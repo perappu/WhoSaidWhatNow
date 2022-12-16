@@ -37,7 +37,7 @@ namespace WhoSaidWhatNow
 
             this.CommandManager.AddHandler(CommandName, new CommandInfo(OnCommand)
             {
-                HelpMessage = "Per character chat history plugin, evolution of Maia-Everett/dalamud-snooper."
+                HelpMessage = "Open settings"
             });
 
             this.PluginInterface.UiBuilder.Draw += DrawUI;
