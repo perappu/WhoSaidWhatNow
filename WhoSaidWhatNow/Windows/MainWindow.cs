@@ -1,8 +1,10 @@
 using Dalamud.Game.ClientState.Objects;
 using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Game.ClientState.Objects.Types;
+using Dalamud.Game.Text;
 using Dalamud.Interface;
 using Dalamud.Interface.Windowing;
+using Dalamud.Logging;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 using ImGuiNET;
 using System;
@@ -20,6 +22,21 @@ public class MainWindow : Window, IDisposable
     private Player? selectedPlayer = null;
     private string errorMessage = string.Empty;
     private bool open = false;
+
+    //thank you snooper
+    private static readonly IDictionary<XivChatType, string> formats = new Dictionary<XivChatType, string>()
+        {
+            { XivChatType.Say, "{0}: {1}" },
+            { XivChatType.TellIncoming, "{0} >> {1}" },
+            { XivChatType.StandardEmote, "{1}" },
+            { XivChatType.CustomEmote, "{0} {1}" },
+            { XivChatType.Shout, "{0} shouts: {1}" },
+            { XivChatType.Yell, "{0} yells: {1}" },
+            { XivChatType.Party, "({0}) {1}" },
+            { XivChatType.CrossParty, "({0}) {1}" },
+            { XivChatType.Alliance, "(({0})) {1}" },
+            { XivChatType.FreeCompany, "[FC]<{0}> {1}" },
+        };
 
     WindowSizeConstraints openConstraints = new WindowSizeConstraints
     {
@@ -40,6 +57,16 @@ public class MainWindow : Window, IDisposable
         this.plugin = plugin;
         this.Players = trackedPlayers;
         this.targetManager = targetManager;
+
+        //add linkshell indicators
+        for (int i = 1; i <= 8; i++)
+        {
+            var lsChannel = (XivChatType)((ushort)XivChatType.Ls1 + i - 1);
+            formats.Add(lsChannel, string.Format("[LS{0}]{1}", i, "<{0}> {1}"));
+
+            var cwlsChannel = i == 1 ? XivChatType.CrossLinkShell1 : (XivChatType)((ushort)XivChatType.CrossLinkShell2 + i - 2);
+            formats.Add(cwlsChannel, string.Format("[CWLS{0}]{1}", i, "<{0}> {1}"));
+        }
     }
 
     public void Dispose()
@@ -128,7 +155,7 @@ public class MainWindow : Window, IDisposable
 
             }
             ImGui.SameLine();
-            ImGui.Text(player.Name + " " + player.ID);
+            ImGui.Text(player.Name);
             ImGui.EndGroup();
             ImGui.EndChild();
 
@@ -149,7 +176,10 @@ public class MainWindow : Window, IDisposable
         if(selectedPlayer != null) {
             for (var i = 0; selectedPlayer.ChatEntries.Count > i; i++)
             {
+                PluginLog.Debug(Configuration.ChatColors[selectedPlayer.ChatEntries[i].Type].ToString());
+                ImGui.PushStyleColor(ImGuiCol.Text, Configuration.ChatColors[selectedPlayer.ChatEntries[i].Type]);
                 ImGui.TextWrapped("[" + selectedPlayer.ChatEntries[i].Time.ToShortTimeString() + "] " + selectedPlayer.ChatEntries[i].Sender + ": " + selectedPlayer.ChatEntries[i].Message);
+                ImGui.PopStyleColor();
             }
         }
         ImGui.EndGroup();
