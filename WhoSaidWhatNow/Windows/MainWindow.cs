@@ -176,6 +176,7 @@ public class MainWindow : Window, IDisposable
         if(selectedPlayer != null) {
             for (var i = 0; selectedPlayer.ChatEntries.Count > i; i++)
             {
+                //I have no idea why this isn't working because it seems like it's 
                 PluginLog.Debug(Configuration.ChatColors[selectedPlayer.ChatEntries[i].Type].ToString());
                 ImGui.PushStyleColor(ImGuiCol.Text, Configuration.ChatColors[selectedPlayer.ChatEntries[i].Type]);
                 ImGui.TextWrapped("[" + selectedPlayer.ChatEntries[i].Time.ToShortTimeString() + "] " + selectedPlayer.ChatEntries[i].Sender + ": " + selectedPlayer.ChatEntries[i].Message);
