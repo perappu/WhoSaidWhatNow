@@ -178,8 +178,8 @@ public class MainWindow : Window, IDisposable
             foreach (ChatEntry c in selectedPlayer.ChatEntries)
             {
                 //I have no idea why color isn't working because it seems like it should
-                PluginLog.Debug(Configuration.ChatColors[selectedPlayer.ChatEntries[i].Type].ToString());
-                ImGui.PushStyleColor(ImGuiCol.Text, Configuration.ChatColors[selectedPlayer.ChatEntries[i].Type]);
+                PluginLog.Debug(Configuration.ChatColors[c.Type].ToString());
+                ImGui.PushStyleColor(ImGuiCol.Text, Configuration.ChatColors[c.Type]);
                 var time = c.Time.ToShortTimeString();
                 var sender = c.Sender;
                 var msg = c.Message;
