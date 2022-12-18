@@ -109,8 +109,9 @@ public class MainWindow : Window, IDisposable
             {
                 this.plugin.DrawConfigUI();
             }
-
+            ImGui.PushStyleColor(ImGuiCol.Text, 0xd41717);
             ImGui.Text(this.plugin.configuration.IsOn == true ? "On" : "Off");
+            ImGui.PopStyleColor();
 
             ImGui.EndMenuBar();
         }
