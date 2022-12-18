@@ -16,8 +16,10 @@ namespace WhoSaidWhatNow
         //Always start the plugin as off by default, to prevent crashes
         public bool IsOn { get; set; } = false;
 
+        //Autoscrolling on the chat log window
         public bool AutoScroll { get; set; } = false;
 
+        //Default chat color values
         public static readonly IDictionary<XivChatType, Vector4> ChatColors = new Dictionary<XivChatType, Vector4>()
         {
             { XivChatType.Say, new Vector4(0.969f,0.969f,0.961f, 1f)},

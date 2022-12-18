@@ -35,6 +35,9 @@ namespace WhoSaidWhatNow
             configuration = passedConfiguration;
         }
 
+        //THIS IS VERY IMPORTANT
+        //if you do not do Dispose() like this it will created a brand new lost OnChatMessage thread.
+        //I accidentally had like 15+ once. my game crashed
         public void Dispose()
         {
             chatGui.ChatMessage -= OnChatMessage;

@@ -25,7 +25,7 @@ public class MainWindow : Window, IDisposable
     private bool open = false;
 
     //thank you snooper
-    private static readonly IDictionary<XivChatType, string> formats = new Dictionary<XivChatType, string>()
+    private static readonly IDictionary<XivChatType, string> Formats = new Dictionary<XivChatType, string>()
         {
             { XivChatType.Say, "{0}: {1}" },
             { XivChatType.TellIncoming, "{0} >> {1}" },
@@ -39,6 +39,8 @@ public class MainWindow : Window, IDisposable
             { XivChatType.FreeCompany, "[FC]<{0}> {1}" },
         };
 
+    //define constraints for when the right panel is open/closed
+    //TODO: set minimum/maximum when "closed" but infinitely resizable when expanded
     WindowSizeConstraints openConstraints = new WindowSizeConstraints
     {
         MinimumSize = new Vector2(500, 330),
@@ -60,21 +62,22 @@ public class MainWindow : Window, IDisposable
         this.targetManager = targetManager;
 
         //add linkshell indicators
+        //this is just ripped straight from snooper... we may have our own way to do it eventually
         for (int i = 1; i <= 8; i++)
         {
             var lsChannel = (XivChatType)((ushort)XivChatType.Ls1 + i - 1);
-            formats.Add(lsChannel, string.Format("[LS{0}]{1}", i, "<{0}> {1}"));
+            Formats.Add(lsChannel, string.Format("[LS{0}]{1}", i, "<{0}> {1}"));
 
             var cwlsChannel = i == 1 ? XivChatType.CrossLinkShell1 : (XivChatType)((ushort)XivChatType.CrossLinkShell2 + i - 2);
-            formats.Add(cwlsChannel, string.Format("[CWLS{0}]{1}", i, "<{0}> {1}"));
+            Formats.Add(cwlsChannel, string.Format("[CWLS{0}]{1}", i, "<{0}> {1}"));
         }
     }
 
-    public void Dispose()
-    {
+    //I honestly have no idea how to dispose of windows correctly
+    //TODO: make sure this is ok?
+    public void Dispose() { }
 
-    }
-
+    //AddNewPlayer() creates a player based on a game object and adds it to the main list
     private uint AddNewPlayer(GameObject gameObject)
     {
         uint id = gameObject.DataId;
@@ -82,6 +85,8 @@ public class MainWindow : Window, IDisposable
         return id;
     }
 
+    //IsTargetPlayer() checks to see if the current target is a player
+    //if so it'll make the new player object, if not return false
     private bool IsTargetPlayer()
     {
         GameObject? target = null;
@@ -102,8 +107,10 @@ public class MainWindow : Window, IDisposable
         }
     }
 
+    //Draw() the main window
     public override void Draw()
     {
+        //Creating menu bar
         if (ImGui.BeginMenuBar())
         {
             if (ImGui.MenuItem("Open Settings"))
@@ -117,18 +124,23 @@ public class MainWindow : Window, IDisposable
             ImGui.EndMenuBar();
         }
 
+        //non-menu bar buttons
+        //TODO: add remove button lol, might put it on the right panel. or a context/popup menu?
         if (ImGui.Button("Add Target"))
         {
             IsTargetPlayer();
         }
+        
 
-        // left and right panels
+        //Creating left and right panels
+        ////you can redeclare BeginChild() with the same ID to add things to them, which we do for chatlog
         ImGui.BeginChild("###WhoSaidWhatNow_LeftPanel_Child", new Vector2(205 * ImGuiHelpers.GlobalScale, 0), true);
         ImGui.EndChild();
         ImGui.SameLine();
         ImGui.BeginChild("###WhoSaidWhatNow_RightPanel_Child", new Vector2(0, 0), true);
         ImGui.EndChild();
 
+        //Populating selectable list
         for (var i = 0; Players.Count > i; i++)
         {
             Player player = Players[i];
@@ -142,8 +154,11 @@ public class MainWindow : Window, IDisposable
                 if (ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left))
                 {
                     // ignored
+                    // I'm honestly not sure why the original snooper had this but I'm going to guess
+                    // it's to make sure it explicitly ignores people buttonmashing
                 }
 
+                //if we're clicking on the current player and the window is already open, close it
                 if (open == true && selectedPlayer.ID == player.ID)
                 {
                     open = false;
@@ -156,11 +171,14 @@ public class MainWindow : Window, IDisposable
                 }
 
             }
+
+            //TODO: padding is a bit wacky on the selectable and clicks with the one above it, either remove the padding or add margins
             ImGui.SameLine();
             ImGui.Text(player.Name);
             ImGui.EndGroup();
             ImGui.EndChild();
 
+            //Stuff the selectable should do on click
             if (open)
             {
                 this.SizeConstraints = openConstraints;
@@ -172,14 +190,14 @@ public class MainWindow : Window, IDisposable
 
         }
 
-        // menu for selected player
+        // Build the chat log
+        // it's worth noting all of this stuff stays in memory and is only hidden when it's "closed"
         ImGui.BeginChild("###WhoSaidWhatNow_RightPanel_Child");
         ImGui.BeginGroup();
         if (selectedPlayer is not null)
         {
             foreach (ChatEntry c in selectedPlayer.ChatEntries)
             {
-                //I have no idea why color isn't working because it seems like it should
                 //PluginLog.Debug(Configuration.ChatColors[c.Type].ToString());
                 ImGui.PushStyleColor(ImGuiCol.Text, Configuration.ChatColors[c.Type]);
                 var time = c.Time.ToShortTimeString();
@@ -189,9 +207,10 @@ public class MainWindow : Window, IDisposable
                 ImGui.PopStyleColor();
             }
         }
+
         if(plugin.configuration.AutoScroll)
         {
-            //this only scrolls to the top because I don't understand math
+            //i don't understand math, make this actually work better
             ImGui.SetScrollHereY(1.0f);
         }
         ImGui.EndGroup();

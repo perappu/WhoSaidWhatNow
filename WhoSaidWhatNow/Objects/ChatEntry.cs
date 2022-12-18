@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace WhoSaidWhatNow.Objects
 {
+    //ChatEntry object
     //this is pretty much lifted straight from Snooper
     public class ChatEntry
     {

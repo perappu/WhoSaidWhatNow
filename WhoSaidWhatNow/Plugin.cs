@@ -26,6 +26,8 @@ namespace WhoSaidWhatNow
         public WindowSystem WindowSystem = new("WhoSaidWhatNow");
         public List<Player> trackedPlayers;
 
+        //TODO: Make sure we're only actually declaring stuff we need
+        //I went a little ham because of what I thought was required by onmessagehandled
         public Plugin(
             [RequiredVersion("1.0")] DalamudPluginInterface pluginInterface,
             [RequiredVersion("1.0")] CommandManager commandManager,
@@ -38,14 +40,19 @@ namespace WhoSaidWhatNow
             this.CommandManager = commandManager;
             this.trackedPlayers = new List<Player>();
 
+            //initiatize our configuration
             this.configuration = this.PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
             this.configuration.Initialize(this.PluginInterface);
 
+            //create the listener
             this.ChatListener = new ChatListener(trackedPlayers, chatGui, configuration, clientState, targetManager, sigScanner);
 
+            //add our windows
             WindowSystem.AddWindow(new ConfigWindow(this));
             WindowSystem.AddWindow(new MainWindow(this, trackedPlayers, targetManager));
 
+            //TODO: add a command for the config window?
+            //and one for on/off toggle
             this.CommandManager.AddHandler(CommandName, new CommandInfo(OnCommand)
             {
                 HelpMessage = "Open settings"
@@ -55,6 +62,7 @@ namespace WhoSaidWhatNow
             this.PluginInterface.UiBuilder.OpenConfigUi += DrawConfigUI;
         }
 
+        //TODO: make sure we're disposing of everything we need to appropriately
         public void Dispose()
         {
             this.ChatListener.Dispose();
