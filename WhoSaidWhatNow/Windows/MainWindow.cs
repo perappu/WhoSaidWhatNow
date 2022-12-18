@@ -173,13 +173,17 @@ public class MainWindow : Window, IDisposable
         // menu for selected player
         ImGui.BeginChild("###WhoSaidWhatNow_RightPanel_Child");
         ImGui.BeginGroup();
-        if(selectedPlayer != null) {
-            for (var i = 0; selectedPlayer.ChatEntries.Count > i; i++)
+        if (selectedPlayer is not null)
+        {
+            foreach (ChatEntry c in selectedPlayer.ChatEntries)
             {
-                //I have no idea why this isn't working because it seems like it's 
+                //I have no idea why color isn't working because it seems like it should
                 PluginLog.Debug(Configuration.ChatColors[selectedPlayer.ChatEntries[i].Type].ToString());
                 ImGui.PushStyleColor(ImGuiCol.Text, Configuration.ChatColors[selectedPlayer.ChatEntries[i].Type]);
-                ImGui.TextWrapped("[" + selectedPlayer.ChatEntries[i].Time.ToShortTimeString() + "] " + selectedPlayer.ChatEntries[i].Sender + ": " + selectedPlayer.ChatEntries[i].Message);
+                var time = c.Time.ToShortTimeString();
+                var sender = c.Sender;
+                var msg = c.Message;
+                ImGui.TextWrapped($"[{time}] {sender}: {msg}");
                 ImGui.PopStyleColor();
             }
         }
