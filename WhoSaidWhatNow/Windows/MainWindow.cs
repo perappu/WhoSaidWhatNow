@@ -17,7 +17,7 @@ public class MainWindow : Window, IDisposable
     private Plugin plugin;
     public List<Player> Players;
     private TargetManager targetManager;
-    private Player selectedPlayer;
+    private Player? selectedPlayer = null;
     private string errorMessage = string.Empty;
     private bool open = false;
 
@@ -128,7 +128,7 @@ public class MainWindow : Window, IDisposable
 
             }
             ImGui.SameLine();
-            ImGui.Text(player.Name + " " + Players.Count + player.ID);
+            ImGui.Text(player.Name + " " + player.ID);
             ImGui.EndGroup();
             ImGui.EndChild();
 
@@ -146,12 +146,12 @@ public class MainWindow : Window, IDisposable
         // menu for selected player
         ImGui.BeginChild("###WhoSaidWhatNow_RightPanel_Child");
         ImGui.BeginGroup();
-        ImGui.Text(selectedPlayer.Name + " " + selectedPlayer.ID);
-        for (var i = 0; selectedPlayer.ChatEntries.Count > i; i++)
-        {
-            ImGui.Text(selectedPlayer.ChatEntries[i].Message);
+        if(selectedPlayer != null) {
+            for (var i = 0; selectedPlayer.ChatEntries.Count > i; i++)
+            {
+                ImGui.TextWrapped("[" + selectedPlayer.ChatEntries[i].Time.ToShortTimeString() + "] " + selectedPlayer.ChatEntries[i].Sender + ": " + selectedPlayer.ChatEntries[i].Message);
+            }
         }
-
         ImGui.EndGroup();
         ImGui.EndChild();
 
