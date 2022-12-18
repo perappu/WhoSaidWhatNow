@@ -42,7 +42,7 @@ public class MainWindow : Window, IDisposable
     WindowSizeConstraints openConstraints = new WindowSizeConstraints
     {
         MinimumSize = new Vector2(500, 330),
-        MaximumSize = new Vector2(700, 800)
+        MaximumSize = new Vector2(900, 900)
     };
     WindowSizeConstraints closedConstraints = new WindowSizeConstraints
     {
@@ -180,7 +180,7 @@ public class MainWindow : Window, IDisposable
             foreach (ChatEntry c in selectedPlayer.ChatEntries)
             {
                 //I have no idea why color isn't working because it seems like it should
-                PluginLog.Debug(Configuration.ChatColors[c.Type].ToString());
+                //PluginLog.Debug(Configuration.ChatColors[c.Type].ToString());
                 ImGui.PushStyleColor(ImGuiCol.Text, Configuration.ChatColors[c.Type]);
                 var time = c.Time.ToShortTimeString();
                 var sender = c.Sender;
@@ -188,6 +188,11 @@ public class MainWindow : Window, IDisposable
                 ImGui.TextWrapped($"[{time}] {sender}: {msg}");
                 ImGui.PopStyleColor();
             }
+        }
+        if(plugin.configuration.AutoScroll)
+        {
+            //this only scrolls to the top because I don't understand math
+            ImGui.SetScrollHereY(1.0f);
         }
         ImGui.EndGroup();
         ImGui.EndChild();
