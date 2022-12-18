@@ -3,6 +3,7 @@ using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Game.Text;
 using Dalamud.Interface;
+using Dalamud.Interface.Colors;
 using Dalamud.Interface.Windowing;
 using Dalamud.Logging;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
@@ -109,9 +110,9 @@ public class MainWindow : Window, IDisposable
             {
                 this.plugin.DrawConfigUI();
             }
-            ImGui.PushStyleColor(ImGuiCol.Text, 0xd41717);
-            ImGui.Text(this.plugin.configuration.IsOn == true ? "On" : "Off");
-            ImGui.PopStyleColor();
+           ImGui.PushStyleColor(ImGuiCol.Text, new Vector4(1f, 0f, 0f, 1f));
+           ImGui.Text(this.plugin.configuration.IsOn == true ? "On" : "Off");
+           ImGui.PopStyleColor();
 
             ImGui.EndMenuBar();
         }
