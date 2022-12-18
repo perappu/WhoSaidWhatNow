@@ -57,6 +57,7 @@ namespace WhoSaidWhatNow
 
         public void Dispose()
         {
+            this.ChatListener.Dispose();
             this.WindowSystem.RemoveAllWindows();
             this.CommandManager.RemoveHandler(CommandName);
         }
