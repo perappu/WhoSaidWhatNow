@@ -5,6 +5,12 @@ using System.IO;
 using System.Reflection;
 using Dalamud.Interface.Windowing;
 using WhoSaidWhatNow.Windows;
+using Dalamud.Game.ClientState;
+using Dalamud.Game.Gui;
+using Dalamud.Game.ClientState.Objects;
+using Dalamud.Game;
+using System.Collections.Generic;
+using WhoSaidWhatNow.Objects;
 
 namespace WhoSaidWhatNow
 {
@@ -15,25 +21,30 @@ namespace WhoSaidWhatNow
 
         private DalamudPluginInterface PluginInterface { get; init; }
         private CommandManager CommandManager { get; init; }
-        public Configuration Configuration { get; init; }
+        private ChatListener ChatListener { get; init; }
+        public Configuration configuration { get; init; }
         public WindowSystem WindowSystem = new("WhoSaidWhatNow");
+        public List<Player> trackedPlayers;
 
         public Plugin(
             [RequiredVersion("1.0")] DalamudPluginInterface pluginInterface,
-            [RequiredVersion("1.0")] CommandManager commandManager)
+            [RequiredVersion("1.0")] CommandManager commandManager,
+            [RequiredVersion("1.0")] ClientState clientState,
+            [RequiredVersion("1.0")] ChatGui chatGui,
+            [RequiredVersion("1.0")] TargetManager targetManager,
+            [RequiredVersion("1.0")] SigScanner sigScanner)
         {
             this.PluginInterface = pluginInterface;
             this.CommandManager = commandManager;
+            this.trackedPlayers = new List<Player>();
 
-            this.Configuration = this.PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
-            this.Configuration.Initialize(this.PluginInterface);
+            this.configuration = this.PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
+            this.configuration.Initialize(this.PluginInterface);
 
-            // you might normally want to embed resources and load them from the manifest stream
-            var imagePath = Path.Combine(PluginInterface.AssemblyLocation.Directory?.FullName!, "goat.png");
-            var goatImage = this.PluginInterface.UiBuilder.LoadImage(imagePath);
+            this.ChatListener = new ChatListener(trackedPlayers, chatGui, configuration, clientState, targetManager, sigScanner);
 
             WindowSystem.AddWindow(new ConfigWindow(this));
-            WindowSystem.AddWindow(new MainWindow(this, goatImage));
+            WindowSystem.AddWindow(new MainWindow(this, trackedPlayers, targetManager));
 
             this.CommandManager.AddHandler(CommandName, new CommandInfo(OnCommand)
             {
@@ -53,7 +64,7 @@ namespace WhoSaidWhatNow
         private void OnCommand(string command, string args)
         {
             // in response to the slash command, just display our main ui
-            WindowSystem.GetWindow("My Amazing Window").IsOpen = true;
+            WindowSystem.GetWindow("Who Said What Now").IsOpen = true;
         }
 
         private void DrawUI()
@@ -63,7 +74,7 @@ namespace WhoSaidWhatNow
 
         public void DrawConfigUI()
         {
-            WindowSystem.GetWindow("A Wonderful Configuration Window").IsOpen = true;
+            WindowSystem.GetWindow("Who Said What Now - Settings").IsOpen = true;
         }
     }
 }

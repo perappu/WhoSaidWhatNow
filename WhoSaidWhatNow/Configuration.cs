@@ -9,7 +9,8 @@ namespace WhoSaidWhatNow
     {
         public int Version { get; set; } = 1;
 
-        public bool SomePropertyToBeSavedAndWithADefault { get; set; } = true;
+        //Always start the plugin as off by default, to prevent crashes
+        public bool IsOn { get; set; } = false;
 
         // the below exist just to make saving less cumbersome
         [NonSerialized]
