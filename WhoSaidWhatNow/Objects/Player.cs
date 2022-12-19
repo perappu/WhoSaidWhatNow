@@ -17,13 +17,15 @@ namespace WhoSaidWhatNow.Objects
     {
         public uint ID { get; set; }
         public string Name { get; init; }
+        public string Server { get; init; }
         public List<ChatEntry> ChatEntries { get; init; }
 
-        public Player(uint id, string name)
+        public Player(uint id, string name, string server)
         {
             ID = id; 
             Name = name;
             ChatEntries = new List<ChatEntry>();
+            Server = server;
         }
     }
 }

@@ -19,6 +19,38 @@ namespace WhoSaidWhatNow
         //Autoscrolling on the chat log window
         public bool AutoScroll { get; set; } = false;
 
+        //TODO: Channel toggles
+        public IDictionary<XivChatType, bool> ChannelToggles = new Dictionary<XivChatType, bool>()
+        {
+            { XivChatType.Say, true},
+            { XivChatType.TellIncoming, true},
+            { XivChatType.StandardEmote, true},
+            { XivChatType.CustomEmote, true},
+            { XivChatType.Shout, true},
+            { XivChatType.Yell, true},
+            { XivChatType.Party, true},
+            { XivChatType.CrossParty, true},
+            { XivChatType.Alliance, true},
+            { XivChatType.FreeCompany, true},
+            { XivChatType.Ls1, true},
+            { XivChatType.Ls2, true},
+            { XivChatType.Ls3, true},
+            { XivChatType.Ls4, true},
+            { XivChatType.Ls5, true},
+            { XivChatType.Ls6, true},
+            { XivChatType.Ls7, true},
+            { XivChatType.Ls8, true},
+            { XivChatType.CrossLinkShell1, true},
+            { XivChatType.CrossLinkShell2, true},
+            { XivChatType.CrossLinkShell3, true},
+            { XivChatType.CrossLinkShell4, true},
+            { XivChatType.CrossLinkShell5, true},
+            { XivChatType.CrossLinkShell6, true},
+            { XivChatType.CrossLinkShell7, true}
+        };
+
+        //TODO: Custom chat color values, ideally using ingame colors
+
         //Default chat color values
         public static readonly IDictionary<XivChatType, Vector4> ChatColors = new Dictionary<XivChatType, Vector4>()
         {
