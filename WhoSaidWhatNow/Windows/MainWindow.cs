@@ -21,6 +21,7 @@ public class MainWindow : Window, IDisposable
 {
     private Plugin plugin;
     public List<Player> Players;
+    public SortedList<DateTime, ChatEntry> ChatEntries;
     private TargetManager targetManager;
     private Player? selectedPlayer = null;
     private string errorMessage = string.Empty;
@@ -54,14 +55,15 @@ public class MainWindow : Window, IDisposable
         MaximumSize = new Vector2(220, 330)
     };
 
-    public MainWindow(Plugin plugin, List<Player> trackedPlayers, TargetManager targetManager) : base(
-        "Who Said What Now", ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse | ImGuiWindowFlags.MenuBar)
+    public MainWindow(Plugin plugin, List<Player> trackedPlayers, SortedList<DateTime, ChatEntry> chatEntries, TargetManager targetManager) 
+        : base("Who Said What Now", ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse | ImGuiWindowFlags.MenuBar)
     {
         this.SizeConstraints = closedConstraints;
 
         this.plugin = plugin;
         this.Players = trackedPlayers;
         this.targetManager = targetManager;
+        this.ChatEntries = chatEntries;
 
         //add linkshell indicators
         //this is just ripped straight from snooper... we may have our own way to do it eventually
@@ -214,15 +216,17 @@ public class MainWindow : Window, IDisposable
         ImGui.BeginGroup();
         if (selectedPlayer is not null)
         {
-            foreach (ChatEntry c in selectedPlayer.ChatEntries)
+            foreach (KeyValuePair<DateTime, ChatEntry> c in ChatEntries)
             {
-                if (plugin.configuration.ChannelToggles[c.Type] == true) { 
+                if (plugin.configuration.ChannelToggles[c.Value.Type] == true && c.Value.Sender.Contains(selectedPlayer.Name)) { 
                 //PluginLog.Debug(Configuration.ChatColors[c.Type].ToString());
-                ImGui.PushStyleColor(ImGuiCol.Text, Configuration.ChatColors[c.Type]);
-                string time = c.Time.ToShortTimeString();
+                ImGui.PushStyleColor(ImGuiCol.Text, Configuration.ChatColors[c.Value.Type]);
+
+                string time = c.Value.Time.ToShortTimeString();
                 string sender = selectedPlayer.Name + "" + selectedPlayer.Server;
-                string tag = Formats[c.Type];
-                string msg = c.Message;
+                string tag = Formats[c.Value.Type];
+                string msg = c.Value.Message;
+
                 ImGui.TextWrapped($"[{time}]" + String.Format(tag, sender, msg));
                 ImGui.PopStyleColor();}
             }

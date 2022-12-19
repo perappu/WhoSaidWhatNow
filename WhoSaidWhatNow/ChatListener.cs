@@ -23,12 +23,14 @@ namespace WhoSaidWhatNow
     internal class ChatListener : IDisposable
     {
         public List<Player> Players;
+        public SortedList<DateTime,ChatEntry> ChatEntries;
         readonly private ChatGui chatGui;
         readonly private Configuration configuration;
 
-        public ChatListener(List<Player> players, ChatGui passedChatGui, Configuration passedConfiguration, ClientState clientState, TargetManager targetManager, SigScanner sigScanner)
+        public ChatListener(SortedList<DateTime, ChatEntry> chatEntries, List<Player> players, ChatGui passedChatGui, Configuration passedConfiguration, ClientState clientState, TargetManager targetManager, SigScanner sigScanner)
 
         {
+            ChatEntries = chatEntries;
             Players = players;
             chatGui = passedChatGui;
             chatGui.ChatMessage += OnChatMessage;
@@ -55,7 +57,7 @@ namespace WhoSaidWhatNow
                 //this would be gross if it was messages but it should be okay given a person will probably only have 4-5 players tracked a time
                 if (result != null)
                 {
-                    result.ChatEntries.Add(new ChatEntry(senderId, senderName, message.ToString(), type, DateTime.Now));
+                    ChatEntries.Add(DateTime.Now, new ChatEntry(senderId, senderName, message.ToString(), type, DateTime.Now));
                 }
             }
         }
