@@ -1,5 +1,6 @@
 using Dalamud.Game.ClientState.Objects;
 using Dalamud.Game.ClientState.Objects.Enums;
+using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Game.Text;
 using Dalamud.Interface;
@@ -10,6 +11,7 @@ using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 using ImGuiNET;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Numerics;
 using WhoSaidWhatNow.Objects;
@@ -81,7 +83,8 @@ public class MainWindow : Window, IDisposable
     private uint AddNewPlayer(GameObject gameObject)
     {
         uint id = gameObject.DataId;
-        Players.Add(new Player(gameObject.ObjectId, new string(gameObject.Name.ToString())));
+        string server = ((PlayerCharacter)(gameObject)).HomeWorld.GameData.Name.ToString();
+        Players.Add(new Player(gameObject.ObjectId, new string(gameObject.Name.ToString()), server));
         return id;
     }
 
@@ -125,12 +128,26 @@ public class MainWindow : Window, IDisposable
         }
 
         //non-menu bar buttons
-        //TODO: add remove button lol, might put it on the right panel. or a context/popup menu?
+        //TODO: make remove button have checking
+        //put it on the right panel as well maybe, since it does nothing when a person isn't selected
         if (ImGui.Button("Add Target"))
         {
             IsTargetPlayer();
         }
-        
+        ImGui.SameLine();
+        //This is a really janky workaround
+        ImGui.InvisibleButton("##dummy", new Vector2(128, 20));
+        ImGui.SameLine();
+        if (ImGui.Button("Remove Target"))
+        {
+            //we have to manually close the window here
+            if (selectedPlayer is not null)
+            {
+                Players.Remove(selectedPlayer);
+                open = false;
+                this.SizeConstraints = closedConstraints;
+            }
+        }
 
         //Creating left and right panels
         ////you can redeclare BeginChild() with the same ID to add things to them, which we do for chatlog
@@ -162,6 +179,7 @@ public class MainWindow : Window, IDisposable
                 if (open == true && selectedPlayer.ID == player.ID)
                 {
                     open = false;
+                    selectedPlayer = null;
                 }
                 // open content in right panel
                 else
@@ -198,13 +216,15 @@ public class MainWindow : Window, IDisposable
         {
             foreach (ChatEntry c in selectedPlayer.ChatEntries)
             {
+                if (plugin.configuration.ChannelToggles[c.Type] == true) { 
                 //PluginLog.Debug(Configuration.ChatColors[c.Type].ToString());
                 ImGui.PushStyleColor(ImGuiCol.Text, Configuration.ChatColors[c.Type]);
-                var time = c.Time.ToShortTimeString();
-                var sender = c.Sender;
-                var msg = c.Message;
-                ImGui.TextWrapped($"[{time}] {sender}: {msg}");
-                ImGui.PopStyleColor();
+                string time = c.Time.ToShortTimeString();
+                string sender = selectedPlayer.Name + "" + selectedPlayer.Server;
+                string tag = Formats[c.Type];
+                string msg = c.Message;
+                ImGui.TextWrapped($"[{time}]" + String.Format(tag, sender, msg));
+                ImGui.PopStyleColor();}
             }
         }
 
