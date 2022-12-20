@@ -24,6 +24,7 @@ namespace WhoSaidWhatNow
         {
             { XivChatType.Say, true},
             { XivChatType.TellIncoming, true},
+            { XivChatType.TellOutgoing, true},
             { XivChatType.StandardEmote, true},
             { XivChatType.CustomEmote, true},
             { XivChatType.Shout, true},
@@ -56,6 +57,7 @@ namespace WhoSaidWhatNow
         {
             { XivChatType.Say, new Vector4(0.969f,0.969f,0.961f, 1f)},
             { XivChatType.TellIncoming, new Vector4(1f,0.784f,0.929f, 1f) },
+            { XivChatType.TellOutgoing, new Vector4(1f,0.784f,0.929f, 1f) },
             { XivChatType.StandardEmote, new Vector4(0.353f,0.878f,0.725f, 1f) },
             { XivChatType.CustomEmote, new Vector4(0.353f,0.878f,0.725f, 1f) },
             { XivChatType.Shout, new Vector4(1f,0.729f,0.486f, 1f) },
