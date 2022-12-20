@@ -25,5 +25,14 @@ namespace WhoSaidWhatNow.Objects
             Type = type;
             Time = time;
         }
+
+        public string CreateMessage(string server, string tag)
+        {
+            string time = this.Time.ToShortTimeString();
+            string sender = this.Sender + "" + server;
+            string msg = this.Message;
+
+            return $"[{time}]" + String.Format(tag, sender, msg);
+        }
     }
 }

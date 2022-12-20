@@ -8,13 +8,17 @@ using Dalamud.Interface.Colors;
 using Dalamud.Interface.Windowing;
 using Dalamud.Logging;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
+using FFXIVClientStructs.Havok;
 using ImGuiNET;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Numerics;
 using WhoSaidWhatNow.Objects;
+using static Lumina.Data.Parsing.Layer.LayerCommon;
+
 namespace WhoSaidWhatNow.Windows;
 
 public class MainWindow : Window, IDisposable
@@ -26,6 +30,7 @@ public class MainWindow : Window, IDisposable
     private Player? selectedPlayer = null;
     private string errorMessage = string.Empty;
     private bool open = false;
+    private bool btnDisable = true;
 
     //thank you snooper
     private static readonly IDictionary<XivChatType, string> Formats = new Dictionary<XivChatType, string>()
@@ -47,7 +52,7 @@ public class MainWindow : Window, IDisposable
     WindowSizeConstraints openConstraints = new WindowSizeConstraints
     {
         MinimumSize = new Vector2(500, 330),
-        MaximumSize = new Vector2(900, 900)
+        MaximumSize = new Vector2(1000, 1000)
     };
     WindowSizeConstraints closedConstraints = new WindowSizeConstraints
     {
@@ -55,7 +60,7 @@ public class MainWindow : Window, IDisposable
         MaximumSize = new Vector2(220, 330)
     };
 
-    public MainWindow(Plugin plugin, List<Player> trackedPlayers, SortedList<DateTime, ChatEntry> chatEntries, TargetManager targetManager) 
+    public MainWindow(Plugin plugin, List<Player> trackedPlayers, SortedList<DateTime, ChatEntry> chatEntries, TargetManager targetManager)
         : base("Who Said What Now", ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse | ImGuiWindowFlags.MenuBar)
     {
         this.SizeConstraints = closedConstraints;
@@ -81,15 +86,6 @@ public class MainWindow : Window, IDisposable
     //TODO: make sure this is ok?
     public void Dispose() { }
 
-    //AddNewPlayer() creates a player based on a game object and adds it to the main list
-    private uint AddNewPlayer(GameObject gameObject)
-    {
-        uint id = gameObject.DataId;
-        string server = ((PlayerCharacter)(gameObject)).HomeWorld.GameData.Name.ToString();
-        Players.Add(new Player(gameObject.ObjectId, new string(gameObject.Name.ToString()), server));
-        return id;
-    }
-
     //IsTargetPlayer() checks to see if the current target is a player
     //if so it'll make the new player object, if not return false
     private bool IsTargetPlayer()
@@ -112,6 +108,24 @@ public class MainWindow : Window, IDisposable
         }
     }
 
+    //AddNewPlayer() creates a player based on a game object and adds it to the main list
+    private uint AddNewPlayer(GameObject gameObject)
+    {
+        uint id = gameObject.DataId;
+        string server = ((PlayerCharacter)(gameObject)).HomeWorld.GameData.Name.ToString();
+        Players.Add(new Player(gameObject.ObjectId, new string(gameObject.Name.ToString()), server));
+        return id;
+    }
+
+    //ShowMessage() creates an ImGui text wrapped given a player and a keyvalue datetime chatentry
+    private void ShowMessage(Player player, KeyValuePair<DateTime, ChatEntry> c)
+    {
+        ImGui.PushStyleColor(ImGuiCol.Text, Configuration.ChatColors[c.Value.Type]);
+        string tag = Formats[c.Value.Type];
+        ImGui.TextWrapped(c.Value.CreateMessage(player.Server, tag));
+        ImGui.PopStyleColor();
+    }
+
     //Draw() the main window
     public override void Draw()
     {
@@ -122,53 +136,142 @@ public class MainWindow : Window, IDisposable
             {
                 this.plugin.DrawConfigUI();
             }
-           ImGui.PushStyleColor(ImGuiCol.Text, new Vector4(1f, 0f, 0f, 1f));
-           ImGui.Text(this.plugin.configuration.IsOn == true ? "On" : "Off");
-           ImGui.PopStyleColor();
+            ImGui.PushStyleColor(ImGuiCol.Text, new Vector4(1f, 0f, 0f, 1f));
+            ImGui.Text(this.plugin.configuration.IsOn == true ? "On" : "Off");
+            ImGui.PopStyleColor();
 
             ImGui.EndMenuBar();
         }
 
-        //non-menu bar buttons
-        //TODO: make remove button have checking
-        //put it on the right panel as well maybe, since it does nothing when a person isn't selected
-        if (ImGui.Button("Add Target"))
+        //INDIVIDUAL TAB
+        ImGui.BeginTabBar("###WhoSaidWhatNow_Tab_Bar");
+        if (ImGui.BeginTabItem("Individual"))
         {
-            IsTargetPlayer();
-        }
-        ImGui.SameLine();
-        //This is a really janky workaround
-        ImGui.InvisibleButton("##dummy", new Vector2(128, 20));
-        ImGui.SameLine();
-        if (ImGui.Button("Remove Target"))
-        {
-            //we have to manually close the window here
+
+            // Creating left and right panels
+            // you can redeclare BeginChild() with the same ID to add things to them, which we do for chatlog
+            ImGui.BeginChild("###WhoSaidWhatNow_LeftPanel_Child", new Vector2(205 * ImGuiHelpers.GlobalScale, 0), true, ImGuiWindowFlags.MenuBar);
+
+            if (ImGui.BeginMenuBar())
+            {
+                if (ImGui.MenuItem("Add Target"))
+                {
+                    IsTargetPlayer();
+                }
+
+                ImGui.BeginDisabled(selectedPlayer is null);
+                if (ImGui.MenuItem("Remove Target"))
+                {
+                    if (selectedPlayer is not null)
+                    {
+                        Players.Remove(selectedPlayer);
+                        open = false;
+                        selectedPlayer = null;
+                        //we have to manually close the window here
+                        this.SizeConstraints = closedConstraints;
+                    }
+                }
+                ImGui.EndDisabled();
+                ImGui.EndMenuBar();
+            }
+
+            ImGui.EndChild();
+            ImGui.SameLine();
+            ImGui.BeginChild("###WhoSaidWhatNow_RightPanel_Child", new Vector2(0, 0), true);
+            ImGui.EndChild();
+
+            //Populating selectable list
+            for (var i = 0; Players.Count > i; i++)
+            {
+                Player player = Players[i];
+
+                ImGui.BeginChild("###WhoSaidWhatNow_LeftPanel_Child");
+                ImGui.BeginGroup();
+
+                if (ImGui.Selectable("###WhoSaidWhatNow_Player_Selectable_" + player.ID, true, ImGuiSelectableFlags.AllowDoubleClick))
+                {
+                    if (ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left))
+                    {
+                        // ignored
+                        // I'm honestly not sure why the original snooper had this but I'm going to guess
+                        // it's to make sure it explicitly ignores people buttonmashing
+                    }
+
+                    //if we're clicking on the current player and the window is already open, close it
+                    if (open == true && selectedPlayer.ID == player.ID)
+                    {
+                        open = false;
+                        selectedPlayer = null;
+                    }
+                    // open content in right panel
+                    else
+                    {
+                        open = true;
+                        selectedPlayer = player;
+                    }
+
+                }
+
+                //TODO: padding is a bit wacky on the selectable and clicks with the one above it, either remove the padding or add margins
+                ImGui.SameLine();
+                ImGui.Text(player.Name);
+                ImGui.EndGroup();
+                ImGui.EndChild();
+
+                //Stuff the selectable should do on click
+                if (open)
+                {
+                    this.SizeConstraints = openConstraints;
+                }
+                else
+                {
+                    this.SizeConstraints = closedConstraints;
+                }
+
+            }
+
+            // Build the chat log
+            // it's worth noting all of this stuff stays in memory and is only hidden when it's "closed"
+            ImGui.BeginChild("###WhoSaidWhatNow_RightPanel_Child");
+            ImGui.BeginGroup();
             if (selectedPlayer is not null)
             {
-                Players.Remove(selectedPlayer);
-                open = false;
-                this.SizeConstraints = closedConstraints;
+                foreach (KeyValuePair<DateTime, ChatEntry> c in ChatEntries)
+                {
+                    if (plugin.configuration.ChannelToggles[c.Value.Type] == true && c.Value.Sender.Contains(selectedPlayer.Name))
+                    {
+                        ShowMessage(selectedPlayer, c);
+                    }
+                }
             }
+            ImGui.EndGroup();
+
+            if (plugin.configuration.AutoScroll)
+            {
+                //i don't understand math, make this actually work better
+                ImGui.SetScrollHereY(1.0f);
+            }
+            
+            ImGui.EndChild();
+            ImGui.EndTabItem();
         }
 
-        //Creating left and right panels
-        ////you can redeclare BeginChild() with the same ID to add things to them, which we do for chatlog
-        ImGui.BeginChild("###WhoSaidWhatNow_LeftPanel_Child", new Vector2(205 * ImGuiHelpers.GlobalScale, 0), true);
-        ImGui.EndChild();
-        ImGui.SameLine();
-        ImGui.BeginChild("###WhoSaidWhatNow_RightPanel_Child", new Vector2(0, 0), true);
-        ImGui.EndChild();
-
-        //Populating selectable list
-        for (var i = 0; Players.Count > i; i++)
+        //GROUP TAB
+        if (ImGui.BeginTabItem("Groups"))
         {
-            Player player = Players[i];
+
+            // Creating left and right panels
+            // you can redeclare BeginChild() with the same ID to add things to them, which we do for chatlog
+            ImGui.BeginChild("###WhoSaidWhatNow_LeftPanel_Child", new Vector2(205 * ImGuiHelpers.GlobalScale, 0), true);
+            ImGui.EndChild();
+            ImGui.SameLine();
+            ImGui.BeginChild("###WhoSaidWhatNow_RightPanel_Child", new Vector2(0, 0), true);
+            ImGui.EndChild();
 
             ImGui.BeginChild("###WhoSaidWhatNow_LeftPanel_Child");
-
             ImGui.BeginGroup();
-
-            if (ImGui.Selectable("###WhoSaidWhatNow_Player_Selectable_" + player.ID, true, ImGuiSelectableFlags.AllowDoubleClick))
+            //make the "all" selectable
+            if (ImGui.Selectable("###WhoSaidWhatNow_Player_Selectable_GroupAll", true, ImGuiSelectableFlags.AllowDoubleClick))
             {
                 if (ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left))
                 {
@@ -178,68 +281,52 @@ public class MainWindow : Window, IDisposable
                 }
 
                 //if we're clicking on the current player and the window is already open, close it
-                if (open == true && selectedPlayer.ID == player.ID)
+                if (open == true)
                 {
                     open = false;
-                    selectedPlayer = null;
                 }
                 // open content in right panel
                 else
                 {
                     open = true;
-                    selectedPlayer = player;
+                }
+
+                //Stuff the selectable should do on click
+                if (open)
+                {
+                    this.SizeConstraints = openConstraints;
+                }
+                else
+                {
+                    this.SizeConstraints = closedConstraints;
                 }
 
             }
-
             //TODO: padding is a bit wacky on the selectable and clicks with the one above it, either remove the padding or add margins
             ImGui.SameLine();
-            ImGui.Text(player.Name);
+            ImGui.Text("All Tracked Players");
             ImGui.EndGroup();
             ImGui.EndChild();
 
-            //Stuff the selectable should do on click
-            if (open)
-            {
-                this.SizeConstraints = openConstraints;
-            }
-            else
-            {
-                this.SizeConstraints = closedConstraints;
-            }
-
-        }
-
-        // Build the chat log
-        // it's worth noting all of this stuff stays in memory and is only hidden when it's "closed"
-        ImGui.BeginChild("###WhoSaidWhatNow_RightPanel_Child");
-        ImGui.BeginGroup();
-        if (selectedPlayer is not null)
-        {
+            // Build the chat log
+            // it's worth noting all of this stuff stays in memory and is only hidden when it's "closed"
+            ImGui.BeginChild("###WhoSaidWhatNow_RightPanel_Child");
+            ImGui.BeginGroup();
             foreach (KeyValuePair<DateTime, ChatEntry> c in ChatEntries)
             {
-                if (plugin.configuration.ChannelToggles[c.Value.Type] == true && c.Value.Sender.Contains(selectedPlayer.Name)) { 
-                //PluginLog.Debug(Configuration.ChatColors[c.Type].ToString());
-                ImGui.PushStyleColor(ImGuiCol.Text, Configuration.ChatColors[c.Value.Type]);
-
-                string time = c.Value.Time.ToShortTimeString();
-                string sender = selectedPlayer.Name + "" + selectedPlayer.Server;
-                string tag = Formats[c.Value.Type];
-                string msg = c.Value.Message;
-
-                ImGui.TextWrapped($"[{time}]" + String.Format(tag, sender, msg));
-                ImGui.PopStyleColor();}
+                if (plugin.configuration.ChannelToggles[c.Value.Type] == true)
+                {
+                    //this is sort of gross but it's only necessary for a "get all" type thing, otherwise we will know the exact players
+                    selectedPlayer = Players.Find(x => x.Name == c.Value.Sender);
+                    ShowMessage(selectedPlayer, c);
+                }
             }
+            ImGui.EndGroup();
+            ImGui.EndChild();
+            ImGui.EndTabItem();
         }
 
-        if(plugin.configuration.AutoScroll)
-        {
-            //i don't understand math, make this actually work better
-            ImGui.SetScrollHereY(1.0f);
-        }
-        ImGui.EndGroup();
-        ImGui.EndChild();
-
+        ImGui.EndTabBar();
     }
 
 }
