@@ -57,7 +57,7 @@ namespace WhoSaidWhatNow
 
                 if (result != null)
                 {
-                    ChatEntries.Add(DateTime.Now, new ChatEntry(senderId, senderName, message.ToString(), type, DateTime.Now));
+                    ChatEntries.Add(DateTime.Now, new ChatEntry(senderId, result.Name, message.ToString(), type, DateTime.Now));
                 }
             }
         }
