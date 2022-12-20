@@ -112,7 +112,7 @@ public class MainWindow : Window, IDisposable
     private uint AddNewPlayer(GameObject gameObject)
     {
         uint id = gameObject.DataId;
-        string server = ((PlayerCharacter)(gameObject)).HomeWorld.GameData.Name.ToString();
+        string server = ((PlayerCharacter)(gameObject)).HomeWorld.GameData == null ? "ServerNotFound" : ((PlayerCharacter)(gameObject)).HomeWorld.GameData.Name.ToString();
         Players.Add(new Player(gameObject.ObjectId, new string(gameObject.Name.ToString()), server));
         return id;
     }
@@ -198,7 +198,7 @@ public class MainWindow : Window, IDisposable
                     }
 
                     //if we're clicking on the current player and the window is already open, close it
-                    if (open == true && selectedPlayer.ID == player.ID)
+                    if (open == true && selectedPlayer != null && selectedPlayer.ID == player.ID)
                     {
                         open = false;
                         selectedPlayer = null;
@@ -318,7 +318,9 @@ public class MainWindow : Window, IDisposable
                 {
                     //this is sort of gross but it's only necessary for a "get all" type thing, otherwise we will know the exact players
                     selectedPlayer = Players.Find(x => x.Name == c.Value.Sender);
-                    ShowMessage(selectedPlayer, c);
+                    if (selectedPlayer != null) { 
+                        ShowMessage(selectedPlayer, c);
+                    }
                 }
             }
             ImGui.EndGroup();
