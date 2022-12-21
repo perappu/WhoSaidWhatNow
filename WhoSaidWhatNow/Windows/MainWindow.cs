@@ -64,21 +64,25 @@ public class MainWindow : Window, IDisposable
     //if so it'll make the new player object, if not return false
     private bool IsTargetPlayer()
     {
-        GameObject? target = null;
-        target = targetManager.Target;
+        if (targetManager.Target != null)
+        {
+            GameObject target = targetManager.Target;
 
-        if (target == null || target.ObjectKind != ObjectKind.Player)
-        {
+            if (target == null || target.ObjectKind != ObjectKind.Player)
+            {
+                return false;
+            }
+            else if (Players.Any(x => x.ID == target.ObjectId))
+            {
+                return false;
+            }
+            else
+            {
+                AddNewPlayer(target);
+                return true;
+            }
+        } else {
             return false;
-        }
-        else if (Players.Any(x => x.ID == target.ObjectId))
-        {
-            return false;
-        }
-        else
-        {
-            AddNewPlayer(target);
-            return true;
         }
     }
 
@@ -223,7 +227,7 @@ public class MainWindow : Window, IDisposable
                 //i don't understand math, make this actually work better
                 ImGui.SetScrollHereY(1.0f);
             }
-            
+
             ImGui.EndChild();
             ImGui.EndTabItem();
         }
@@ -290,7 +294,8 @@ public class MainWindow : Window, IDisposable
                 {
                     //this is sort of gross but it's only necessary for a "get all" type thing, otherwise we will know the exact players
                     selectedPlayer = Players.Find(x => x.Name == c.Value.Sender.Name);
-                    if (selectedPlayer != null) { 
+                    if (selectedPlayer != null)
+                    {
                         ShowMessage(c);
                     }
                 }

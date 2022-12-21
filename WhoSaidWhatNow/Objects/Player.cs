@@ -30,11 +30,11 @@ namespace WhoSaidWhatNow.Objects
 
         public Player(GameObject gameObject)
         {
-            ID = gameObject.DataId;
+            ID = gameObject.ObjectId;
             Name = gameObject.Name.ToString();
             try
             {
-                Server = ((PlayerCharacter)gameObject).HomeWorld.GameData!.Name.ToString();
+                Server = ((PlayerCharacter)gameObject).HomeWorld.GameData.Name.ToString();
             }
              catch
             {
