@@ -204,12 +204,11 @@ public class MainWindow : Window, IDisposable
             ImGui.BeginGroup();
             if (selectedPlayer is not null)
             {
-                foreach (KeyValuePair<DateTime, ChatEntry> c in ChatEntries)
+                foreach (var c in from KeyValuePair<DateTime, ChatEntry> c in ChatEntries
+                                  where plugin.configuration.ChannelToggles[c.Value.Type] == true && c.Value.Sender.Name.Contains(selectedPlayer.Name)
+                                  select c)
                 {
-                    if (plugin.configuration.ChannelToggles[c.Value.Type] == true && c.Value.Sender.Name.Contains(selectedPlayer.Name))
-                    {
-                        ShowMessage(c);
-                    }
+                    ShowMessage(c);
                 }
             }
             ImGui.EndGroup();
@@ -280,18 +279,18 @@ public class MainWindow : Window, IDisposable
             // it's worth noting all of this stuff stays in memory and is only hidden when it's "closed"
             ImGui.BeginChild("###WhoSaidWhatNow_RightPanel_Child");
             ImGui.BeginGroup();
-            foreach (KeyValuePair<DateTime, ChatEntry> c in ChatEntries)
+            foreach (var c in from KeyValuePair<DateTime, ChatEntry> c in ChatEntries
+                              where plugin.configuration.ChannelToggles[c.Value.Type] == true
+                              select c)
             {
-                if (plugin.configuration.ChannelToggles[c.Value.Type] == true)
+                //this is sort of gross but it's only necessary for a "get all" type thing, otherwise we will know the exact players
+                selectedPlayer = Players.Find(x => x.Name == c.Value.Sender.Name);
+                if (selectedPlayer != null)
                 {
-                    //this is sort of gross but it's only necessary for a "get all" type thing, otherwise we will know the exact players
-                    selectedPlayer = Players.Find(x => x.Name == c.Value.Sender.Name);
-                    if (selectedPlayer != null)
-                    {
-                        ShowMessage(c);
-                    }
+                    ShowMessage(c);
                 }
             }
+
             ImGui.EndGroup();
             ImGui.EndChild();
             ImGui.EndTabItem();
