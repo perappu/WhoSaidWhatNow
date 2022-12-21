@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Runtime;
 using System.Diagnostics.CodeAnalysis;
+using Dalamud.Game.ClientState.Objects.Types;
+using Dalamud.Game.ClientState.Objects.SubKinds;
 
 namespace WhoSaidWhatNow.Objects
 {
@@ -24,6 +26,20 @@ namespace WhoSaidWhatNow.Objects
             ID = id; 
             Name = name;
             Server = server;
+        }
+
+        public Player(GameObject gameObject)
+        {
+            ID = gameObject.DataId;
+            Name = gameObject.Name.ToString();
+            try
+            {
+                Server = ((PlayerCharacter)gameObject).HomeWorld.GameData!.Name.ToString();
+            }
+             catch
+            {
+                Server = "ServerNotFound";
+            }
         }
     }
 }

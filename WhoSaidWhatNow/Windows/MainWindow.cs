@@ -112,10 +112,8 @@ public class MainWindow : Window, IDisposable
     //AddNewPlayer() creates a player based on a game object and adds it to the main list
     private uint AddNewPlayer(GameObject gameObject)
     {
-        uint id = gameObject.DataId;
-        string server = ((PlayerCharacter)(gameObject)).HomeWorld.GameData == null ? "ServerNotFound" : ((PlayerCharacter)(gameObject)).HomeWorld.GameData.Name.ToString();
-        Players.Add(new Player(gameObject.ObjectId, new string(gameObject.Name.ToString()), server));
-        return id;
+        Players.Add(new Player(gameObject));
+        return gameObject.ObjectId;
     }
 
     //ShowMessage() creates an ImGui text wrapped given a player and a keyvalue datetime chatentry
