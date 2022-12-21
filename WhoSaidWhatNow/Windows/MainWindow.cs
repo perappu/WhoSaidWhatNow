@@ -119,11 +119,11 @@ public class MainWindow : Window, IDisposable
     }
 
     //ShowMessage() creates an ImGui text wrapped given a player and a keyvalue datetime chatentry
-    private void ShowMessage(Player player, KeyValuePair<DateTime, ChatEntry> c)
+    private void ShowMessage(KeyValuePair<DateTime, ChatEntry> c)
     {
         ImGui.PushStyleColor(ImGuiCol.Text, Configuration.ChatColors[c.Value.Type]);
         string tag = Formats[c.Value.Type];
-        ImGui.TextWrapped(c.Value.CreateMessage(player.Server, tag));
+        ImGui.TextWrapped(c.Value.CreateMessage(tag));
         ImGui.PopStyleColor();
     }
 
@@ -239,9 +239,9 @@ public class MainWindow : Window, IDisposable
             {
                 foreach (KeyValuePair<DateTime, ChatEntry> c in ChatEntries)
                 {
-                    if (plugin.configuration.ChannelToggles[c.Value.Type] == true && c.Value.Sender.Contains(selectedPlayer.Name))
+                    if (plugin.configuration.ChannelToggles[c.Value.Type] == true && c.Value.Sender.Name.Contains(selectedPlayer.Name))
                     {
-                        ShowMessage(selectedPlayer, c);
+                        ShowMessage(c);
                     }
                 }
             }
@@ -318,9 +318,9 @@ public class MainWindow : Window, IDisposable
                 if (plugin.configuration.ChannelToggles[c.Value.Type] == true)
                 {
                     //this is sort of gross but it's only necessary for a "get all" type thing, otherwise we will know the exact players
-                    selectedPlayer = Players.Find(x => x.Name == c.Value.Sender);
+                    selectedPlayer = Players.Find(x => x.Name == c.Value.Sender.Name);
                     if (selectedPlayer != null) { 
-                        ShowMessage(selectedPlayer, c);
+                        ShowMessage(c);
                     }
                 }
             }

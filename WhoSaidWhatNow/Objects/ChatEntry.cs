@@ -12,12 +12,12 @@ namespace WhoSaidWhatNow.Objects
     public class ChatEntry
     {
         public uint SenderID { get; set; }
-        public string Sender { get; init; }
+        public Player Sender { get; init; }
         public string Message { get; init; }
         public XivChatType Type { get; init; }
         public DateTime Time { get; init; }
 
-        public ChatEntry(uint senderId, string sender, string message, XivChatType type, DateTime time)
+        public ChatEntry(uint senderId, Player sender, string message, XivChatType type, DateTime time)
         {
             SenderID = senderId;
             Sender = sender;
@@ -26,13 +26,14 @@ namespace WhoSaidWhatNow.Objects
             Time = time;
         }
 
-        public string CreateMessage(string server, string tag)
+        public string CreateMessage(string tag)
         {
             string time = this.Time.ToShortTimeString();
-            string sender = this.Sender + "" + server;
+            string sender = this.Sender.Name + "" + this.Sender.Server;
             string msg = this.Message;
 
             return $"[{time}]" + String.Format(tag, sender, msg);
         }
+
     }
 }
