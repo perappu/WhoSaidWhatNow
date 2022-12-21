@@ -1,19 +1,12 @@
 using Dalamud.Game.ClientState.Objects;
 using Dalamud.Game.ClientState.Objects.Enums;
-using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Game.ClientState.Objects.Types;
-using Dalamud.Game.Text;
 using Dalamud.Interface;
-using Dalamud.Interface.Colors;
 using Dalamud.Interface.Windowing;
 using Dalamud.Logging;
-using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
-using FFXIVClientStructs.Havok;
 using ImGuiNET;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Numerics;
 using WhoSaidWhatNow.Objects;
@@ -30,7 +23,6 @@ public class MainWindow : Window, IDisposable
     private Player? selectedPlayer = null;
     private string errorMessage = string.Empty;
     private bool open = false;
-    private bool btnDisable = true;
 
     //define constraints for when the right panel is open/closed
     //TODO: set minimum/maximum when "closed" but infinitely resizable when expanded
