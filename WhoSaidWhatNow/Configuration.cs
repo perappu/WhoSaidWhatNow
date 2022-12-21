@@ -19,7 +19,7 @@ namespace WhoSaidWhatNow
         //Autoscrolling on the chat log window
         public bool AutoScroll { get; set; } = false;
 
-        //TODO: Channel toggles
+        //Channel toggles
         public IDictionary<XivChatType, bool> ChannelToggles = new Dictionary<XivChatType, bool>()
         {
             { XivChatType.Say, true},
@@ -47,7 +47,8 @@ namespace WhoSaidWhatNow
             { XivChatType.CrossLinkShell4, true},
             { XivChatType.CrossLinkShell5, true},
             { XivChatType.CrossLinkShell6, true},
-            { XivChatType.CrossLinkShell7, true}
+            { XivChatType.CrossLinkShell7, true},
+            { XivChatType.CrossLinkShell8, true}
         };
 
         //TODO: Custom chat color values, ideally using ingame colors
@@ -81,6 +82,7 @@ namespace WhoSaidWhatNow
             { XivChatType.CrossLinkShell5, new Vector4(0.863f, 0.961f, 0.431f, 1f) },
             { XivChatType.CrossLinkShell6, new Vector4(0.863f, 0.961f, 0.431f, 1f) },
             { XivChatType.CrossLinkShell7, new Vector4(0.863f, 0.961f, 0.431f, 1f) },
+            { XivChatType.CrossLinkShell8, new Vector4(0.863f, 0.961f, 0.431f, 1f) }
         };
 
         // the below exist just to make saving less cumbersome
