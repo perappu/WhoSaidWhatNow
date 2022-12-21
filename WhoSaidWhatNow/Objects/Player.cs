@@ -28,15 +28,28 @@ namespace WhoSaidWhatNow.Objects
             Server = server;
         }
 
+        public static PlayerCharacter? CastPlayer(GameObject obj)
+        {
+            try
+            {
+                var character = (PlayerCharacter)obj;
+                return character;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
         public Player(GameObject gameObject)
         {
             ID = gameObject.ObjectId;
             Name = gameObject.Name.ToString();
-            try
-            {
-                Server = ((PlayerCharacter)gameObject).HomeWorld.GameData.Name.ToString();
-            }
-             catch
+            PlayerCharacter? player = CastPlayer(gameObject);
+            
+            if (player != null) {
+                Server = player.HomeWorld.GameData!.Name.ToString();
+            } else
             {
                 Server = "ServerNotFound";
             }

@@ -24,8 +24,8 @@ namespace WhoSaidWhatNow
     {
         public List<Player> Players;
         public SortedList<DateTime,ChatEntry> ChatEntries;
-        readonly private ChatGui chatGui;
-        readonly private Configuration configuration;
+        private readonly ChatGui chatGui;
+        private readonly Configuration configuration;
 
         public ChatListener(SortedList<DateTime, ChatEntry> chatEntries, List<Player> players, ChatGui passedChatGui, Configuration passedConfiguration, ClientState clientState, TargetManager targetManager, SigScanner sigScanner)
 

@@ -1,7 +1,6 @@
 using Dalamud.Configuration;
 using Dalamud.Game.Text;
 using Dalamud.Plugin;
-using ImGuiNET;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
@@ -13,13 +12,19 @@ namespace WhoSaidWhatNow
     {
         public int Version { get; set; } = 1;
 
+        // BOOLEAN CONFIGURATION //
         //Always start the plugin as off by default, to prevent crashes
         public bool IsOn { get; set; } = false;
 
         //Autoscrolling on the chat log window
         public bool AutoScroll { get; set; } = false;
 
-        //Channel toggles
+        // SAVED PLAYER CONFIGURATION //
+        public List<uint> AlwaysTrackedPlayers = new List<uint>();
+
+        // CHANNEL CONFIGURATION //
+        //I don't feel the need to generate the linkshell ones with a for loop, this is perfectly legible
+        //Channel visibility toggle
         public IDictionary<XivChatType, bool> ChannelToggles = new Dictionary<XivChatType, bool>()
         {
             { XivChatType.Say, true},
@@ -52,7 +57,6 @@ namespace WhoSaidWhatNow
         };
 
         //TODO: Custom chat color values, ideally using ingame colors
-
         //Default chat color values
         public static readonly IDictionary<XivChatType, Vector4> ChatColors = new Dictionary<XivChatType, Vector4>()
         {
@@ -85,6 +89,7 @@ namespace WhoSaidWhatNow
             { XivChatType.CrossLinkShell8, new Vector4(0.863f, 0.961f, 0.431f, 1f) }
         };
 
+        //Channel format for when printing message
         public static readonly IDictionary<XivChatType, string> Formats = new Dictionary<XivChatType, string>()
         {
             { XivChatType.Say, "{0}: {1}" },

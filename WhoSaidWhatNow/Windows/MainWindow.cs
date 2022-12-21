@@ -19,19 +19,18 @@ public class MainWindow : Window, IDisposable
     private Plugin plugin;
     public List<Player> Players;
     public SortedList<DateTime, ChatEntry> ChatEntries;
-    private TargetManager targetManager;
+    private readonly TargetManager targetManager;
     private Player? selectedPlayer = null;
-    private string errorMessage = string.Empty;
     private bool open = false;
 
     //define constraints for when the right panel is open/closed
     //TODO: set minimum/maximum when "closed" but infinitely resizable when expanded
-    WindowSizeConstraints openConstraints = new WindowSizeConstraints
+    private WindowSizeConstraints openConstraints = new WindowSizeConstraints
     {
-        MinimumSize = new Vector2(500, 330),
+        MinimumSize = new Vector2(600, 330),
         MaximumSize = new Vector2(1000, 1000)
     };
-    WindowSizeConstraints closedConstraints = new WindowSizeConstraints
+    private WindowSizeConstraints closedConstraints = new WindowSizeConstraints
     {
         MinimumSize = new Vector2(220, 330),
         MaximumSize = new Vector2(220, 330)
@@ -283,7 +282,6 @@ public class MainWindow : Window, IDisposable
                               where plugin.configuration.ChannelToggles[c.Value.Type] == true
                               select c)
             {
-                //this is sort of gross but it's only necessary for a "get all" type thing, otherwise we will know the exact players
                 selectedPlayer = Players.Find(x => x.Name == c.Value.Sender.Name);
                 if (selectedPlayer != null)
                 {
