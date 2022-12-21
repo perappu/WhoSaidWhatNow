@@ -4,6 +4,7 @@ using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Interface;
 using Dalamud.Interface.Windowing;
 using Dalamud.Logging;
+using FFXIVClientStructs.FFXIV.Component.GUI;
 using ImGuiNET;
 using System;
 using System.Collections.Generic;
@@ -51,9 +52,9 @@ public class MainWindow : Window, IDisposable
     //TODO: make sure this is ok?
     public void Dispose() { }
 
-    //IsTargetPlayer() checks to see if the current target is a player
+    //AddPlayer() checks to see if the current target is a player
     //if so it'll make the new player object, if not return false
-    private bool IsTargetPlayer()
+    private bool AddPlayer()
     {
         if (targetManager.Target != null)
         {
@@ -69,7 +70,7 @@ public class MainWindow : Window, IDisposable
             }
             else
             {
-                AddNewPlayer(target);
+                Players.Add(new Player(target));
                 return true;
             }
         } else {
@@ -77,11 +78,17 @@ public class MainWindow : Window, IDisposable
         }
     }
 
-    //AddNewPlayer() creates a player based on a game object and adds it to the main list
-    private uint AddNewPlayer(GameObject gameObject)
+
+    private void RemovePlayer()
     {
-        Players.Add(new Player(gameObject));
-        return gameObject.ObjectId;
+        if (selectedPlayer is not null)
+        {
+            Players.Remove(selectedPlayer);
+            open = false;
+            selectedPlayer = null;
+            //we have to manually close the window here
+            this.SizeConstraints = closedConstraints;
+        }
     }
 
     //ShowMessage() creates an ImGui text wrapped given a player and a keyvalue datetime chatentry
@@ -91,6 +98,83 @@ public class MainWindow : Window, IDisposable
         string tag = Configuration.Formats[c.Value.Type];
         ImGui.TextWrapped(c.Value.CreateMessage(tag));
         ImGui.PopStyleColor();
+    }
+
+    //ToggleWindowOpen() toggles window being opened/closed based on current state of open variable
+    private void ToggleWindowOpen(Player? player)
+    {
+        //If player is null, then we just open/close the window. Otherwise we set the selected player to the passed player
+        if (player != null) {
+            //if we're clicking on the current player and the window is already open, close it
+            if (open == true && selectedPlayer != null && selectedPlayer.ID == player.ID)
+            {
+                open = false;
+                selectedPlayer = null;
+            }
+            // open content in right panel
+            else
+            {
+                open = true;
+                selectedPlayer = player;
+            }
+        } else
+        {
+            //if we're clicking on the current player and the window is already open, close it
+            if (open == true)
+            {
+                open = false;
+            }
+            // open content in right panel
+            else
+            {
+                open = true;
+            }
+        }
+
+        //Stuff the selectable should do on click
+        if (open)
+        {
+            this.SizeConstraints = openConstraints;
+        }
+        else
+        {
+            this.SizeConstraints = closedConstraints;
+        }
+    }
+
+    private void AddPlayerSelectable(Player player)
+    {
+        ImGui.BeginGroup();
+
+        if (ImGui.Selectable("###WhoSaidWhatNow_Player_Selectable_" + player.ID, true, ImGuiSelectableFlags.AllowDoubleClick))
+        {
+            if (ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left))
+            {
+                // ignored
+                // I'm honestly not sure why the original snooper had this but I'm going to guess
+                // it's to make sure it explicitly ignores people buttonmashing
+            }
+
+            //if we're clicking on the current player and the window is already open, close it
+            if (open == true && selectedPlayer != null && selectedPlayer.ID == player.ID)
+            {
+                open = false;
+                selectedPlayer = null;
+            }
+            // open content in right panel
+            else
+            {
+                open = true;
+                selectedPlayer = player;
+            }
+
+            ToggleWindowOpen(player);
+        }
+
+        //TODO: padding is a bit wacky on the selectable and clicks with the one above it, either remove the padding or add margins
+        ImGui.SameLine();
+        ImGui.Text(player.Name);
+        ImGui.EndGroup();
     }
 
     //Draw() the main window
@@ -123,20 +207,13 @@ public class MainWindow : Window, IDisposable
             {
                 if (ImGui.MenuItem("Add Target"))
                 {
-                    IsTargetPlayer();
+                    AddPlayer();
                 }
 
                 ImGui.BeginDisabled(selectedPlayer is null);
                 if (ImGui.MenuItem("Remove Target"))
                 {
-                    if (selectedPlayer is not null)
-                    {
-                        Players.Remove(selectedPlayer);
-                        open = false;
-                        selectedPlayer = null;
-                        //we have to manually close the window here
-                        this.SizeConstraints = closedConstraints;
-                    }
+                    RemovePlayer();
                 }
                 ImGui.EndDisabled();
                 ImGui.EndMenuBar();
@@ -150,50 +227,10 @@ public class MainWindow : Window, IDisposable
             //Populating selectable list
             for (var i = 0; Players.Count > i; i++)
             {
-                Player player = Players[i];
 
                 ImGui.BeginChild("###WhoSaidWhatNow_LeftPanel_Child");
-                ImGui.BeginGroup();
-
-                if (ImGui.Selectable("###WhoSaidWhatNow_Player_Selectable_" + player.ID, true, ImGuiSelectableFlags.AllowDoubleClick))
-                {
-                    if (ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left))
-                    {
-                        // ignored
-                        // I'm honestly not sure why the original snooper had this but I'm going to guess
-                        // it's to make sure it explicitly ignores people buttonmashing
-                    }
-
-                    //if we're clicking on the current player and the window is already open, close it
-                    if (open == true && selectedPlayer != null && selectedPlayer.ID == player.ID)
-                    {
-                        open = false;
-                        selectedPlayer = null;
-                    }
-                    // open content in right panel
-                    else
-                    {
-                        open = true;
-                        selectedPlayer = player;
-                    }
-
-                }
-
-                //TODO: padding is a bit wacky on the selectable and clicks with the one above it, either remove the padding or add margins
-                ImGui.SameLine();
-                ImGui.Text(player.Name);
-                ImGui.EndGroup();
+                AddPlayerSelectable(Players[i]);
                 ImGui.EndChild();
-
-                //Stuff the selectable should do on click
-                if (open)
-                {
-                    this.SizeConstraints = openConstraints;
-                }
-                else
-                {
-                    this.SizeConstraints = closedConstraints;
-                }
 
             }
 
@@ -234,38 +271,17 @@ public class MainWindow : Window, IDisposable
             ImGui.BeginChild("###WhoSaidWhatNow_RightPanel_Child", new Vector2(0, 0), true);
             ImGui.EndChild();
 
+            //Create All Tracked Players selectable
             ImGui.BeginChild("###WhoSaidWhatNow_LeftPanel_Child");
             ImGui.BeginGroup();
-            //make the "all" selectable
             if (ImGui.Selectable("###WhoSaidWhatNow_Player_Selectable_GroupAll", true, ImGuiSelectableFlags.AllowDoubleClick))
             {
                 if (ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left))
                 {
                     // ignored
-                    // I'm honestly not sure why the original snooper had this but I'm going to guess
-                    // it's to make sure it explicitly ignores people buttonmashing
                 }
 
-                //if we're clicking on the current player and the window is already open, close it
-                if (open == true)
-                {
-                    open = false;
-                }
-                // open content in right panel
-                else
-                {
-                    open = true;
-                }
-
-                //Stuff the selectable should do on click
-                if (open)
-                {
-                    this.SizeConstraints = openConstraints;
-                }
-                else
-                {
-                    this.SizeConstraints = closedConstraints;
-                }
+                ToggleWindowOpen(null);
 
             }
             //TODO: padding is a bit wacky on the selectable and clicks with the one above it, either remove the padding or add margins
@@ -288,9 +304,11 @@ public class MainWindow : Window, IDisposable
                     ShowMessage(c);
                 }
             }
-
             ImGui.EndGroup();
             ImGui.EndChild();
+
+
+
             ImGui.EndTabItem();
         }
 

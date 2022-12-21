@@ -76,7 +76,7 @@ namespace WhoSaidWhatNow
         private void OnCommand(string command, string args)
         {
             // in response to the slash command, just display our main ui
-            WindowSystem.GetWindow("Who Said What Now").IsOpen = true;
+            WindowSystem.GetWindow("Who Said What Now")!.IsOpen = true;
         }
 
         private void DrawUI()
@@ -86,7 +86,7 @@ namespace WhoSaidWhatNow
 
         public void DrawConfigUI()
         {
-            WindowSystem.GetWindow("Who Said What Now - Settings").IsOpen = true;
+            WindowSystem.GetWindow("Who Said What Now - Settings")!.IsOpen = true;
         }
     }
 }
