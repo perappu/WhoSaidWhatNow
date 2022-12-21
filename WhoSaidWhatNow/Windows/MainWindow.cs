@@ -32,22 +32,6 @@ public class MainWindow : Window, IDisposable
     private bool open = false;
     private bool btnDisable = true;
 
-    //thank you snooper
-    private static readonly IDictionary<XivChatType, string> Formats = new Dictionary<XivChatType, string>()
-        {
-            { XivChatType.Say, "{0}: {1}" },
-            { XivChatType.TellIncoming, "{0} >> {1}" },
-            { XivChatType.TellOutgoing, ">> {0}: {1}" },
-            { XivChatType.StandardEmote, "{1}" },
-            { XivChatType.CustomEmote, "{0} {1}" },
-            { XivChatType.Shout, "{0} shouts: {1}" },
-            { XivChatType.Yell, "{0} yells: {1}" },
-            { XivChatType.Party, "({0}) {1}" },
-            { XivChatType.CrossParty, "({0}) {1}" },
-            { XivChatType.Alliance, "(({0})) {1}" },
-            { XivChatType.FreeCompany, "[FC]<{0}> {1}" },
-        };
-
     //define constraints for when the right panel is open/closed
     //TODO: set minimum/maximum when "closed" but infinitely resizable when expanded
     WindowSizeConstraints openConstraints = new WindowSizeConstraints
@@ -70,17 +54,6 @@ public class MainWindow : Window, IDisposable
         this.Players = trackedPlayers;
         this.targetManager = targetManager;
         this.ChatEntries = chatEntries;
-
-        //add linkshell indicators
-        //this is just ripped straight from snooper... we may have our own way to do it eventually
-        for (int i = 1; i <= 8; i++)
-        {
-            var lsChannel = (XivChatType)((ushort)XivChatType.Ls1 + i - 1);
-            Formats.Add(lsChannel, string.Format("[LS{0}]{1}", i, "<{0}> {1}"));
-
-            var cwlsChannel = i == 1 ? XivChatType.CrossLinkShell1 : (XivChatType)((ushort)XivChatType.CrossLinkShell2 + i - 2);
-            Formats.Add(cwlsChannel, string.Format("[CWLS{0}]{1}", i, "<{0}> {1}"));
-        }
     }
 
     //I honestly have no idea how to dispose of windows correctly
@@ -120,7 +93,7 @@ public class MainWindow : Window, IDisposable
     private void ShowMessage(KeyValuePair<DateTime, ChatEntry> c)
     {
         ImGui.PushStyleColor(ImGuiCol.Text, Configuration.ChatColors[c.Value.Type]);
-        string tag = Formats[c.Value.Type];
+        string tag = Configuration.Formats[c.Value.Type];
         ImGui.TextWrapped(c.Value.CreateMessage(tag));
         ImGui.PopStyleColor();
     }
