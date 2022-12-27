@@ -11,6 +11,7 @@ using Dalamud.Game.ClientState.Objects;
 using Dalamud.Game;
 using System.Collections.Generic;
 using WhoSaidWhatNow.Objects;
+using System;
 
 namespace WhoSaidWhatNow
 {
@@ -25,6 +26,7 @@ namespace WhoSaidWhatNow
         public Configuration configuration { get; init; }
         public WindowSystem WindowSystem = new("WhoSaidWhatNow");
         public List<Player> trackedPlayers;
+        public SortedList<DateTime, ChatEntry> chatEntries;
 
         //TODO: Make sure we're only actually declaring stuff we need
         //I went a little ham because of what I thought was required by onmessagehandled
@@ -39,17 +41,18 @@ namespace WhoSaidWhatNow
             this.PluginInterface = pluginInterface;
             this.CommandManager = commandManager;
             this.trackedPlayers = new List<Player>();
+            this.chatEntries = new SortedList<DateTime, ChatEntry>();
 
             //initiatize our configuration
             this.configuration = this.PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
             this.configuration.Initialize(this.PluginInterface);
 
             //create the listener
-            this.ChatListener = new ChatListener(trackedPlayers, chatGui, configuration, clientState, targetManager, sigScanner);
+            this.ChatListener = new ChatListener(chatEntries, trackedPlayers, chatGui, configuration, clientState, targetManager, sigScanner);
 
             //add our windows
             WindowSystem.AddWindow(new ConfigWindow(this));
-            WindowSystem.AddWindow(new MainWindow(this, trackedPlayers, targetManager));
+            WindowSystem.AddWindow(new MainWindow(this, trackedPlayers, chatEntries, targetManager));
 
             //TODO: add a command for the config window?
             //and one for on/off toggle
@@ -73,7 +76,7 @@ namespace WhoSaidWhatNow
         private void OnCommand(string command, string args)
         {
             // in response to the slash command, just display our main ui
-            WindowSystem.GetWindow("Who Said What Now").IsOpen = true;
+            WindowSystem.GetWindow("Who Said What Now")!.IsOpen = true;
         }
 
         private void DrawUI()
@@ -83,7 +86,7 @@ namespace WhoSaidWhatNow
 
         public void DrawConfigUI()
         {
-            WindowSystem.GetWindow("Who Said What Now - Settings").IsOpen = true;
+            WindowSystem.GetWindow("Who Said What Now - Settings")!.IsOpen = true;
         }
     }
 }

@@ -1,7 +1,6 @@
 using Dalamud.Configuration;
 using Dalamud.Game.Text;
 using Dalamud.Plugin;
-using ImGuiNET;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
@@ -13,17 +12,24 @@ namespace WhoSaidWhatNow
     {
         public int Version { get; set; } = 1;
 
+        // BOOLEAN CONFIGURATION //
         //Always start the plugin as off by default, to prevent crashes
         public bool IsOn { get; set; } = false;
 
         //Autoscrolling on the chat log window
         public bool AutoScroll { get; set; } = false;
 
-        //TODO: Channel toggles
+        // SAVED PLAYER CONFIGURATION //
+        public List<uint> AlwaysTrackedPlayers = new List<uint>();
+
+        // CHANNEL CONFIGURATION //
+        //I don't feel the need to generate the linkshell ones with a for loop, this is perfectly legible
+        //Channel visibility toggle
         public IDictionary<XivChatType, bool> ChannelToggles = new Dictionary<XivChatType, bool>()
         {
             { XivChatType.Say, true},
             { XivChatType.TellIncoming, true},
+            { XivChatType.TellOutgoing, true},
             { XivChatType.StandardEmote, true},
             { XivChatType.CustomEmote, true},
             { XivChatType.Shout, true},
@@ -46,16 +52,17 @@ namespace WhoSaidWhatNow
             { XivChatType.CrossLinkShell4, true},
             { XivChatType.CrossLinkShell5, true},
             { XivChatType.CrossLinkShell6, true},
-            { XivChatType.CrossLinkShell7, true}
+            { XivChatType.CrossLinkShell7, true},
+            { XivChatType.CrossLinkShell8, true}
         };
 
         //TODO: Custom chat color values, ideally using ingame colors
-
         //Default chat color values
         public static readonly IDictionary<XivChatType, Vector4> ChatColors = new Dictionary<XivChatType, Vector4>()
         {
             { XivChatType.Say, new Vector4(0.969f,0.969f,0.961f, 1f)},
             { XivChatType.TellIncoming, new Vector4(1f,0.784f,0.929f, 1f) },
+            { XivChatType.TellOutgoing, new Vector4(1f,0.784f,0.929f, 1f) },
             { XivChatType.StandardEmote, new Vector4(0.353f,0.878f,0.725f, 1f) },
             { XivChatType.CustomEmote, new Vector4(0.353f,0.878f,0.725f, 1f) },
             { XivChatType.Shout, new Vector4(1f,0.729f,0.486f, 1f) },
@@ -79,6 +86,39 @@ namespace WhoSaidWhatNow
             { XivChatType.CrossLinkShell5, new Vector4(0.863f, 0.961f, 0.431f, 1f) },
             { XivChatType.CrossLinkShell6, new Vector4(0.863f, 0.961f, 0.431f, 1f) },
             { XivChatType.CrossLinkShell7, new Vector4(0.863f, 0.961f, 0.431f, 1f) },
+            { XivChatType.CrossLinkShell8, new Vector4(0.863f, 0.961f, 0.431f, 1f) }
+        };
+
+        //Channel format for when printing message
+        public static readonly IDictionary<XivChatType, string> Formats = new Dictionary<XivChatType, string>()
+        {
+            { XivChatType.Say, "{0}: {1}" },
+            { XivChatType.TellIncoming, "{0} >> {1}" },
+            { XivChatType.TellOutgoing, ">> {0}: {1}" },
+            { XivChatType.StandardEmote, "{1}" },
+            { XivChatType.CustomEmote, "{0} {1}" },
+            { XivChatType.Shout, "{0} shouts: {1}" },
+            { XivChatType.Yell, "{0} yells: {1}" },
+            { XivChatType.Party, "({0}) {1}" },
+            { XivChatType.CrossParty, "({0}) {1}" },
+            { XivChatType.Alliance, "(({0})) {1}" },
+            { XivChatType.FreeCompany, "[FC]<{0}> {1}" },
+            { XivChatType.Ls1, "[LS1]<{0}> {1}"},
+            { XivChatType.Ls2, "[LS2]<{0}> {1}"},
+            { XivChatType.Ls3, "[LS3]<{0}> {1}"},
+            { XivChatType.Ls4, "[LS4]<{0}> {1}"},
+            { XivChatType.Ls5, "[LS5]<{0}> {1}"},
+            { XivChatType.Ls6, "[LS6]<{0}> {1}"},
+            { XivChatType.Ls7, "[LS7]<{0}> {1}"},
+            { XivChatType.Ls8, "[LS8]<{0}> {1}"},
+            { XivChatType.CrossLinkShell1, "[CWLS1]<{0}> {1}"},
+            { XivChatType.CrossLinkShell2, "[CWLS2]<{0}> {1}"},
+            { XivChatType.CrossLinkShell3, "[CWLS3]<{0}> {1}"},
+            { XivChatType.CrossLinkShell4, "[CWLS4]<{0}> {1}"},
+            { XivChatType.CrossLinkShell5, "[CWLS5]<{0}> {1}"},
+            { XivChatType.CrossLinkShell6, "[CWLS6]<{0}> {1}"},
+            { XivChatType.CrossLinkShell7, "[CWLS7]<{0}> {1}"},
+            { XivChatType.CrossLinkShell8, "[CWLS8]<{0}> {1}"}
         };
 
         // the below exist just to make saving less cumbersome

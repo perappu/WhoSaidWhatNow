@@ -9,3 +9,5 @@ bin/
 /WhoSaidWhatNow/Configuration.cs
 /WhoSaidWhatNow/Windows/MainWindow.cs
 /WhoSaidWhatNow/Windows/ConfigWindow.cs
+WhoSaidWhatNowTests/
+packages/

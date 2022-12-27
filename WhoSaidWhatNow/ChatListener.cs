@@ -23,12 +23,14 @@ namespace WhoSaidWhatNow
     internal class ChatListener : IDisposable
     {
         public List<Player> Players;
-        readonly private ChatGui chatGui;
-        readonly private Configuration configuration;
+        public SortedList<DateTime,ChatEntry> ChatEntries;
+        private readonly ChatGui chatGui;
+        private readonly Configuration configuration;
 
-        public ChatListener(List<Player> players, ChatGui passedChatGui, Configuration passedConfiguration, ClientState clientState, TargetManager targetManager, SigScanner sigScanner)
+        public ChatListener(SortedList<DateTime, ChatEntry> chatEntries, List<Player> players, ChatGui passedChatGui, Configuration passedConfiguration, ClientState clientState, TargetManager targetManager, SigScanner sigScanner)
 
         {
+            ChatEntries = chatEntries;
             Players = players;
             chatGui = passedChatGui;
             chatGui.ChatMessage += OnChatMessage;
@@ -49,13 +51,13 @@ namespace WhoSaidWhatNow
             {
                 string senderName = sender.ToString();
                 //The basic ToString here includes any friends list icons and the server name, so we have to do Contains() for now
+                //this would be gross if it was messages but it should be okay given a person will probably only have 4-5 players tracked a time
                 Player? result = Players.Find(x => senderName.Contains(x.Name));
                 //PluginLog.Debug("onchat message triggered" + senderName);
 
-                //this would be gross if it was messages but it should be okay given a person will probably only have 4-5 players tracked a time
                 if (result != null)
                 {
-                    result.ChatEntries.Add(new ChatEntry(senderId, senderName, message.ToString(), type, DateTime.Now));
+                    ChatEntries.Add(DateTime.Now, new ChatEntry(senderId, result, message.ToString(), type, DateTime.Now));
                 }
             }
         }
