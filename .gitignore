@@ -2,12 +2,4 @@
 obj/
 bin/
 *.user
-/WhoSaidWhatNow/WhoSaidWhatNow.csproj
-/WhoSaidWhatNow/WhoSaidWhatNow.json
-/WhoSaidWhatNow/Plugin.cs
-/WhoSaidWhatNow/packages.lock.json
-/WhoSaidWhatNow/Configuration.cs
-/WhoSaidWhatNow/Windows/MainWindow.cs
-/WhoSaidWhatNow/Windows/ConfigWindow.cs
-WhoSaidWhatNowTests/
-packages/
+.editorconfig

@@ -1,12 +1,13 @@
 {
-    "Author": "toko",
+    "Author": "perappu",
     "Name": "Who Said What Now",
     "Punchline": "Per character chat history plugin.",
     "Description": "Per character chat history plugin, evolution of Maia-Everett/dalamud-snooper.\n Main command /whowhat",
     "InternalName": "WhoSaidWhatNow",
     "ApplicableVersion": "any",
+    "RepoUrl": "https://github.com/perappu/WhoSaidWhatNow",
     "Tags": [
-        "sample",
-        "plugin"
+        "utility",
+        "chat"
     ]
 }

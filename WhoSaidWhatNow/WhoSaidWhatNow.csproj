@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Authors></Authors>
-    <Company></Company>
+    <Authors>perappu</Authors>
     <Version>0.0.0.1</Version>
-    <Description>A sample plugin.</Description>
+    <Description>Plugin for tracking chat logs.</Description>
     <Copyright></Copyright>
-    <PackageProjectUrl>https://github.com/goatcorp/SamplePlugin</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/perappu/WhoSaidWhatNow</PackageProjectUrl>
   </PropertyGroup>
 
   <PropertyGroup>
     <TargetFramework>net6.0-windows</TargetFramework>
     <Platforms>x64</Platforms>
+    <RootNamespace>WhoSaidWhatNow</RootNamespace>
+    <AssemblyName>WhoSaidWhatNow</AssemblyName>
     <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>

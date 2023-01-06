@@ -1,0 +1,9 @@
+name: WhoSaidWhatNow
+author: perappu
+punchline: Places flag marker on map from coordinates in chat.
+description: |-
+    Per character chat history plugin, evolution of Maia-Everett/dalamud-snooper.
+    Main command /whowhat
+repo_url: https://github.com/perappu/WhoSaidWhatNow
+categoryTags:
+    - utility
