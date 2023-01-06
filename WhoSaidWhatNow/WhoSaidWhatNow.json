@@ -9,5 +9,12 @@
     "Tags": [
         "utility",
         "chat"
-    ]
+    ],
+    "IconUrl": "https://ffxiv.gamerescape.com/w/images/thumb/5/59/Consider_Emote_Icon.png/64px-Consider_Emote_Icon.png",
+    "IsHide": "False",
+    "IsTestingExclusive": "False",
+    "DownloadLinkInstall": "https://github.com/perappu/WhoSaidWhatNow/releases/download/latest/latest.zip",
+    "DownloadLinkTesting": "https://github.com/perappu/WhoSaidWhatNow/releases/download/latest/latest.zip",
+    "DownloadLinkUpdate": "https://github.com/perappu/WhoSaidWhatNow/releases/download/latest/latest.zip"
+}
 }
