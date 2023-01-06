@@ -8,6 +8,7 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 using ImGuiNET;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using WhoSaidWhatNow.Objects;
@@ -103,6 +104,7 @@ public class MainWindow : Window, IDisposable
     //ToggleWindowOpen() toggles window being opened/closed based on current state of open variable
     private void ToggleWindowOpen(Player? player)
     {
+
         //If player is null, then we just open/close the window. Otherwise we set the selected player to the passed player
         if (player != null) {
             //if we're clicking on the current player and the window is already open, close it
@@ -114,6 +116,7 @@ public class MainWindow : Window, IDisposable
             // open content in right panel
             else
             {
+                
                 open = true;
                 selectedPlayer = player;
             }
@@ -134,6 +137,7 @@ public class MainWindow : Window, IDisposable
         //Stuff the selectable should do on click
         if (open)
         {
+            
             this.SizeConstraints = openConstraints;
         }
         else
@@ -153,19 +157,6 @@ public class MainWindow : Window, IDisposable
                 // ignored
                 // I'm honestly not sure why the original snooper had this but I'm going to guess
                 // it's to make sure it explicitly ignores people buttonmashing
-            }
-
-            //if we're clicking on the current player and the window is already open, close it
-            if (open == true && selectedPlayer != null && selectedPlayer.ID == player.ID)
-            {
-                open = false;
-                selectedPlayer = null;
-            }
-            // open content in right panel
-            else
-            {
-                open = true;
-                selectedPlayer = player;
             }
 
             ToggleWindowOpen(player);
