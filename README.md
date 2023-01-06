@@ -9,6 +9,7 @@ Takes ideas and some code from [Snooper](https://github.com/Maia-Everett/dalamud
 * Only saves chat logs for specified characters
 * Tracking can be turned on/off within the plugin to potentially save memory
 * Stores all chat logs as tabs on a single collapsible window
+* 📮
 
  ## Future
  
