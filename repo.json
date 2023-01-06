@@ -1,4 +1,5 @@
- {
+[
+    {
         "Author": "perappu",
         "Name": "Who Said What Now",
         "Punchline": "Per character chat history plugin.",
@@ -12,5 +13,11 @@
         "Tags": [
             "utility",
             "chat"
-        ]
+        ],
+        "IsHide": "False",
+        "IsTestingExclusive": "False",
+        "DownloadLinkInstall": "https://github.com/perappu/WhoSaidWhatNow/releases/download/v0.1.1/latest.zip",
+        "DownloadLinkTesting": "https://github.com/perappu/WhoSaidWhatNow/releases/download/v0.1.1/latest.zip",
+        "DownloadLinkUpdate": "https://github.com/perappu/WhoSaidWhatNow/releases/download/v0.1.1/latest.zip"
     }
+]
