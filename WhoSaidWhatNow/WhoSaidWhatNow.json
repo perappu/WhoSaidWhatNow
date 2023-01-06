@@ -1,19 +1,24 @@
-{
-    "Author": "perappu",
-    "Name": "Who Said What Now",
-    "Punchline": "Per character chat history plugin.",
-    "Description": "Per character chat history plugin, evolution of Maia-Everett/dalamud-snooper.\n Main command /whowhat",
-    "InternalName": "WhoSaidWhatNow",
-    "ApplicableVersion": "any",
-    "RepoUrl": "https://github.com/perappu/WhoSaidWhatNow",
-    "Tags": [
-        "utility",
-        "chat"
-    ],
-    "IconUrl": "https://ffxiv.gamerescape.com/w/images/thumb/5/59/Consider_Emote_Icon.png/64px-Consider_Emote_Icon.png",
-    "IsHide": "False",
-    "IsTestingExclusive": "False",
-    "DownloadLinkInstall": "https://github.com/perappu/WhoSaidWhatNow/releases/download/latest/latest.zip",
-    "DownloadLinkTesting": "https://github.com/perappu/WhoSaidWhatNow/releases/download/latest/latest.zip",
-    "DownloadLinkUpdate": "https://github.com/perappu/WhoSaidWhatNow/releases/download/latest/latest.zip"
-}
+[
+    {
+        "Author": "perappu",
+        "Name": "Who Said What Now",
+        "Punchline": "Per character chat history plugin.",
+        "Description": "Per character chat history plugin, evolution of Maia-Everett/dalamud-snooper.\n Main command /whowhat",
+        "InternalName": "WhoSaidWhatNow",
+        "AssemblyVersion": "0.1",
+        "TestingAssemblyVersion": "0.1",
+        "ApplicableVersion": "any",
+        "RepoUrl": "https://github.com/perappu/WhoSaidWhatNow",
+        "DalamudApiLevel": 7,
+        "Tags": [
+            "utility",
+            "chat"
+        ],
+        "IconUrl": "https://ffxiv.gamerescape.com/w/images/thumb/5/59/Consider_Emote_Icon.png/64px-Consider_Emote_Icon.png",
+        "IsHide": "False",
+        "IsTestingExclusive": "False",
+        "DownloadLinkInstall": "https://github.com/perappu/WhoSaidWhatNow/releases/download/latest/latest.zip",
+        "DownloadLinkTesting": "https://github.com/perappu/WhoSaidWhatNow/releases/download/latest/latest.zip",
+        "DownloadLinkUpdate": "https://github.com/perappu/WhoSaidWhatNow/releases/download/latest/latest.zip"
+    }
+]
