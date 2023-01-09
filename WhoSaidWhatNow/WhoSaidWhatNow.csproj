@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <TargetFramework>net6.0-windows</TargetFramework>
+    <TargetFramework>net7.0-windows</TargetFramework>
     <Platforms>x64</Platforms>
     <RootNamespace>WhoSaidWhatNow</RootNamespace>
     <AssemblyName>WhoSaidWhatNow</AssemblyName>
@@ -30,7 +30,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="DalamudPackager" Version="2.1.8" />
+    <PackageReference Include="DalamudPackager" Version="2.1.10" />
     <PackageReference Include="ImGui.NET" Version="1.88.0" />
     <PackageReference Include="System.Runtime" Version="4.3.1" />
     <Reference Include="FFXIVClientStructs">
