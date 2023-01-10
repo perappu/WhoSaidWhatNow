@@ -54,8 +54,10 @@ public class MainWindow : Window, IDisposable
     //TODO: make sure this is ok?
     public void Dispose() { }
 
-    //AddPlayer() checks to see if the current target is a player
-    //if so it'll make the new player object, if not return false
+    /// <summary>
+    /// If current target is player, save to internal list.
+    /// </summary>
+    /// <returns>True if successful.</returns>
     private bool AddPlayer()
     {
         if (targetManager.Target != null)
