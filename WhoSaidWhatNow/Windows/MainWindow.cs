@@ -20,6 +20,7 @@ public class MainWindow : Window, IDisposable
 {
     private Plugin plugin;
     public List<Player> Players;
+    IDictionary<String, List<Player>> Groups = new Dictionary<String, List<Player>>();
     public SortedList<DateTime, ChatEntry> ChatEntries;
     private readonly TargetManager targetManager;
     private Player? selectedPlayer = null;
@@ -77,7 +78,9 @@ public class MainWindow : Window, IDisposable
                 Players.Add(new Player(target));
                 return true;
             }
-        } else {
+        }
+        else
+        {
             return false;
         }
     }
@@ -109,7 +112,8 @@ public class MainWindow : Window, IDisposable
     {
 
         //If player is null, then we just open/close the window. Otherwise we set the selected player to the passed player
-        if (player != null) {
+        if (player != null)
+        {
             //if we're clicking on the current player and the window is already open, close it
             if (open == true && selectedPlayer != null && selectedPlayer.ID == player.ID)
             {
@@ -119,11 +123,12 @@ public class MainWindow : Window, IDisposable
             // open content in right panel
             else
             {
-                
+
                 open = true;
                 selectedPlayer = player;
             }
-        } else
+        }
+        else
         {
             //if we're clicking on the current player and the window is already open, close it
             if (open == true)
@@ -140,7 +145,7 @@ public class MainWindow : Window, IDisposable
         //Stuff the selectable should do on click
         if (open)
         {
-            
+
             this.SizeConstraints = openConstraints;
         }
         else
@@ -149,6 +154,10 @@ public class MainWindow : Window, IDisposable
         }
     }
 
+    /// <summary>
+    /// Adds the player as a selectable element to the parent.
+    /// </summary>
+    /// <param name="player">Player to add.</param>
     private void AddPlayerSelectable(Player player)
     {
         ImGui.BeginGroup();
@@ -169,6 +178,42 @@ public class MainWindow : Window, IDisposable
         ImGui.SameLine();
         ImGui.Text(player.Name);
         ImGui.EndGroup();
+    }
+
+    /// <summary>
+    /// Add a context menu for tracked players to the parent element.<br/>
+    /// Only handles creating or adding to groups; defer removing to the groups window.<br/>
+    /// TODO needs functional testing.
+    /// </summary>
+    private void ContextMenuPlayer(Player player)
+    {
+        if (ImGui.BeginPopupContextItem())
+        {
+            if (ImGui.Selectable("Add to group..."))
+            {
+                if (ImGui.BeginMenu("MenuGroups"))
+                {
+                    // User can either create a new group...
+                    if (ImGui.Selectable("Create Group"))
+                    {
+                        Groups.Add("New Group", new List<Player> { player });
+                        ImGui.CloseCurrentPopup();
+
+                    }
+                    ImGui.Separator();
+                    // ... or add to an existing group.
+                    foreach (var (k, v) in Groups)
+                    {
+                        if (ImGui.Selectable($"{k}"))
+                        {
+                            v.Add(player);
+                            ImGui.CloseCurrentPopup();
+                        }
+                    }
+                }
+                ImGui.EndPopup();
+            }
+        }
     }
 
     //Draw() the main window
@@ -265,19 +310,14 @@ public class MainWindow : Window, IDisposable
             ImGui.BeginChild("###WhoSaidWhatNow_RightPanel_Child", new Vector2(0, 0), true);
             ImGui.EndChild();
 
-            //Create All Tracked Players selectable
-            ImGui.BeginChild("###WhoSaidWhatNow_LeftPanel_Child");
-            ImGui.BeginGroup();
-            if (ImGui.Selectable("###WhoSaidWhatNow_Player_Selectable_GroupAll", true, ImGuiSelectableFlags.AllowDoubleClick))
+            // populate the list of selectable groups.
+            foreach (var (k, v) in Groups)
             {
-                if (ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left))
-                {
-                    // ignored
-                }
-
-                ToggleWindowOpen(null);
-
+                ImGui.BeginChild("###WhoSaidWhatNow_LeftPanel_Child");
+                // AddPlayerSelectable(Players[i]);
+                ImGui.EndChild();
             }
+
             //TODO: padding is a bit wacky on the selectable and clicks with the one above it, either remove the padding or add margins
             ImGui.SameLine();
             ImGui.Text("All Tracked Players");
