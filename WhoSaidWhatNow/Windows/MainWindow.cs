@@ -107,7 +107,10 @@ public class MainWindow : Window, IDisposable
         ImGui.PopStyleColor();
     }
 
-    //ToggleWindowOpen() toggles window being opened/closed based on current state of open variable
+    /// <summary>
+    /// Toggles window being opened/closed based on current state of open variable
+    /// </summary>
+    /// <param name="player"></param>
     private void ToggleWindowOpen(Player? player)
     {
 
@@ -178,6 +181,21 @@ public class MainWindow : Window, IDisposable
         ImGui.SameLine();
         ImGui.Text(player.Name);
         ImGui.EndGroup();
+    }
+
+    /// <summary>
+    /// Adds a selectable player group to the parent element.
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="players"></param>
+    private void addPlayerGroup(String id, List<Player> players)
+    {
+        ImGui.BeginGroup();
+        if (ImGui.Selectable($"group_selectable_{id}", true, ImGuiSelectableFlags.None))
+        {
+            // TODO verify what happens here?
+            ToggleWindowOpen(null);
+        }
     }
 
     /// <summary>
@@ -314,7 +332,7 @@ public class MainWindow : Window, IDisposable
             foreach (var (k, v) in Groups)
             {
                 ImGui.BeginChild("###WhoSaidWhatNow_LeftPanel_Child");
-                // AddPlayerSelectable(Players[i]);
+                addPlayerGroup(k, v);
                 ImGui.EndChild();
             }
 
