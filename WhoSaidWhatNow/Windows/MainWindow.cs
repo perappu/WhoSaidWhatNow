@@ -24,6 +24,7 @@ public class MainWindow : Window, IDisposable
     private readonly TargetManager targetManager;
     private Player? selectedPlayer = null;
     private bool open = false;
+    private bool showSelf = false;
 
     //define constraints for when the right panel is open/closed
     //TODO: set minimum/maximum when "closed" but infinitely resizable when expanded
@@ -304,6 +305,11 @@ public class MainWindow : Window, IDisposable
         }
 
         ImGui.EndTabBar();
+
+        if (ImGui.Checkbox("Show own messages?", ref showSelf))
+        {
+            // TODO logic for showing own messages.
+        }
     }
 
 }
