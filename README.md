@@ -16,5 +16,3 @@ Takes ideas and some code from [Snooper](https://github.com/Maia-Everett/dalamud
  * Track multiple characters in one group
  * Automatically whitelist names to always be tracked
  * Read backlog???
-
-![image](https://user-images.githubusercontent.com/13854524/208371923-05d66e16-4acc-4bb7-8dd0-dcd211954101.png)
