@@ -287,6 +287,7 @@ public class MainWindow : Window, IDisposable
 
                 ImGui.BeginChild("###WhoSaidWhatNow_LeftPanel_Child");
                 AddPlayerSelectable(Players[i]);
+                ContextMenuPlayer(Players[i]);
                 ImGui.EndChild();
 
             }
