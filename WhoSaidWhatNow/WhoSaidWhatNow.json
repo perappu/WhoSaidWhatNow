@@ -8,7 +8,7 @@
         "TestingAssemblyVersion": "0.1.1",
         "ApplicableVersion": "any",
         "RepoUrl": "https://github.com/perappu/WhoSaidWhatNow",
-        "DalamudApiLevel": 7,
+        "DalamudApiLevel": 8,
         "Tags": [
             "utility",
             "chat"
