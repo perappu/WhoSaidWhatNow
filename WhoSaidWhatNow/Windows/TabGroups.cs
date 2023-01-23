@@ -47,7 +47,7 @@ public class TabGroups
             foreach (var c in Plugin.ChatEntries)
             {
                 // if we are displaying this type of message;
-                if (Configuration.ChannelToggles[c.Value.Type] == true)
+                if (Plugin.Config.ChannelToggles[c.Value.Type] == true)
                 {
                     // and if the player is among the tracked;
                     if (Plugin.Players.Find(p => p.Name == c.Value.Sender.Name) != null)

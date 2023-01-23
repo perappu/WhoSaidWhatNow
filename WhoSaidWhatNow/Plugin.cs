@@ -19,7 +19,7 @@ namespace WhoSaidWhatNow
     {
         public string Name => "Who Said What Now";
         private const string COMMAND = "/whowhat";
-        public static Configuration Configuration = null!;
+        public static Configuration Config = null!;
         public static Player? SelectedPlayer = null;
         public static List<Player> Players = new List<Player>();
         public static IDictionary<String, List<Player>> Groups = new Dictionary<String, List<Player>>();
@@ -45,8 +45,8 @@ namespace WhoSaidWhatNow
             TargetManager = targetManager;
 
             // initiatize our configuration
-            Configuration = s_pluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
-            Configuration.Initialize(s_pluginInterface);
+            Config = s_pluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
+            Config.Initialize(s_pluginInterface);
 
             // create the listener
             s_chatListener = new ChatListener(chatGui);

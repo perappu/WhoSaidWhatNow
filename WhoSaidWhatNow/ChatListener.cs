@@ -37,7 +37,7 @@ namespace WhoSaidWhatNow
 
         private void OnChatMessage(XivChatType type, uint senderId, ref SeString sender, ref SeString message, ref bool isHandled)
         {
-            if (Configuration.IsOn == true)
+            if (Plugin.Config.Enabled == true)
             {
                 string senderName = sender.ToString();
                 //The basic ToString here includes any friends list icons and the server name, so we have to do Contains() for now

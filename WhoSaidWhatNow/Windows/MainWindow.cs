@@ -90,8 +90,8 @@ public class MainWindow : Window, IDisposable
     /// </summary>
     internal static void ShowMessage(KeyValuePair<DateTime, ChatEntry> c)
     {
-        ImGui.PushStyleColor(ImGuiCol.Text, Configuration.ChatColors[c.Value.Type]);
-        string tag = Configuration.Formats[c.Value.Type];
+        ImGui.PushStyleColor(ImGuiCol.Text, Plugin.Config.ChatColors[c.Value.Type]);
+        string tag = Plugin.Config.Formats[c.Value.Type];
         ImGui.TextWrapped(c.Value.CreateMessage(tag));
         ImGui.PopStyleColor();
     }
@@ -219,7 +219,7 @@ public class MainWindow : Window, IDisposable
                 Plugin.DrawConfigUI();
             }
             ImGui.PushStyleColor(ImGuiCol.Text, new Vector4(1f, 0f, 0f, 1f));
-            ImGui.Text(Configuration.IsOn == true ? "On" : "Off");
+            ImGui.Text(Plugin.Config.Enabled == true ? "On" : "Off");
             ImGui.PopStyleColor();
 
             ImGui.EndMenuBar();
@@ -271,7 +271,7 @@ public class MainWindow : Window, IDisposable
             if (Plugin.SelectedPlayer is not null)
             {
                 foreach (var c in from KeyValuePair<DateTime, ChatEntry> c in Plugin.ChatEntries
-                                  where Configuration.ChannelToggles[c.Value.Type] == true && c.Value.Sender.Name.Contains(Plugin.SelectedPlayer.Name)
+                                  where Plugin.Config.ChannelToggles[c.Value.Type] == true && c.Value.Sender.Name.Contains(Plugin.SelectedPlayer.Name)
                                   select c)
                 {
                     ShowMessage(c);
@@ -279,7 +279,7 @@ public class MainWindow : Window, IDisposable
             }
             ImGui.EndGroup();
 
-            if (Configuration.AutoScroll)
+            if (Plugin.Config.Autoscroll)
             {
                 //i don't understand math, make this actually work better
                 ImGui.SetScrollHereY(1.0f);
