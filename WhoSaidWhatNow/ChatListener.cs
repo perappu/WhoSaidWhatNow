@@ -1,18 +1,10 @@
-using Dalamud.Game.ClientState.Objects;
-using Dalamud.Game.ClientState;
-using Dalamud.Game.Command;
+using System;
+
 using Dalamud.Game.Gui;
 using Dalamud.Game.Text;
 using Dalamud.Game.Text.SeStringHandling;
-using Dalamud.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 using WhoSaidWhatNow.Objects;
-using Dalamud.Game;
-using Dalamud.Game.Text.SeStringHandling.Payloads;
 
 namespace WhoSaidWhatNow
 {
@@ -26,12 +18,13 @@ namespace WhoSaidWhatNow
     /// </summary>
     internal class ChatListener : IDisposable
     {
-        internal ChatGui gui = null!;
+        internal ChatGui? gui;
 
         public ChatListener(ChatGui gui)
 
         {
-            gui.ChatMessage += OnChatMessage;
+            this.gui = gui;
+            this.gui.ChatMessage += OnChatMessage;
         }
 
         //THIS IS VERY IMPORTANT
@@ -39,7 +32,7 @@ namespace WhoSaidWhatNow
         //I accidentally had like 15+ once. my game crashed
         public void Dispose()
         {
-            gui.ChatMessage -= OnChatMessage;
+            gui!.ChatMessage -= OnChatMessage;
         }
 
         private void OnChatMessage(XivChatType type, uint senderId, ref SeString sender, ref SeString message, ref bool isHandled)
