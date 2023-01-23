@@ -14,18 +14,18 @@ namespace WhoSaidWhatNow
 
         // BOOLEAN CONFIGURATION //
         //Always start the plugin as off by default, to prevent crashes
-        public bool IsOn { get; set; } = false;
+        public static bool IsOn { get; set; } = false;
 
         //Autoscrolling on the chat log window
-        public bool AutoScroll { get; set; } = false;
+        public static bool AutoScroll { get; set; } = false;
 
         // SAVED PLAYER CONFIGURATION //
-        public List<uint> AlwaysTrackedPlayers = new List<uint>();
+        public static List<uint> AlwaysTrackedPlayers = new List<uint>();
 
         // CHANNEL CONFIGURATION //
         //I don't feel the need to generate the linkshell ones with a for loop, this is perfectly legible
         //Channel visibility toggle
-        public IDictionary<XivChatType, bool> ChannelToggles = new Dictionary<XivChatType, bool>()
+        public static IDictionary<XivChatType, bool> ChannelToggles = new Dictionary<XivChatType, bool>()
         {
             { XivChatType.Say, true},
             { XivChatType.TellIncoming, true},
@@ -123,16 +123,16 @@ namespace WhoSaidWhatNow
 
         // the below exist just to make saving less cumbersome
         [NonSerialized]
-        private DalamudPluginInterface? PluginInterface;
+        private static DalamudPluginInterface? PluginInterface;
 
-        public void Initialize(DalamudPluginInterface pluginInterface)
+        public static void Initialize(DalamudPluginInterface pluginInterface)
         {
-            this.PluginInterface = pluginInterface;
+            PluginInterface = pluginInterface;
         }
 
-        public void Save()
+        public static void Save()
         {
-            this.PluginInterface!.SavePluginConfig(this);
+            PluginInterface!.SavePluginConfig(null);
         }
     }
 }

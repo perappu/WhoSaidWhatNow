@@ -18,41 +18,28 @@ namespace WhoSaidWhatNow.Windows;
 
 public class MainWindow : Window, IDisposable
 {
-    private Plugin plugin;
-    public List<Player> Players;
-    IDictionary<String, List<Player>> Groups = new Dictionary<String, List<Player>>();
-    public SortedList<DateTime, ChatEntry> ChatEntries;
-    private readonly TargetManager targetManager;
-    private Player? selectedPlayer = null;
-    private bool open = false;
-    private bool showSelf = false;
+    internal static bool open = false;
+    internal const String ID_PANEL_LEFT = "###WhoSaidWhatNow_LeftPanel_Child";
+    internal const String ID_PANEL_RIGHT = "###WhoSaidWhatNow_RightPanel_Child";
 
-    //define constraints for when the right panel is open/closed
-    //TODO: set minimum/maximum when "closed" but infinitely resizable when expanded
-    private WindowSizeConstraints openConstraints = new WindowSizeConstraints
-    {
-        MinimumSize = new Vector2(600, 330),
-        MaximumSize = new Vector2(1000, 1000)
-    };
-    private WindowSizeConstraints closedConstraints = new WindowSizeConstraints
+    private readonly WindowSizeConstraints closedConstraints = new WindowSizeConstraints
     {
         MinimumSize = new Vector2(220, 330),
         MaximumSize = new Vector2(220, 330)
     };
+    private readonly WindowSizeConstraints openConstraints = new WindowSizeConstraints
+    {
+        MinimumSize = new Vector2(600, 330),
+        MaximumSize = new Vector2(int.MaxValue, int.MaxValue)
+    };
 
-    public MainWindow(Plugin plugin, List<Player> trackedPlayers, SortedList<DateTime, ChatEntry> chatEntries, TargetManager targetManager)
-        : base("Who Said What Now", ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse | ImGuiWindowFlags.MenuBar)
+    public MainWindow() : base("Who Said What Now", ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse | ImGuiWindowFlags.MenuBar)
     {
         this.SizeConstraints = closedConstraints;
-
-        this.plugin = plugin;
-        this.Players = trackedPlayers;
-        this.targetManager = targetManager;
-        this.ChatEntries = chatEntries;
     }
 
-    //I honestly have no idea how to dispose of windows correctly
-    //TODO: make sure this is ok?
+    // I honestly have no idea how to dispose of windows correctly
+    // TODO: make sure this is ok?
     public void Dispose() { }
 
     /// <summary>
@@ -61,21 +48,21 @@ public class MainWindow : Window, IDisposable
     /// <returns>True if successful.</returns>
     private bool AddPlayer()
     {
-        if (targetManager.Target != null)
+        if (Plugin.TargetManager.Target != null)
         {
-            GameObject target = targetManager.Target;
+            GameObject target = Plugin.TargetManager.Target;
 
             if (target == null || target.ObjectKind != ObjectKind.Player)
             {
                 return false;
             }
-            else if (Players.Any(x => x.ID == target.ObjectId))
+            else if (Plugin.Players.Any(x => x.ID == target.ObjectId))
             {
                 return false;
             }
             else
             {
-                Players.Add(new Player(target));
+                Plugin.Players.Add(new Player(target));
                 return true;
             }
         }
@@ -88,18 +75,20 @@ public class MainWindow : Window, IDisposable
 
     private void RemovePlayer()
     {
-        if (selectedPlayer is not null)
+        if (Plugin.SelectedPlayer is not null)
         {
-            Players.Remove(selectedPlayer);
+            Plugin.Players.Remove(Plugin.SelectedPlayer);
             open = false;
-            selectedPlayer = null;
+            Plugin.SelectedPlayer = null;
             //we have to manually close the window here
             this.SizeConstraints = closedConstraints;
         }
     }
 
-    //ShowMessage() creates an ImGui text wrapped given a player and a keyvalue datetime chatentry
-    private void ShowMessage(KeyValuePair<DateTime, ChatEntry> c)
+    /// <summary>
+    /// Properly formats the passed data as a chat message and adds it to the log.
+    /// </summary>
+    internal static void ShowMessage(KeyValuePair<DateTime, ChatEntry> c)
     {
         ImGui.PushStyleColor(ImGuiCol.Text, Configuration.ChatColors[c.Value.Type]);
         string tag = Configuration.Formats[c.Value.Type];
@@ -111,24 +100,24 @@ public class MainWindow : Window, IDisposable
     /// Toggles window being opened/closed based on current state of open variable
     /// </summary>
     /// <param name="player"></param>
-    private void ToggleWindowOpen(Player? player)
+    internal void ToggleWindowOpen(Player? player)
     {
 
         //If player is null, then we just open/close the window. Otherwise we set the selected player to the passed player
         if (player != null)
         {
             //if we're clicking on the current player and the window is already open, close it
-            if (open == true && selectedPlayer != null && selectedPlayer.ID == player.ID)
+            if (open == true && Plugin.SelectedPlayer != null && Plugin.SelectedPlayer.ID == player.ID)
             {
                 open = false;
-                selectedPlayer = null;
+                Plugin.SelectedPlayer = null;
             }
             // open content in right panel
             else
             {
 
                 open = true;
-                selectedPlayer = player;
+                Plugin.SelectedPlayer = player;
             }
         }
         else
@@ -184,21 +173,6 @@ public class MainWindow : Window, IDisposable
     }
 
     /// <summary>
-    /// Adds a selectable player group to the parent element.
-    /// </summary>
-    /// <param name="id"></param>
-    /// <param name="players"></param>
-    private void addPlayerGroup(String id, List<Player> players)
-    {
-        ImGui.BeginGroup();
-        if (ImGui.Selectable($"group_selectable_{id}", true, ImGuiSelectableFlags.None))
-        {
-            // TODO verify what happens here?
-            ToggleWindowOpen(null);
-        }
-    }
-
-    /// <summary>
     /// Add a context menu for tracked players to the parent element.<br/>
     /// Only handles creating or adding to groups; defer removing to the groups window.<br/>
     /// TODO needs functional testing.
@@ -214,13 +188,13 @@ public class MainWindow : Window, IDisposable
                     // User can either create a new group...
                     if (ImGui.Selectable("Create Group"))
                     {
-                        Groups.Add("New Group", new List<Player> { player });
+                        Plugin.Groups.Add("New Group", new List<Player> { player });
                         ImGui.CloseCurrentPopup();
 
                     }
                     ImGui.Separator();
                     // ... or add to an existing group.
-                    foreach (var (k, v) in Groups)
+                    foreach (var (k, v) in Plugin.Groups)
                     {
                         if (ImGui.Selectable($"{k}"))
                         {
@@ -242,10 +216,10 @@ public class MainWindow : Window, IDisposable
         {
             if (ImGui.MenuItem("Open Settings"))
             {
-                this.plugin.DrawConfigUI();
+                Plugin.DrawConfigUI();
             }
             ImGui.PushStyleColor(ImGuiCol.Text, new Vector4(1f, 0f, 0f, 1f));
-            ImGui.Text(this.plugin.configuration.IsOn == true ? "On" : "Off");
+            ImGui.Text(Configuration.IsOn == true ? "On" : "Off");
             ImGui.PopStyleColor();
 
             ImGui.EndMenuBar();
@@ -258,7 +232,7 @@ public class MainWindow : Window, IDisposable
 
             // Creating left and right panels
             // you can redeclare BeginChild() with the same ID to add things to them, which we do for chatlog
-            ImGui.BeginChild("###WhoSaidWhatNow_LeftPanel_Child", new Vector2(205 * ImGuiHelpers.GlobalScale, 0), true, ImGuiWindowFlags.MenuBar);
+            ImGui.BeginChild(ID_PANEL_LEFT, new Vector2(205 * ImGuiHelpers.GlobalScale, 0), true, ImGuiWindowFlags.MenuBar);
 
             if (ImGui.BeginMenuBar())
             {
@@ -267,7 +241,7 @@ public class MainWindow : Window, IDisposable
                     AddPlayer();
                 }
 
-                ImGui.BeginDisabled(selectedPlayer is null);
+                ImGui.BeginDisabled(Plugin.SelectedPlayer is null);
                 if (ImGui.MenuItem("Remove Target"))
                 {
                     RemovePlayer();
@@ -278,28 +252,26 @@ public class MainWindow : Window, IDisposable
 
             ImGui.EndChild();
             ImGui.SameLine();
-            ImGui.BeginChild("###WhoSaidWhatNow_RightPanel_Child", new Vector2(0, 0), true);
+            ImGui.BeginChild(ID_PANEL_RIGHT, new Vector2(0, 0), true);
             ImGui.EndChild();
 
             //Populating selectable list
-            for (var i = 0; Players.Count > i; i++)
+            foreach (var p in Plugin.Players)
             {
-
-                ImGui.BeginChild("###WhoSaidWhatNow_LeftPanel_Child");
-                AddPlayerSelectable(Players[i]);
-                ContextMenuPlayer(Players[i]);
+                ImGui.BeginChild(ID_PANEL_LEFT);
+                AddPlayerSelectable(p);
+                ContextMenuPlayer(p);
                 ImGui.EndChild();
-
             }
 
             // Build the chat log
             // it's worth noting all of this stuff stays in memory and is only hidden when it's "closed"
-            ImGui.BeginChild("###WhoSaidWhatNow_RightPanel_Child");
+            ImGui.BeginChild(ID_PANEL_RIGHT);
             ImGui.BeginGroup();
-            if (selectedPlayer is not null)
+            if (Plugin.SelectedPlayer is not null)
             {
-                foreach (var c in from KeyValuePair<DateTime, ChatEntry> c in ChatEntries
-                                  where plugin.configuration.ChannelToggles[c.Value.Type] == true && c.Value.Sender.Name.Contains(selectedPlayer.Name)
+                foreach (var c in from KeyValuePair<DateTime, ChatEntry> c in Plugin.ChatEntries
+                                  where Configuration.ChannelToggles[c.Value.Type] == true && c.Value.Sender.Name.Contains(Plugin.SelectedPlayer.Name)
                                   select c)
                 {
                     ShowMessage(c);
@@ -307,7 +279,7 @@ public class MainWindow : Window, IDisposable
             }
             ImGui.EndGroup();
 
-            if (plugin.configuration.AutoScroll)
+            if (Configuration.AutoScroll)
             {
                 //i don't understand math, make this actually work better
                 ImGui.SetScrollHereY(1.0f);
@@ -318,59 +290,7 @@ public class MainWindow : Window, IDisposable
         }
 
         //GROUP TAB
-        if (ImGui.BeginTabItem("Groups"))
-        {
 
-            // Creating left and right panels
-            // you can redeclare BeginChild() with the same ID to add things to them, which we do for chatlog
-            ImGui.BeginChild("###WhoSaidWhatNow_LeftPanel_Child", new Vector2(205 * ImGuiHelpers.GlobalScale, 0), true);
-            ImGui.EndChild();
-            ImGui.SameLine();
-            ImGui.BeginChild("###WhoSaidWhatNow_RightPanel_Child", new Vector2(0, 0), true);
-            ImGui.EndChild();
-
-            // populate the list of selectable groups.
-            foreach (var (k, v) in Groups)
-            {
-                ImGui.BeginChild("###WhoSaidWhatNow_LeftPanel_Child");
-                addPlayerGroup(k, v);
-                ImGui.EndChild();
-            }
-
-            //TODO: padding is a bit wacky on the selectable and clicks with the one above it, either remove the padding or add margins
-            ImGui.SameLine();
-            ImGui.Text("All Tracked Players");
-            ImGui.EndGroup();
-            ImGui.EndChild();
-
-            // Build the chat log
-            // it's worth noting all of this stuff stays in memory and is only hidden when it's "closed"
-            ImGui.BeginChild("###WhoSaidWhatNow_RightPanel_Child");
-            ImGui.BeginGroup();
-            foreach (var c in from KeyValuePair<DateTime, ChatEntry> c in ChatEntries
-                              where plugin.configuration.ChannelToggles[c.Value.Type] == true
-                              select c)
-            {
-                selectedPlayer = Players.Find(x => x.Name == c.Value.Sender.Name);
-                if (selectedPlayer != null)
-                {
-                    ShowMessage(c);
-                }
-            }
-            ImGui.EndGroup();
-            ImGui.EndChild();
-
-
-
-            ImGui.EndTabItem();
-        }
-
-        ImGui.EndTabBar();
-
-        if (ImGui.Checkbox("Show own messages?", ref showSelf))
-        {
-            // TODO logic for showing own messages.
-        }
     }
 
 }
