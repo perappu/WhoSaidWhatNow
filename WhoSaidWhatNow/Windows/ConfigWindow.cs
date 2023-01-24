@@ -50,14 +50,12 @@ public class ConfigWindow : Window, IDisposable
 
         ImGui.BeginChild(MainWindow.ID_PANEL_RIGHT, new Vector2(0, 0), true);
         {
-            foreach (var pair in Plugin.Config.ChannelToggles)
+            foreach (var chan in Plugin.Config.ChannelToggles)
             {
-                var type = pair.Key;
-                var enabled = pair.Value;
-                bool isOn = false;
-                if (ImGui.Checkbox(type.ToString(), ref isOn))
+                bool val = chan.Value;
+                if (ImGui.Checkbox(chan.Key.ToString(), ref val))
                 {
-                    enabled = isOn;
+                    Plugin.Config.ChannelToggles[chan.Key] = val;
                     Plugin.Config.Save();
                 }
             }
