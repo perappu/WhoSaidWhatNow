@@ -1,20 +1,20 @@
 # Who Said What Now
 
-Dalamud plugin for tracking chat logs on a per-character basis. Good for crowded events and locations!
+Dalamud plugin for tracking/filtering chat logs on a per-character basis. Good for crowded events and locations!
 
-Takes ideas and some code from [Snooper](https://github.com/Maia-Everett/dalamud-snooper), and therefore is under the same license. Thank you!
+Takes ideas and logic from [Snooper](https://github.com/Maia-Everett/dalamud-snooper), and therefore is under the same license. Thank you!
 
 ## Current Features
 
-* Only saves chat logs for specified characters
-* Tracking can be turned on/off within the plugin to potentially save memory
+* View individual chat logs for specified characters
+* Tracking can be turned on/off within the plugin
 * Stores all chat logs as tabs on a single collapsible window
-* 📮
+* View all tracked characters as one group or individually
+* Enable/disable specific chat channels (i.e. /say, /em, /cwls2, etc)
 
  ## Future
  
- * Track multiple characters in one group
+ * User-defined groups for specified characters only
  * Automatically whitelist names to always be tracked
- * Read backlog???
-
-![image](https://user-images.githubusercontent.com/13854524/208371923-05d66e16-4acc-4bb7-8dd0-dcd211954101.png)
+ * Enable hiding/showing user's messages in viewed log
+ * Read backlog when plugin is enabled

@@ -5,8 +5,8 @@
         "Punchline": "Per character chat history plugin.",
         "Description": "Per character chat history plugin, evolution of Maia-Everett/dalamud-snooper.\n Main command /whowhat",
         "InternalName": "WhoSaidWhatNow",
-        "AssemblyVersion": "0.1.1",
-        "TestingAssemblyVersion": "0.1.1",
+        "AssemblyVersion": "0.1.2",
+        "TestingAssemblyVersion": "0.1.2",
         "ApplicableVersion": "any",
         "RepoUrl": "https://github.com/perappu/WhoSaidWhatNow",
         "DalamudApiLevel": 8,
@@ -16,8 +16,8 @@
         ],
         "IsHide": "False",
         "IsTestingExclusive": "False",
-        "DownloadLinkInstall": "https://github.com/perappu/WhoSaidWhatNow/releases/download/v0.1.1/latest.zip",
-        "DownloadLinkTesting": "https://github.com/perappu/WhoSaidWhatNow/releases/download/v0.1.1/latest.zip",
-        "DownloadLinkUpdate": "https://github.com/perappu/WhoSaidWhatNow/releases/download/v0.1.1/latest.zip"
+        "DownloadLinkInstall": "https://github.com/perappu/WhoSaidWhatNow/releases/download/v0.1.2/latest.zip",
+        "DownloadLinkTesting": "https://github.com/perappu/WhoSaidWhatNow/releases/download/v0.1.2/latest.zip",
+        "DownloadLinkUpdate": "https://github.com/perappu/WhoSaidWhatNow/releases/download/v0.1.2/latest.zip"
     }
 ]
