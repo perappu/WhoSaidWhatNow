@@ -290,6 +290,9 @@ public class MainWindow : Window, IDisposable
         }
 
         //GROUP TAB
+        var groups = new TabGroups();
+        
+        ImGui.EndTabBar();
 
     }
 
