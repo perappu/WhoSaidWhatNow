@@ -1,18 +1,16 @@
-using Dalamud.Game.ClientState.Objects;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Numerics;
+
 using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Interface;
 using Dalamud.Interface.Windowing;
-using Dalamud.Logging;
-using FFXIVClientStructs.FFXIV.Component.GUI;
+
 using ImGuiNET;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Numerics;
+
 using WhoSaidWhatNow.Objects;
-using static Lumina.Data.Parsing.Layer.LayerCommon;
 
 namespace WhoSaidWhatNow.Windows;
 
@@ -181,30 +179,27 @@ public class MainWindow : Window, IDisposable
     {
         if (ImGui.BeginPopupContextItem())
         {
-            if (ImGui.Selectable("Add to group..."))
+            if (ImGui.BeginMenu("Add to group..."))
             {
-                if (ImGui.BeginMenu("MenuGroups"))
+                // User can either create a new group...
+                if (ImGui.Selectable("Create Group"))
                 {
-                    // User can either create a new group...
-                    if (ImGui.Selectable("Create Group"))
-                    {
-                        Plugin.Groups.Add("New Group", new List<Player> { player });
-                        ImGui.CloseCurrentPopup();
+                    Plugin.Groups.Add("New Group", new List<Player> { player });
+                    ImGui.CloseCurrentPopup();
 
-                    }
-                    ImGui.Separator();
-                    // ... or add to an existing group.
-                    foreach (var (k, v) in Plugin.Groups)
+                }
+                ImGui.Separator();
+                // ... or add to an existing group.
+                foreach (var (k, v) in Plugin.Groups)
+                {
+                    if (ImGui.Selectable($"{k}"))
                     {
-                        if (ImGui.Selectable($"{k}"))
-                        {
-                            v.Add(player);
-                            ImGui.CloseCurrentPopup();
-                        }
+                        v.Add(player);
+                        ImGui.CloseCurrentPopup();
                     }
                 }
-                ImGui.EndPopup();
             }
+            ImGui.EndPopup();
         }
     }
 
@@ -291,7 +286,7 @@ public class MainWindow : Window, IDisposable
 
         //GROUP TAB
         var groups = new TabGroups();
-        
+
         ImGui.EndTabBar();
 
     }
