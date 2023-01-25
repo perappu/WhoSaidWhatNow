@@ -198,6 +198,7 @@ public class MainWindow : Window, IDisposable
                         ImGui.CloseCurrentPopup();
                     }
                 }
+                ImGui.EndMenu();
             }
             ImGui.EndPopup();
         }

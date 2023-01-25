@@ -70,7 +70,7 @@ public class TabGroups
     private void addPlayerGroup(KeyValuePair<String, List<Player>> pair)
     {
         ImGui.BeginGroup();
-        if (ImGui.Selectable($"group_selectable_{pair.Key}", true, ImGuiSelectableFlags.None))
+        if (ImGui.Selectable(pair.Key, true, ImGuiSelectableFlags.None))
         {
             // TODO verify what happens here?
             MainWindow.open = true;
