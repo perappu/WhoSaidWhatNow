@@ -34,12 +34,6 @@ public class TabGroups
                 ImGui.EndChild();
             }
 
-            //TODO: padding is a bit wacky on the selectable and clicks with the one above it, either remove the padding or add margins
-            // ImGui.SameLine();
-            // ImGui.Text("All Tracked Players");
-            // ImGui.EndGroup();
-            // ImGui.EndChild();
-
             // construct chatlog.
             ImGui.BeginChild(MainWindow.ID_PANEL_RIGHT);
             ImGui.BeginGroup();

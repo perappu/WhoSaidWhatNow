@@ -152,15 +152,8 @@ public class MainWindow : Window, IDisposable
     {
         ImGui.BeginGroup();
 
-        if (ImGui.Selectable("###WhoSaidWhatNow_Player_Selectable_" + player.ID, true, ImGuiSelectableFlags.AllowDoubleClick))
+        if (ImGui.Selectable("###WhoSaidWhatNow_Player_Selectable_" + player.ID, true, ImGuiSelectableFlags.None))
         {
-            if (ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left))
-            {
-                // ignored
-                // I'm honestly not sure why the original snooper had this but I'm going to guess
-                // it's to make sure it explicitly ignores people buttonmashing
-            }
-
             ToggleWindowOpen(player);
         }
 
@@ -184,6 +177,7 @@ public class MainWindow : Window, IDisposable
                 // User can either create a new group...
                 if (ImGui.Selectable("Create Group"))
                 {
+                    // TODO make name somewhat generated, otherwise key error
                     Plugin.Groups.Add("New Group", new List<Player> { player });
                     ImGui.CloseCurrentPopup();
 
@@ -192,7 +186,7 @@ public class MainWindow : Window, IDisposable
                 // ... or add to an existing group.
                 foreach (var (k, v) in Plugin.Groups)
                 {
-                    if (ImGui.Selectable($"{k}"))
+                    if (ImGui.Selectable(k))
                     {
                         v.Add(player);
                         ImGui.CloseCurrentPopup();
@@ -256,6 +250,10 @@ public class MainWindow : Window, IDisposable
             {
                 ImGui.BeginChild(ID_PANEL_LEFT);
                 AddPlayerSelectable(p);
+                if (ImGui.IsItemHovered())
+                {
+                    ImGui.SetTooltip("Right-click for more...");
+                }
                 ContextMenuPlayer(p);
                 ImGui.EndChild();
             }
