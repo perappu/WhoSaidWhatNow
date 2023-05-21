@@ -1,9 +1,10 @@
-using Dalamud.Configuration;
-using Dalamud.Game.Text;
-using Dalamud.Plugin;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
+
+using Dalamud.Configuration;
+using Dalamud.Game.Text;
+using Dalamud.Plugin;
 
 namespace WhoSaidWhatNow
 {
@@ -12,14 +13,19 @@ namespace WhoSaidWhatNow
     {
         public int Version { get; set; } = 1;
 
-        // BOOLEAN CONFIGURATION //
-        //Always start the plugin as off by default, to prevent crashes
-        public bool IsOn { get; set; } = false;
+        /// <summary>
+        /// Always start the plugin as off by default, to prevent crashes.
+        /// </summary>
+        public bool Enabled { get; set; } = false;
 
-        //Autoscrolling on the chat log window
-        public bool AutoScroll { get; set; } = false;
+        /// <summary>
+        /// Whether the chat log window should autoscroll.
+        /// </summary>
+        public bool Autoscroll { get; set; } = false;
 
-        // SAVED PLAYER CONFIGURATION //
+        /// <summary>
+        /// Player IDs that should always be tracked.
+        /// </summary>
         public List<uint> AlwaysTrackedPlayers = new List<uint>();
 
         // CHANNEL CONFIGURATION //
@@ -58,7 +64,7 @@ namespace WhoSaidWhatNow
 
         //TODO: Custom chat color values, ideally using ingame colors
         //Default chat color values
-        public static readonly IDictionary<XivChatType, Vector4> ChatColors = new Dictionary<XivChatType, Vector4>()
+        public readonly IDictionary<XivChatType, Vector4> ChatColors = new Dictionary<XivChatType, Vector4>()
         {
             { XivChatType.Say, new Vector4(0.969f,0.969f,0.961f, 1f)},
             { XivChatType.TellIncoming, new Vector4(1f,0.784f,0.929f, 1f) },
@@ -90,7 +96,7 @@ namespace WhoSaidWhatNow
         };
 
         //Channel format for when printing message
-        public static readonly IDictionary<XivChatType, string> Formats = new Dictionary<XivChatType, string>()
+        public readonly IDictionary<XivChatType, string> Formats = new Dictionary<XivChatType, string>()
         {
             { XivChatType.Say, "{0}: {1}" },
             { XivChatType.TellIncoming, "{0} >> {1}" },
@@ -127,12 +133,12 @@ namespace WhoSaidWhatNow
 
         public void Initialize(DalamudPluginInterface pluginInterface)
         {
-            this.PluginInterface = pluginInterface;
+            PluginInterface = pluginInterface;
         }
 
         public void Save()
         {
-            this.PluginInterface!.SavePluginConfig(this);
+            PluginInterface!.SavePluginConfig(this);
         }
     }
 }
