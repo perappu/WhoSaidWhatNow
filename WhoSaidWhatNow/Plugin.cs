@@ -7,6 +7,7 @@ using Dalamud.Interface.Windowing;
 using WhoSaidWhatNow.Windows;
 using Dalamud.Game.ClientState;
 using Dalamud.Game.Gui;
+using Dalamud.Logging;
 using Dalamud.Game.ClientState.Objects;
 using Dalamud.Game;
 using System.Collections.Generic;
@@ -27,6 +28,8 @@ namespace WhoSaidWhatNow
         public static TargetManager TargetManager = null!;
         private static ChatListener s_chatListener = null!;
         private static CommandManager s_commandManager = null!;
+        public static ClientState ClientState = null!;
+
         private static DalamudPluginInterface s_pluginInterface = null!;
         private static WindowSystem WindowSystem = new("WhoSaidWhatNow");
 
@@ -64,6 +67,12 @@ namespace WhoSaidWhatNow
 
             s_pluginInterface.UiBuilder.Draw += DrawUI;
             s_pluginInterface.UiBuilder.OpenConfigUi += DrawConfigUI;
+
+            clientState.Login += onLogin;
+        }
+
+        void onLogin(object? sender, EventArgs e) {
+            PluginLog.LogDebug("logging in!");
         }
 
         //TODO: make sure we're disposing of everything we need to appropriately
@@ -72,6 +81,7 @@ namespace WhoSaidWhatNow
             s_chatListener.Dispose();
             WindowSystem.RemoveAllWindows();
             s_commandManager.RemoveHandler(COMMAND);
+            Plugin.ClientState.Login -= onLogin;
         }
 
         private static void OnCommand(string command, string args)
