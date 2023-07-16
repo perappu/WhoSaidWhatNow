@@ -60,7 +60,8 @@ public class TabGroups
                         if (Plugin.Config.ChannelToggles[c.Value.Type] == true)
                         {
                             // and if the player is among the tracked;
-                            if (Plugin.Players.Find(p => p.Name == c.Value.Sender.Name) != null)
+                            var p = Plugin.Players.Find(p => p.Name == c.Value.Sender.Name);
+                            if (p != null && g[p])
                             {
                                 MainWindow.ShowMessage(c);
                             }
