@@ -4,6 +4,9 @@ Dalamud plugin for tracking/filtering chat logs on a per-character basis. Good f
 
 Takes ideas and logic from [Snooper](https://github.com/Maia-Everett/dalamud-snooper), and therefore is under the same license. Thank you!
 
+Repo link for adding to Dalamud:
+https://raw.githubusercontent.com/perappu/WhoSaidWhatNow/master/repo.json
+
 ## Current Features
 
 * View individual chat logs for specified characters
