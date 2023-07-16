@@ -83,36 +83,6 @@ namespace WhoSaidWhatNow
             Plugin.ClientState.Login -= OnLogin;
         }
 
-        private void OnCommand(string command, string args)
-        {
-            // in response to the slash command, just display our main ui
-            WindowSystem.GetWindow("Who Said What Now")!.IsOpen = true;
-            SetCurrentPlayer();
-
-        }
-
-        //set the current player when logging in
-        void OnLogin(object? sender, EventArgs e)
-        {
-            SetCurrentPlayer();
-        }
-
-        //close all windows when logging out so that the windows refresh
-        void OnLogout(object? sender, EventArgs e)
-        {
-            WindowSystem.RemoveAllWindows();
-        }
-
-        private static void DrawUI()
-        {
-            WindowSystem.Draw();
-        }
-
-        public static void DrawConfigUI()
-        {
-            WindowSystem.GetWindow("Who Said What Now - Settings")!.IsOpen = true;
-        }
-
         //may be better suited somewhere else?
         void SetCurrentPlayer()
         {
@@ -126,11 +96,57 @@ namespace WhoSaidWhatNow
             //adds to top of list with insert
             else if (!Config.CurrentPlayer.ToString().Equals(ClientState.LocalPlayer!.Name.ToString()))
             {
+                PluginLog.LogDebug("Currently Logged In Player was changed. Old: " + Config.CurrentPlayer);
                 Players.Remove(Players.Find(x => Config.CurrentPlayer.Contains(x.Name)));
                 Config.CurrentPlayer = ClientState.LocalPlayer!.Name.ToString();
                 Players.Insert(0, new Player(ClientState.LocalPlayer!));
-                PluginLog.LogDebug("Currently Logged In Player was changed. Set: " + Config.CurrentPlayer);
+                PluginLog.LogDebug("Currently Logged In Player was changed. New: " + Config.CurrentPlayer);
             }
+        }
+
+        private void OnCommand(string command, string args)
+        {
+
+            if (args.Equals("on"))
+            {
+                Config.Enabled = true;
+            }
+            else if (args.Equals("off"))
+            {
+                Config.Enabled = false;
+            }
+            else if (args.Equals("reload"))
+            {
+                WindowSystem.GetWindow("Who Said What Now")!.IsOpen = false;
+                SetCurrentPlayer();
+                WindowSystem.GetWindow("Who Said What Now")!.IsOpen = true;
+            } else
+            {
+                WindowSystem.GetWindow("Who Said What Now")!.IsOpen = true;
+            }
+        }
+
+        //set the current player when logging in
+        void OnLogin(object? sender, EventArgs e)
+        {
+            PluginLog.LogDebug("onlogin");
+            SetCurrentPlayer();
+        }
+
+        //close all windows when logging out so that the windows refresh
+        void OnLogout(object? sender, EventArgs e)
+        {
+            WindowSystem.GetWindow("Who Said What Now")!.IsOpen = false;
+        }
+
+        private static void DrawUI()
+        {
+            WindowSystem.Draw();
+        }
+
+        public static void DrawConfigUI()
+        {
+            WindowSystem.GetWindow("Who Said What Now - Settings")!.IsOpen = true;
         }
     }
 }
