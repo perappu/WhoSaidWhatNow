@@ -9,6 +9,7 @@ using ImGuiNET;
 using WhoSaidWhatNow;
 using WhoSaidWhatNow.Objects;
 using WhoSaidWhatNow.Windows;
+using System.Text;
 
 public class TabGroups
 {
@@ -23,8 +24,18 @@ public class TabGroups
             for (var i = 0; i < Plugin.Groups.Count; i++)
             {
                 var g = Plugin.Groups[i];
-                if (ImGui.BeginTabItem("Group " + i))
+                var name = "Group " + (i + 1);
+                if (ImGui.BeginTabItem(name))
                 {
+                    if (ImGui.BeginPopupContextItem())
+                    {
+                        ImGui.InputText("##edit", ref name, (uint)name.Length * sizeof(Char));
+                        if (i > 0)
+                        {
+                            ImGui.Button("Delete");
+                        }
+                        ImGui.EndPopup();
+                    }
                     ImGui.BeginChild(MainWindow.ID_PANEL_LEFT, new Vector2(205 * ImGuiHelpers.GlobalScale, 0), true); ;
                     foreach (var p in Plugin.Players)
                     {
