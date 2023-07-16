@@ -122,7 +122,7 @@ namespace WhoSaidWhatNow
                 WindowSystem.GetWindow("Who Said What Now")!.IsOpen = true;
             } else
             {
-                WindowSystem.GetWindow("Who Said What Now")!.IsOpen = true;
+                WindowSystem.GetWindow("Who Said What Now")!.IsOpen = !WindowSystem.GetWindow("Who Said What Now")!.IsOpen;
             }
         }
 
