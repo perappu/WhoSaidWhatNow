@@ -68,11 +68,13 @@ namespace WhoSaidWhatNow
             s_pluginInterface.UiBuilder.Draw += DrawUI;
             s_pluginInterface.UiBuilder.OpenConfigUi += DrawConfigUI;
 
-            clientState.Login += onLogin;
+            Plugin.ClientState = clientState;
+            Plugin.ClientState.Login += onLogin;
         }
 
         void onLogin(object? sender, EventArgs e) {
             PluginLog.LogDebug("logging in!");
+            PluginLog.LogDebug(ClientState.LocalPlayer!.ObjectId.ToString());
         }
 
         //TODO: make sure we're disposing of everything we need to appropriately
