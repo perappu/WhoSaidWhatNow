@@ -27,9 +27,9 @@ namespace WhoSaidWhatNow
         /// <summary>
         /// Player IDs that should always be tracked.
         /// </summary>
-        public List<uint> AlwaysTrackedPlayers = new List<uint>();
+        public List<Tuple<string, string>> AlwaysTrackedPlayers = new List<Tuple<string, string>>();
 
-        public string CurrentPlayer = null;
+        public string CurrentPlayer = String.Empty;
 
         // CHANNEL CONFIGURATION //
         //I don't feel the need to generate the linkshell ones with a for loop, this is perfectly legible

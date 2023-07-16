@@ -13,6 +13,7 @@ using Dalamud.Game;
 using System.Collections.Generic;
 using WhoSaidWhatNow.Objects;
 using System;
+using System.Linq;
 
 namespace WhoSaidWhatNow
 {
@@ -21,6 +22,7 @@ namespace WhoSaidWhatNow
         public string Name => "Who Said What Now";
         private const string COMMAND = "/whowhat";
         public static Configuration Config = null!;
+        public static ConfigurationHelper ConfigHelper = null!;
         public static Player? SelectedPlayer = null;
         public static List<Player> Players = new List<Player>();
         public static IDictionary<String, List<Player>> Groups = new Dictionary<String, List<Player>>();
@@ -50,6 +52,8 @@ namespace WhoSaidWhatNow
             // initiatize our configuration
             Config = s_pluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
             Config.Initialize(s_pluginInterface);
+
+            ConfigHelper = new ConfigurationHelper();
 
             // create the listener
             s_chatListener = new ChatListener(chatGui);
@@ -83,27 +87,6 @@ namespace WhoSaidWhatNow
             Plugin.ClientState.Login -= OnLogin;
         }
 
-        //may be better suited somewhere else?
-        void SetCurrentPlayer()
-        {
-            if (Config.CurrentPlayer == null)
-            {
-                Config.CurrentPlayer = ClientState.LocalPlayer!.Name.ToString();
-                Players.Add(new Player(ClientState.LocalPlayer!));
-                PluginLog.LogDebug("Currently Logged In Player was null. Set: " + Config.CurrentPlayer);
-            }
-            //if switched characters, remove old character and replace with new one
-            //adds to top of list with insert
-            else if (!Config.CurrentPlayer.ToString().Equals(ClientState.LocalPlayer!.Name.ToString()))
-            {
-                PluginLog.LogDebug("Currently Logged In Player was changed. Old: " + Config.CurrentPlayer);
-                Players.Remove(Players.Find(x => Config.CurrentPlayer.Contains(x.Name)));
-                Config.CurrentPlayer = ClientState.LocalPlayer!.Name.ToString();
-                Players.Insert(0, new Player(ClientState.LocalPlayer!));
-                PluginLog.LogDebug("Currently Logged In Player was changed. New: " + Config.CurrentPlayer);
-            }
-        }
-
         private void OnCommand(string command, string args)
         {
 
@@ -115,12 +98,29 @@ namespace WhoSaidWhatNow
             {
                 Config.Enabled = false;
             }
-            else if (args.Equals("reload"))
+            else if (args.Equals("refresh"))
+            {
+
+                WindowSystem.GetWindow("Who Said What Now")!.IsOpen = false;
+                PluginLog.LogDebug("refresh");
+                ConfigHelper.refresh();
+                WindowSystem.GetWindow("Who Said What Now")!.IsOpen = true;
+            }
+            else if (args.Equals("reset"))
             {
                 WindowSystem.GetWindow("Who Said What Now")!.IsOpen = false;
-                SetCurrentPlayer();
+                WindowSystem.GetWindow("Who Said What Now - Settings")!.IsOpen = false;
+                PluginLog.LogDebug("reset");
+                ConfigHelper.reset();
                 WindowSystem.GetWindow("Who Said What Now")!.IsOpen = true;
-            } else
+                WindowSystem.GetWindow("Who Said What Now - Settings")!.IsOpen = true;
+            }
+
+            else if (args.Equals("config"))
+            {
+                WindowSystem.GetWindow("Who Said What Now - Settings")!.IsOpen = !WindowSystem.GetWindow("Who Said What Now - Settings")!.IsOpen;
+            }
+            else
             {
                 WindowSystem.GetWindow("Who Said What Now")!.IsOpen = !WindowSystem.GetWindow("Who Said What Now")!.IsOpen;
             }
@@ -129,8 +129,7 @@ namespace WhoSaidWhatNow
         //set the current player when logging in
         void OnLogin(object? sender, EventArgs e)
         {
-            PluginLog.LogDebug("onlogin");
-            SetCurrentPlayer();
+            ConfigHelper.refresh();
         }
 
         //close all windows when logging out so that the windows refresh
@@ -148,5 +147,6 @@ namespace WhoSaidWhatNow
         {
             WindowSystem.GetWindow("Who Said What Now - Settings")!.IsOpen = true;
         }
+
     }
 }

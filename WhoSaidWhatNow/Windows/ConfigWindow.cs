@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Numerics;
 
 using Dalamud.Interface;
@@ -10,11 +11,12 @@ namespace WhoSaidWhatNow.Windows;
 
 public class ConfigWindow : Window, IDisposable
 {
+    private string newName = String.Empty;
+    private string newServer = String.Empty;
+    internal const String ID_PANEL_LEFT = "###WhoSaidWhatNowConfig_LeftPanel_Child";
 
     public ConfigWindow() : base(
-        "Who Said What Now - Settings",
-        ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoScrollbar |
-        ImGuiWindowFlags.NoScrollWithMouse)
+        "Who Said What Now - Settings", ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse)
     {
         this.Size = new Vector2(400, 500);
         this.SizeCondition = ImGuiCond.Appearing;
@@ -29,8 +31,12 @@ public class ConfigWindow : Window, IDisposable
         // design philosophy for us right now is we save automatically
         // if we have more options we may change later, but honestly I think some larger plugins also do this so we're fine
 
-        ImGui.BeginChild(MainWindow.ID_PANEL_LEFT, new Vector2(180 * ImGuiHelpers.GlobalScale, 0), true);
+        ImGui.BeginTabBar("###WhoSaidWhatNowConfig_Tab_Bar");
+        if (ImGui.BeginTabItem("General"))
         {
+            // replace the existing panels by using the same IDs.
+            ImGui.BeginChild(ConfigWindow.ID_PANEL_LEFT, new Vector2(0,0), true);
+
             bool enabled = Plugin.Config.Enabled;
             if (ImGui.Checkbox("Plugin On/Off", ref enabled))
             {
@@ -43,34 +49,75 @@ public class ConfigWindow : Window, IDisposable
                 Plugin.Config.Autoscroll = autoscroll;
                 Plugin.Config.Save();
             }
-        }
 
-        foreach(var player in Plugin.Config.AlwaysTrackedPlayers)
-        {
-            //ImGui.Text(player.Name);
-            //ImGui.Text(player.Server);
-        }
-
-        string? newName = null;
-        string? newServer = null;
-
-        ImGui.EndChild();
-
-        ImGui.SameLine();
-
-        ImGui.BeginChild(MainWindow.ID_PANEL_RIGHT, new Vector2(0, 0), true);
-        {
-            foreach (var chan in Plugin.Config.ChannelToggles)
+            if (ImGui.BeginTable("alwaysTrackedPlayers", 3))
             {
-                bool val = chan.Value;
-                if (ImGui.Checkbox(chan.Key.ToString(), ref val))
+                ImGui.TableSetupColumn("Player Name");
+                ImGui.TableSetupColumn("Server");
+                ImGui.TableSetupColumn("");
+
+                ImGui.TableHeadersRow();
+                ImGui.TableNextRow();
+
+                //build table of existing data
+                foreach (var player in Plugin.Config.AlwaysTrackedPlayers)
                 {
-                    Plugin.Config.ChannelToggles[chan.Key] = val;
-                    Plugin.Config.Save();
+                    ImGui.TableNextColumn();
+                    ImGui.Text(player.Item1);
+                    ImGui.TableNextColumn();
+                    ImGui.Text(player.Item2);
+                    ImGui.TableNextColumn();
+                    if (ImGui.Button($"Remove"))
+                    {
+                        Plugin.Config.AlwaysTrackedPlayers.Remove(player);
+                        Plugin.Players.Remove(Plugin.Players.Find(x => Plugin.Config.CurrentPlayer.Contains(player.Item1)));
+                        Plugin.ConfigHelper.CheckTrackedPlayers();
+                    }
+                    ImGui.TableNextColumn();
+                    ImGui.TableNextRow();
                 }
             }
+
+            //ui elements for adding new player
+            ImGui.TableNextColumn();
+            ImGui.InputText("##inputNewName", ref newName,100);
+            ImGui.TableNextColumn();
+            ImGui.InputText("##inputNewServer", ref newServer, 100);
+            ImGui.TableNextColumn();
+            if (ImGui.Button($"Add"))
+            {
+                if (!newName.Equals("") && !newServer.Equals("")) {
+                    Plugin.Config.AlwaysTrackedPlayers.Add(new Tuple<string, string>(newName, newServer));
+                    Plugin.Config.Save();
+                    Plugin.ConfigHelper.CheckTrackedPlayers();
+                    newName = string.Empty;
+                    newServer = string.Empty;
+                }
+            }
+            ImGui.EndTable();
+
+            ImGui.EndChild();
+            ImGui.EndTabItem();
+
         }
-        ImGui.EndChild();
+
+        if (ImGui.BeginTabItem("Channels"))
+        {
+            ImGui.BeginChild(ConfigWindow.ID_PANEL_LEFT, new Vector2(0, 0), true);
+
+            foreach (var chan in Plugin.Config.ChannelToggles)
+                {
+                    bool val = chan.Value;
+                    if (ImGui.Checkbox(chan.Key.ToString(), ref val))
+                    {
+                        Plugin.Config.ChannelToggles[chan.Key] = val;
+                        Plugin.Config.Save();
+                    }
+                }
+            
+            ImGui.EndTabItem();
+            ImGui.EndChild();
+        }
 
     }
 }

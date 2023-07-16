@@ -11,7 +11,6 @@ using Dalamud.Interface.Windowing;
 using ImGuiNET;
 using Lumina.Excel.GeneratedSheets;
 using WhoSaidWhatNow.Objects;
-
 namespace WhoSaidWhatNow.Windows;
 
 public class MainWindow : Window, IDisposable
@@ -54,7 +53,7 @@ public class MainWindow : Window, IDisposable
             {
                 return false;
             }
-            else if (Plugin.Players.Any(x => x.ID == target.ObjectId))
+            else if (Plugin.Players.Any(x => x.Name.Equals(target.Name)))
             {
                 return false;
             }
@@ -161,6 +160,9 @@ public class MainWindow : Window, IDisposable
         if(player.Name == Plugin.Config.CurrentPlayer)
         {
             ImGui.Text(" YOU - " + player.Name);
+        } else if (player.RemoveDisabled == true)
+        {
+            ImGui.Text("- " + player.Name);
         } else
         {
             ImGui.Text(player.Name);
@@ -214,10 +216,10 @@ public class MainWindow : Window, IDisposable
                 Plugin.DrawConfigUI();
             }
 
-            if (ImGui.MenuItem("Add All in Range"))
-            {
+            //if (ImGui.MenuItem("Add All in Range"))
+            //{
                 //AddAllInRange();
-            }
+            //}
 
             ImGui.PushStyleColor(ImGuiCol.Text, Plugin.Config.Enabled == true ? Dalamud.Interface.Colors.ImGuiColors.HealerGreen : Dalamud.Interface.Colors.ImGuiColors.DalamudRed);
             ImGui.Text(Plugin.Config.Enabled == true ? "On" : "Off");
@@ -244,7 +246,7 @@ public class MainWindow : Window, IDisposable
 
                 if (Plugin.SelectedPlayer is not null)
                 {
-                    ImGui.BeginDisabled(Plugin.SelectedPlayer.Name.Equals(Plugin.Config.CurrentPlayer));
+                    ImGui.BeginDisabled(Plugin.SelectedPlayer.RemoveDisabled);
                     if (ImGui.MenuItem("Remove Target"))
                     {
                         RemovePlayer();
