@@ -13,6 +13,7 @@ using Dalamud.Game;
 using System.Collections.Generic;
 using WhoSaidWhatNow.Objects;
 using System;
+using System.Linq;
 
 namespace WhoSaidWhatNow
 {
@@ -23,7 +24,7 @@ namespace WhoSaidWhatNow
         public static Configuration Config = null!;
         public static Player? SelectedPlayer = null;
         public static List<Player> Players = new List<Player>();
-        public static IDictionary<String, List<Player>> Groups = new Dictionary<String, List<Player>>();
+        public static List<Dictionary<Player, Boolean>> Groups = new List<Dictionary<Player, Boolean>> { Players.ToDictionary(p => p, p => false) };
         public static SortedList<DateTime, ChatEntry> ChatEntries = new SortedList<DateTime, ChatEntry>();
         public static TargetManager TargetManager = null!;
         private static ChatListener s_chatListener = null!;
@@ -72,9 +73,9 @@ namespace WhoSaidWhatNow
             Plugin.ClientState.Login += onLogin;
         }
 
-        void onLogin(object? sender, EventArgs e) {
-            PluginLog.LogDebug("logging in!");
-            PluginLog.LogDebug(ClientState.LocalPlayer!.ObjectId.ToString());
+        void onLogin(object? sender, EventArgs e)
+        {
+            // TODO add self, Tier is doing
         }
 
         //TODO: make sure we're disposing of everything we need to appropriately
