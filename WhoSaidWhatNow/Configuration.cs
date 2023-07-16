@@ -15,9 +15,9 @@ namespace WhoSaidWhatNow
         public int Version { get; set; } = 1;
 
         /// <summary>
-        /// Always start the plugin as off by default, to prevent crashes.
+        /// Start plugin as on by default for better UX. Improved UX outweighs performance issue for now
         /// </summary>
-        public bool Enabled { get; set; } = false;
+        public bool Enabled { get; set; } = true;
 
         /// <summary>
         /// Whether the chat log window should autoscroll.
@@ -28,6 +28,8 @@ namespace WhoSaidWhatNow
         /// Player IDs that should always be tracked.
         /// </summary>
         public List<uint> AlwaysTrackedPlayers = new List<uint>();
+
+        public string CurrentPlayer = null;
 
         // CHANNEL CONFIGURATION //
         //I don't feel the need to generate the linkshell ones with a for loop, this is perfectly legible
@@ -65,7 +67,7 @@ namespace WhoSaidWhatNow
 
         //TODO: Custom chat color values, ideally using ingame colors
         //Default chat color values
-        public static readonly IDictionary<XivChatType, Vector4> ChatColors = new Dictionary<XivChatType, Vector4>()
+        public readonly IDictionary<XivChatType, Vector4> ChatColors = new Dictionary<XivChatType, Vector4>()
         {
             { XivChatType.Say, new Vector4(0.969f,0.969f,0.961f, 1f)},
             { XivChatType.TellIncoming, new Vector4(1f,0.784f,0.929f, 1f) },
@@ -97,7 +99,7 @@ namespace WhoSaidWhatNow
         };
 
         //Channel format for when printing message
-        public static readonly IDictionary<XivChatType, string> Formats = new Dictionary<XivChatType, string>()
+        public readonly IDictionary<XivChatType, string> Formats = new Dictionary<XivChatType, string>()
         {
             { XivChatType.Say, "{0}: {1}" },
             { XivChatType.TellIncoming, "{0} >> {1}" },

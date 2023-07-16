@@ -45,10 +45,10 @@ public class ConfigWindow : Window, IDisposable
             }
         }
 
-        foreach(var player in this.configuration.AlwaysTrackedPlayers)
+        foreach(var player in Plugin.Config.AlwaysTrackedPlayers)
         {
-            ImGui.Text(player.Name);
-            ImGui.Text(player.Server);
+            //ImGui.Text(player.Name);
+            //ImGui.Text(player.Server);
         }
 
         string? newName = null;

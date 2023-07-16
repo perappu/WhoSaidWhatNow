@@ -9,7 +9,7 @@ using Dalamud.Interface;
 using Dalamud.Interface.Windowing;
 
 using ImGuiNET;
-
+using Lumina.Excel.GeneratedSheets;
 using WhoSaidWhatNow.Objects;
 
 namespace WhoSaidWhatNow.Windows;
@@ -22,8 +22,8 @@ public class MainWindow : Window, IDisposable
 
     private readonly WindowSizeConstraints closedConstraints = new WindowSizeConstraints
     {
-        MinimumSize = new Vector2(220, 330),
-        MaximumSize = new Vector2(220, 330)
+        MinimumSize = new Vector2(250, 330),
+        MaximumSize = new Vector2(250, 330)
     };
     private readonly WindowSizeConstraints openConstraints = new WindowSizeConstraints
     {
@@ -69,7 +69,6 @@ public class MainWindow : Window, IDisposable
             return false;
         }
     }
-
 
     private void RemovePlayer()
     {
@@ -159,7 +158,13 @@ public class MainWindow : Window, IDisposable
 
         //TODO: padding is a bit wacky on the selectable and clicks with the one above it, either remove the padding or add margins
         ImGui.SameLine();
-        ImGui.Text(player.Name);
+        if(player.Name == Plugin.Config.CurrentPlayer)
+        {
+            ImGui.Text(" YOU - " + player.Name);
+        } else
+        {
+            ImGui.Text(player.Name);
+        }
         ImGui.EndGroup();
     }
 
@@ -208,7 +213,13 @@ public class MainWindow : Window, IDisposable
             {
                 Plugin.DrawConfigUI();
             }
-            ImGui.PushStyleColor(ImGuiCol.Text, new Vector4(1f, 0f, 0f, 1f));
+
+            if (ImGui.MenuItem("Add All in Range"))
+            {
+                //AddAllInRange();
+            }
+
+            ImGui.PushStyleColor(ImGuiCol.Text, Plugin.Config.Enabled == true ? Dalamud.Interface.Colors.ImGuiColors.HealerGreen : Dalamud.Interface.Colors.ImGuiColors.DalamudRed);
             ImGui.Text(Plugin.Config.Enabled == true ? "On" : "Off");
             ImGui.PopStyleColor();
 
@@ -222,7 +233,7 @@ public class MainWindow : Window, IDisposable
 
             // Creating left and right panels
             // you can redeclare BeginChild() with the same ID to add things to them, which we do for chatlog
-            ImGui.BeginChild(ID_PANEL_LEFT, new Vector2(205 * ImGuiHelpers.GlobalScale, 0), true, ImGuiWindowFlags.MenuBar);
+            ImGui.BeginChild(ID_PANEL_LEFT, new Vector2(230 * ImGuiHelpers.GlobalScale, 0), true, ImGuiWindowFlags.MenuBar);
 
             if (ImGui.BeginMenuBar())
             {
@@ -231,18 +242,16 @@ public class MainWindow : Window, IDisposable
                     AddPlayer();
                 }
 
-                ImGui.BeginDisabled(Plugin.SelectedPlayer is null);
-                if (ImGui.MenuItem("Remove Target"))
+                if (Plugin.SelectedPlayer is not null)
                 {
-                    RemovePlayer();
+                    ImGui.BeginDisabled(Plugin.SelectedPlayer.Name.Equals(Plugin.Config.CurrentPlayer));
+                    if (ImGui.MenuItem("Remove Target"))
+                    {
+                        RemovePlayer();
+                    }
+                    ImGui.EndDisabled();
                 }
-                ImGui.EndDisabled();
-
-                if (ImGui.MenuItem("Add All in Range"))
-                {
-                    AddAllInRange();
-                }
-
+                
                 ImGui.EndMenuBar();
             }
 

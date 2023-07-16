@@ -28,6 +28,7 @@ namespace WhoSaidWhatNow.Objects
             Server = server;
         }
 
+        //cast a generic gameobject as a PlayerCharacter
         public static PlayerCharacter? CastPlayer(GameObject obj)
         {
             try
@@ -41,6 +42,8 @@ namespace WhoSaidWhatNow.Objects
             }
         }
 
+        //two constructors
+        //TODO: less code duplication for the constructors
         public Player(GameObject gameObject)
         {
             ID = gameObject.ObjectId;
@@ -50,6 +53,21 @@ namespace WhoSaidWhatNow.Objects
             if (player != null) {
                 Server = player.HomeWorld.GameData!.Name.ToString();
             } else
+            {
+                Server = "ServerNotFound";
+            }
+        }
+
+        public Player(PlayerCharacter playerCharacter)
+        {
+            ID = playerCharacter.ObjectId;
+            Name = playerCharacter.Name.ToString();
+
+            if (playerCharacter != null)
+            {
+                Server = playerCharacter.HomeWorld.GameData!.Name.ToString();
+            }
+            else
             {
                 Server = "ServerNotFound";
             }
