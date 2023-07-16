@@ -44,6 +44,16 @@ public class ConfigWindow : Window, IDisposable
                 Plugin.Config.Save();
             }
         }
+
+        foreach(var player in this.configuration.AlwaysTrackedPlayers)
+        {
+            ImGui.Text(player.Name);
+            ImGui.Text(player.Server);
+        }
+
+        string? newName = null;
+        string? newServer = null;
+
         ImGui.EndChild();
 
         ImGui.SameLine();

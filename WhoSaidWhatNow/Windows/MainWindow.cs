@@ -237,6 +237,12 @@ public class MainWindow : Window, IDisposable
                     RemovePlayer();
                 }
                 ImGui.EndDisabled();
+
+                if (ImGui.MenuItem("Add All in Range"))
+                {
+                    AddAllInRange();
+                }
+
                 ImGui.EndMenuBar();
             }
 
