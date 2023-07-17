@@ -19,7 +19,7 @@ public class ConfigWindow : Window, IDisposable
     public ConfigWindow() : base(
         "Who Said What Now - Settings", ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse)
     {
-        this.Size = new Vector2(400, 500);
+        this.Size = new Vector2(600, 500);
         this.SizeCondition = ImGuiCond.Appearing;
     }
 
@@ -51,10 +51,23 @@ public class ConfigWindow : Window, IDisposable
                 Plugin.Config.Save();
             }
 
-            if (ImGui.BeginTable("alwaysTrackedPlayers", 3))
+            ImGui.EndChild();
+            ImGui.EndTabItem();
+
+        }
+
+        if (ImGui.BeginTabItem("Whitelist"))
+        {
+            ImGui.BeginChild(ConfigWindow.ID_PANEL_LEFT, new Vector2(0, 0), true);
+
+            ImGui.Text("Any players added here will always be tracked and marked with .");
+            ImGui.Text("They can only be removed via this page.");
+            ImGui.NewLine();
+
+            if (ImGui.BeginTable("alwaysTrackedPlayers", 3, ImGuiTableFlags.SizingFixedFit))
             {
-                ImGui.TableSetupColumn("Player Name");
-                ImGui.TableSetupColumn("Server");
+                ImGui.TableSetupColumn("Player Name", ImGuiTableColumnFlags.WidthStretch, 150);
+                ImGui.TableSetupColumn("Server", ImGuiTableColumnFlags.WidthStretch, 150);
                 ImGui.TableSetupColumn("");
 
                 ImGui.TableHeadersRow();
@@ -69,12 +82,10 @@ public class ConfigWindow : Window, IDisposable
                     ImGui.TableNextColumn();
                     ImGui.Text(player.Item2);
                     ImGui.TableNextColumn();
-                    if (ImGui.Button($"Remove"))
+                    if (ImGui.Button("Remove_" + player.Item1))
                     {
                         Plugin.Config.AlwaysTrackedPlayers.Remove(player);
-
                         Plugin.Players.Remove(Plugin.Players.Find(x => x.Name == player.Item1));
-                        
                         Plugin.ConfigHelper.CheckTrackedPlayers();
                     }
                     ImGui.TableNextColumn();
@@ -84,13 +95,14 @@ public class ConfigWindow : Window, IDisposable
 
             //ui elements for adding new player
             ImGui.TableNextColumn();
-            ImGui.InputText("##inputNewName", ref newName,100);
+            ImGui.InputText("##inputNewName", ref newName, 100);
             ImGui.TableNextColumn();
             ImGui.InputText("##inputNewServer", ref newServer, 100);
             ImGui.TableNextColumn();
-            if (ImGui.Button($"Add"))
+            if (ImGui.Button("Add"))
             {
-                if (!newName.Equals("") && !newServer.Equals("")) {
+                if (!newName.Equals("") && !newServer.Equals(""))
+                {
                     Plugin.Config.AlwaysTrackedPlayers.Add(new Tuple<string, string>(newName, newServer));
                     Plugin.Config.Save();
                     Plugin.ConfigHelper.CheckTrackedPlayers();
@@ -102,7 +114,6 @@ public class ConfigWindow : Window, IDisposable
 
             ImGui.EndChild();
             ImGui.EndTabItem();
-
         }
 
         if (ImGui.BeginTabItem("Channels"))
@@ -119,8 +130,9 @@ public class ConfigWindow : Window, IDisposable
                     }
                 }
             
-            ImGui.EndTabItem();
+            
             ImGui.EndChild();
+            ImGui.EndTabItem();
         }
 
     }

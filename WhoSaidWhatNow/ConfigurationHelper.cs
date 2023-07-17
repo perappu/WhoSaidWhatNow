@@ -56,7 +56,7 @@ namespace WhoSaidWhatNow
         {
             foreach (var player in Plugin.Config.AlwaysTrackedPlayers)
             {
-                if (Plugin.Players.Any(x => !x.Name.Equals(player.Item1)))
+                if (!Plugin.Players.Any(x => x.Name.Equals(player.Item1)))
                 {
                     //create new tracked player w/o an ID
                     Plugin.Players.Add(new Player(player.Item1, player.Item2, true));

@@ -26,7 +26,7 @@ public class MainWindow : Window, IDisposable
     };
     private readonly WindowSizeConstraints openConstraints = new WindowSizeConstraints
     {
-        MinimumSize = new Vector2(600, 330),
+        MinimumSize = new Vector2(700, 330),
         MaximumSize = new Vector2(int.MaxValue, int.MaxValue)
     };
 
