@@ -14,6 +14,8 @@ namespace WhoSaidWhatNow
         public void refresh()
         {
             PluginLog.LogDebug("refresh called");
+            Plugin.Players.Clear();
+            Plugin.Config.CurrentPlayer = string.Empty;
             SetCurrentPlayer();
             CheckTrackedPlayers();
         }
@@ -21,6 +23,8 @@ namespace WhoSaidWhatNow
         public void reset()
         {
             Plugin.Config.AlwaysTrackedPlayers = new List<Tuple<string, string>>();
+            Plugin.Players.Clear();
+            Plugin.Config.CurrentPlayer = string.Empty;
             SetCurrentPlayer();
             CheckTrackedPlayers();
         }
