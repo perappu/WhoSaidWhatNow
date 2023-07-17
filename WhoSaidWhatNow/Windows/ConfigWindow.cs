@@ -64,8 +64,9 @@ public class ConfigWindow : Window, IDisposable
             ImGui.Text("They can only be removed via this page.");
             ImGui.NewLine();
 
-            if (ImGui.BeginTable("alwaysTrackedPlayers", 3, ImGuiTableFlags.SizingFixedFit))
+            if (ImGui.BeginTable("alwaysTrackedPlayers", 4, ImGuiTableFlags.SizingFixedFit))
             {
+                ImGui.TableSetupColumn("");
                 ImGui.TableSetupColumn("Player Name", ImGuiTableColumnFlags.WidthStretch, 150);
                 ImGui.TableSetupColumn("Server", ImGuiTableColumnFlags.WidthStretch, 150);
                 ImGui.TableSetupColumn("");
@@ -78,11 +79,12 @@ public class ConfigWindow : Window, IDisposable
                 foreach (var player in templist)
                 {
                     ImGui.TableNextColumn();
+                    ImGui.TableNextColumn();
                     ImGui.Text(player.Item1);
                     ImGui.TableNextColumn();
                     ImGui.Text(player.Item2);
                     ImGui.TableNextColumn();
-                    if (ImGui.Button("Remove_" + player.Item1))
+                    if (ImGui.Button("Remove##" + player.Item1))
                     {
                         Plugin.Config.AlwaysTrackedPlayers.Remove(player);
                         Plugin.Players.Remove(Plugin.Players.Find(x => x.Name == player.Item1));
@@ -94,6 +96,7 @@ public class ConfigWindow : Window, IDisposable
             }
 
             //ui elements for adding new player
+            ImGui.TableNextColumn();
             ImGui.TableNextColumn();
             ImGui.InputText("##inputNewName", ref newName, 100);
             ImGui.TableNextColumn();

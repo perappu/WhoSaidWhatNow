@@ -148,5 +148,10 @@ namespace WhoSaidWhatNow
             WindowSystem.GetWindow("Who Said What Now - Settings")!.IsOpen = true;
         }
 
+        public static void ToggleConfigUI()
+        {
+            WindowSystem.GetWindow("Who Said What Now - Settings")!.IsOpen = !WindowSystem.GetWindow("Who Said What Now - Settings")!.IsOpen;
+        }
+
     }
 }
