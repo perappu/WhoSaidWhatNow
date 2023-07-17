@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 
@@ -59,8 +60,9 @@ public class ConfigWindow : Window, IDisposable
                 ImGui.TableHeadersRow();
                 ImGui.TableNextRow();
 
+                List<Tuple<string, string>> templist = new List<Tuple<string, string>>(Plugin.Config.AlwaysTrackedPlayers);
                 //build table of existing data
-                foreach (var player in Plugin.Config.AlwaysTrackedPlayers)
+                foreach (var player in templist)
                 {
                     ImGui.TableNextColumn();
                     ImGui.Text(player.Item1);
@@ -70,7 +72,9 @@ public class ConfigWindow : Window, IDisposable
                     if (ImGui.Button($"Remove"))
                     {
                         Plugin.Config.AlwaysTrackedPlayers.Remove(player);
-                        Plugin.Players.Remove(Plugin.Players.Find(x => Plugin.Config.CurrentPlayer.Contains(player.Item1)));
+
+                        Plugin.Players.Remove(Plugin.Players.Find(x => x.Name == player.Item1));
+                        
                         Plugin.ConfigHelper.CheckTrackedPlayers();
                     }
                     ImGui.TableNextColumn();

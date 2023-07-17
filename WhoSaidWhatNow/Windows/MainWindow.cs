@@ -103,7 +103,7 @@ public class MainWindow : Window, IDisposable
         if (player != null)
         {
             //if we're clicking on the current player and the window is already open, close it
-            if (open == true && Plugin.SelectedPlayer != null && Plugin.SelectedPlayer.ID == player.ID)
+            if (open == true && Plugin.SelectedPlayer != null && Plugin.SelectedPlayer.Name.Equals(player.Name))
             {
                 open = false;
                 Plugin.SelectedPlayer = null;
