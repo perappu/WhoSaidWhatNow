@@ -7,11 +7,13 @@ using Dalamud.Interface.Windowing;
 using WhoSaidWhatNow.Windows;
 using Dalamud.Game.ClientState;
 using Dalamud.Game.Gui;
+using Dalamud.Logging;
 using Dalamud.Game.ClientState.Objects;
 using Dalamud.Game;
 using System.Collections.Generic;
 using WhoSaidWhatNow.Objects;
 using System;
+using System.Linq;
 
 namespace WhoSaidWhatNow
 {
@@ -22,11 +24,13 @@ namespace WhoSaidWhatNow
         public static Configuration Config = null!;
         public static Player? SelectedPlayer = null;
         public static List<Player> Players = new List<Player>();
-        public static IDictionary<String, List<Player>> Groups = new Dictionary<String, List<Player>>();
+        public static List<Dictionary<Player, Boolean>> Groups = new List<Dictionary<Player, Boolean>> { Players.ToDictionary(p => p, p => false) };
         public static SortedList<DateTime, ChatEntry> ChatEntries = new SortedList<DateTime, ChatEntry>();
         public static TargetManager TargetManager = null!;
         private static ChatListener s_chatListener = null!;
         private static CommandManager s_commandManager = null!;
+        public static ClientState ClientState = null!;
+
         private static DalamudPluginInterface s_pluginInterface = null!;
         private static WindowSystem WindowSystem = new("WhoSaidWhatNow");
 
@@ -64,6 +68,14 @@ namespace WhoSaidWhatNow
 
             s_pluginInterface.UiBuilder.Draw += DrawUI;
             s_pluginInterface.UiBuilder.OpenConfigUi += DrawConfigUI;
+
+            Plugin.ClientState = clientState;
+            Plugin.ClientState.Login += onLogin;
+        }
+
+        void onLogin(object? sender, EventArgs e)
+        {
+            // TODO add self, Tier is doing
         }
 
         //TODO: make sure we're disposing of everything we need to appropriately
@@ -72,6 +84,7 @@ namespace WhoSaidWhatNow
             s_chatListener.Dispose();
             WindowSystem.RemoveAllWindows();
             s_commandManager.RemoveHandler(COMMAND);
+            Plugin.ClientState.Login -= onLogin;
         }
 
         private static void OnCommand(string command, string args)
