@@ -35,6 +35,7 @@ namespace WhoSaidWhatNow.Objects
             ID = null;
             Name = name;
             Server = server;
+            RemoveDisabled = removeDisabled;
         }
         
         public Player(GameObject gameObject, bool removeDisabled = false)

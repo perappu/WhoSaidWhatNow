@@ -51,6 +51,7 @@ namespace WhoSaidWhatNow
         }
 
         // cycle through tracked player list to make sure they're all being tracked. if not, add them
+        // add them with RemoveDisabled = true. should only be able to be removed via the config window
         public void CheckTrackedPlayers()
         {
             foreach (var player in Plugin.Config.AlwaysTrackedPlayers)

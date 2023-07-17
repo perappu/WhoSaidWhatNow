@@ -159,10 +159,10 @@ public class MainWindow : Window, IDisposable
         ImGui.SameLine();
         if(player.Name == Plugin.Config.CurrentPlayer)
         {
-            ImGui.Text(" YOU - " + player.Name);
+            ImGui.Text(" " + player.Name + " (YOU)");
         } else if (player.RemoveDisabled == true)
         {
-            ImGui.Text("- " + player.Name);
+            ImGui.Text(" " + player.Name);
         } else
         {
             ImGui.Text(player.Name);
