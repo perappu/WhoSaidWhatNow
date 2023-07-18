@@ -2,15 +2,20 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-
+using Dalamud.Game.ClientState.Objects;
 using Dalamud.Game.ClientState.Objects.Enums;
+using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Interface;
 using Dalamud.Interface.Windowing;
+using Dalamud.DrunkenToad;
 
 using ImGuiNET;
 using Lumina.Excel.GeneratedSheets;
 using WhoSaidWhatNow.Objects;
+using LiteDB;
+using Dalamud.Logging;
+
 namespace WhoSaidWhatNow.Windows;
 
 public class MainWindow : Window, IDisposable
@@ -53,7 +58,7 @@ public class MainWindow : Window, IDisposable
             {
                 return false;
             }
-            else if (Plugin.Players.Any(x => x.Name.Equals(target.Name)))
+            else if (Plugin.Players.Any(x => x.Name.Equals(target.Name.ToString())))
             {
                 return false;
             }
@@ -78,6 +83,21 @@ public class MainWindow : Window, IDisposable
             Plugin.SelectedPlayer = null;
             //we have to manually close the window here
             this.SizeConstraints = closedConstraints;
+        }
+    }
+
+    internal void AddAllInRange()
+    {
+        GameObject[]? playerArray = Plugin.ObjectTable.ToArray();
+        List<PlayerCharacter?> nearbyPlayers = playerArray!.Where(actor => actor.IsValidPlayerCharacter() && actor.ObjectId != Plugin.ClientState.LocalPlayer!.ObjectId).Select(actor => actor as PlayerCharacter).ToList();
+
+        foreach (PlayerCharacter nearbyPlayer in nearbyPlayers)
+        {
+            if (!Plugin.Players.Any(x => x.Name.Equals(nearbyPlayer.Name.ToString())))
+            {
+                PluginLog.LogDebug("nearby player found " + nearbyPlayer.Name.ToString());
+                Plugin.Players.Add(new Player(nearbyPlayer));
+            }
         }
     }
 
@@ -135,6 +155,7 @@ public class MainWindow : Window, IDisposable
         {
 
             this.SizeConstraints = openConstraints;
+
         }
         else
         {
@@ -216,10 +237,10 @@ public class MainWindow : Window, IDisposable
                 Plugin.ToggleConfigUI();
             }
 
-            //if (ImGui.MenuItem("Add All in Range"))
-            //{
-                //AddAllInRange();
-            //}
+            if (ImGui.MenuItem("Add All in Range"))
+            {
+                 AddAllInRange();
+            }
 
             ImGui.PushStyleColor(ImGuiCol.Text, Plugin.Config.Enabled == true ? Dalamud.Interface.Colors.ImGuiColors.HealerGreen : Dalamud.Interface.Colors.ImGuiColors.DalamudRed);
             ImGui.Text(Plugin.Config.Enabled == true ? "On" : "Off");

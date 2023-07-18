@@ -98,8 +98,10 @@ public class ConfigWindow : Window, IDisposable
             //ui elements for adding new player
             ImGui.TableNextColumn();
             ImGui.TableNextColumn();
+            ImGui.SetNextItemWidth(-1);
             ImGui.InputText("##inputNewName", ref newName, 100);
             ImGui.TableNextColumn();
+            ImGui.SetNextItemWidth(-1);
             ImGui.InputText("##inputNewServer", ref newServer, 100);
             ImGui.TableNextColumn();
             if (ImGui.Button("Add"))

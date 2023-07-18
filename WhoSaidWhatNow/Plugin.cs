@@ -31,6 +31,7 @@ namespace WhoSaidWhatNow
         private static ChatListener s_chatListener = null!;
         private static CommandManager s_commandManager = null!;
         public static ClientState ClientState = null!;
+        public static ObjectTable ObjectTable = null!;
 
         private static DalamudPluginInterface s_pluginInterface = null!;
         private static WindowSystem WindowSystem = new("WhoSaidWhatNow");
@@ -43,7 +44,7 @@ namespace WhoSaidWhatNow
             [RequiredVersion("1.0")] ClientState clientState,
             [RequiredVersion("1.0")] ChatGui chatGui,
             [RequiredVersion("1.0")] TargetManager targetManager,
-            [RequiredVersion("1.0")] SigScanner sigScanner)
+            [RequiredVersion("1.0")] ObjectTable objectTable)
         {
             s_pluginInterface = pluginInterface;
             s_commandManager = commandManager;
@@ -72,6 +73,7 @@ namespace WhoSaidWhatNow
             s_pluginInterface.UiBuilder.Draw += DrawUI;
             s_pluginInterface.UiBuilder.OpenConfigUi += DrawConfigUI;
 
+            Plugin.ObjectTable = objectTable;
             Plugin.ClientState = clientState;
             Plugin.ClientState.Login += OnLogin;
             Plugin.ClientState.Logout += OnLogout;
