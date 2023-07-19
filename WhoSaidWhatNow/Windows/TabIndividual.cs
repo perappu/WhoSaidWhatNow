@@ -2,19 +2,20 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-
+using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Interface;
 
 using ImGuiNET;
-
-using WhoSaidWhatNow;
 using WhoSaidWhatNow.Objects;
-using WhoSaidWhatNow.Windows;
+using WhoSaidWhatNow.Services;
+
+namespace WhoSaidWhatNow.Windows;
 
 public class TabIndividual
-    {
+{
     public TabIndividual(MainWindow mainWindow)
     {
+
         if (ImGui.BeginTabItem("Individual"))
         {
 
@@ -24,10 +25,12 @@ public class TabIndividual
 
             if (ImGui.BeginMenuBar())
             {
+                ImGui.BeginDisabled(!(Plugin.TargetManager.Target != null && Plugin.TargetManager.Target.ObjectKind == ObjectKind.Player));
                 if (ImGui.MenuItem("Add Target"))
                 {
-                    mainWindow.AddPlayer();
+                    PlayerService.AddPlayer(Plugin.TargetManager.Target);
                 }
+                ImGui.EndDisabled();
 
                 if (Plugin.SelectedPlayer is not null)
                 {
@@ -89,4 +92,3 @@ public class TabIndividual
 
 
 }
-

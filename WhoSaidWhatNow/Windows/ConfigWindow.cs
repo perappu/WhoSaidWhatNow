@@ -1,24 +1,26 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
-
-using Dalamud.Interface;
+using Dalamud.DrunkenToad;
 using Dalamud.Interface.Windowing;
 
 using ImGuiNET;
+using WhoSaidWhatNow.Services;
 
 namespace WhoSaidWhatNow.Windows;
 
 public class ConfigWindow : Window, IDisposable
 {
     private string newName = String.Empty;
-    private string newServer = String.Empty;
+    private int newServer = 0;
     internal const String ID_PANEL_LEFT = "###WhoSaidWhatNowConfig_LeftPanel_Child";
+    private readonly Plugin plugin;
+    private readonly string[] worldNames = DataManagerExtensions.WorldNames(Plugin.DataManager);
 
-    public ConfigWindow() : base(
+    public ConfigWindow(Plugin plugin) : base(
         "Who Said What Now - Settings", ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse)
     {
+        this.plugin = plugin;
         this.Size = new Vector2(600, 500);
         this.SizeCondition = ImGuiCond.Appearing;
     }
@@ -56,7 +58,7 @@ public class ConfigWindow : Window, IDisposable
 
         }
 
-        if (ImGui.BeginTabItem("Whitelist"))
+        if (ImGui.BeginTabItem("Always Tracked Players"))
         {
             ImGui.BeginChild(ConfigWindow.ID_PANEL_LEFT, new Vector2(0, 0), true);
 
@@ -86,9 +88,8 @@ public class ConfigWindow : Window, IDisposable
                     ImGui.TableNextColumn();
                     if (ImGui.Button("Remove##" + player.Item1))
                     {
-                        Plugin.Config.AlwaysTrackedPlayers.Remove(player);
-                        Plugin.Players.Remove(Plugin.Players.Find(x => x.Name == player.Item1));
-                        Plugin.ConfigHelper.CheckTrackedPlayers();
+                        PlayerService.RemoveTrackedPlayer(player);
+                        PlayerService.CheckTrackedPlayers();
                     }
                     ImGui.TableNextColumn();
                     ImGui.TableNextRow();
@@ -102,17 +103,15 @@ public class ConfigWindow : Window, IDisposable
             ImGui.InputText("##inputNewName", ref newName, 100);
             ImGui.TableNextColumn();
             ImGui.SetNextItemWidth(-1);
-            ImGui.InputText("##inputNewServer", ref newServer, 100);
+            ImGui.Combo("##servers", ref newServer, worldNames, worldNames.Length);
             ImGui.TableNextColumn();
             if (ImGui.Button("Add"))
             {
-                if (!newName.Equals("") && !newServer.Equals(""))
+                if (newName.IsValidCharacterName() && !newServer.Equals(""))
                 {
-                    Plugin.Config.AlwaysTrackedPlayers.Add(new Tuple<string, string>(newName, newServer));
-                    Plugin.Config.Save();
-                    Plugin.ConfigHelper.CheckTrackedPlayers();
+                    PlayerService.AddTrackedPlayer(new Tuple<string,string>(newName, worldNames[newServer]));
                     newName = string.Empty;
-                    newServer = string.Empty;
+                    newServer = 0;
                 }
             }
             ImGui.EndTable();

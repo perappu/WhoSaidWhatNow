@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Numerics;
-using WhoSaidWhatNow.Objects;
 
 using Dalamud.Configuration;
 using Dalamud.Game.Text;

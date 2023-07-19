@@ -2,24 +2,22 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using Dalamud.Game.ClientState.Objects;
-using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Game.ClientState.Objects.Types;
-using Dalamud.Interface;
 using Dalamud.Interface.Windowing;
 using Dalamud.DrunkenToad;
 
 using ImGuiNET;
-using Lumina.Excel.GeneratedSheets;
 using WhoSaidWhatNow.Objects;
 using LiteDB;
 using Dalamud.Logging;
+using WhoSaidWhatNow.Services;
 
 namespace WhoSaidWhatNow.Windows;
 
 public class MainWindow : Window, IDisposable
 {
+    private readonly Plugin plugin;
     internal static bool open = false;
     internal const String ID_PANEL_LEFT = "###WhoSaidWhatNow_LeftPanel_Child";
     internal const String ID_PANEL_RIGHT = "###WhoSaidWhatNow_RightPanel_Child";
@@ -27,7 +25,7 @@ public class MainWindow : Window, IDisposable
     private readonly WindowSizeConstraints closedConstraints = new WindowSizeConstraints
     {
         MinimumSize = new Vector2(250, 330),
-        MaximumSize = new Vector2(250, 330)
+        MaximumSize = new Vector2(250, int.MaxValue)
     };
     private readonly WindowSizeConstraints openConstraints = new WindowSizeConstraints
     {
@@ -35,50 +33,21 @@ public class MainWindow : Window, IDisposable
         MaximumSize = new Vector2(int.MaxValue, int.MaxValue)
     };
 
-    public MainWindow() : base("Who Said What Now", ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse | ImGuiWindowFlags.MenuBar)
+    public MainWindow(Plugin plugin) : base("Who Said What Now", ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse | ImGuiWindowFlags.MenuBar)
     {
         this.SizeConstraints = closedConstraints;
+        this.plugin = plugin;
     }
 
     // I honestly have no idea how to dispose of windows correctly
     // TODO: make sure this is ok?
     public void Dispose() { }
 
-    /// <summary>
-    /// If current target is player, save to internal list.
-    /// </summary>
-    /// <returns>True if successful.</returns>
-    internal bool AddPlayer()
-    {
-        if (Plugin.TargetManager.Target != null)
-        {
-            GameObject target = Plugin.TargetManager.Target;
-
-            if (target == null || target.ObjectKind != ObjectKind.Player)
-            {
-                return false;
-            }
-            else if (Plugin.Players.Any(x => x.Name.Equals(target.Name.ToString())))
-            {
-                return false;
-            }
-            else
-            {
-                Plugin.Players.Add(new Player(target));
-                return true;
-            }
-        }
-        else
-        {
-            return false;
-        }
-    }
-
-    internal void RemovePlayer()
+    public void RemovePlayer()
     {
         if (Plugin.SelectedPlayer is not null)
         {
-            Plugin.Players.Remove(Plugin.SelectedPlayer);
+            PlayerService.RemovePlayer(Plugin.SelectedPlayer);
             open = false;
             Plugin.SelectedPlayer = null;
             //we have to manually close the window here
@@ -86,17 +55,17 @@ public class MainWindow : Window, IDisposable
         }
     }
 
-    internal void AddAllInRange()
+    public void AddAllInRange()
     {
         GameObject[]? playerArray = Plugin.ObjectTable.ToArray();
-        List<PlayerCharacter?> nearbyPlayers = playerArray!.Where(actor => actor.IsValidPlayerCharacter() && actor.ObjectId != Plugin.ClientState.LocalPlayer!.ObjectId).Select(actor => actor as PlayerCharacter).ToList();
+        List<PlayerCharacter?> nearbyPlayers = playerArray!.Where(x => x.IsValidPlayerCharacter() && x.ObjectId != Plugin.ClientState.LocalPlayer!.ObjectId).Select(x => x as PlayerCharacter).ToList();
 
-        foreach (PlayerCharacter nearbyPlayer in nearbyPlayers)
+        foreach (PlayerCharacter? nearbyPlayer in nearbyPlayers)
         {
             if (!Plugin.Players.Any(x => x.Name.Equals(nearbyPlayer.Name.ToString())))
             {
                 PluginLog.LogDebug("nearby player found " + nearbyPlayer.Name.ToString());
-                Plugin.Players.Add(new Player(nearbyPlayer));
+                PlayerService.AddPlayer(nearbyPlayer);
             }
         }
     }
@@ -104,7 +73,7 @@ public class MainWindow : Window, IDisposable
     /// <summary>
     /// Properly formats the passed data as a chat message and adds it to the log.
     /// </summary>
-    internal static void ShowMessage(KeyValuePair<DateTime, ChatEntry> c)
+    public static void ShowMessage(KeyValuePair<DateTime, ChatEntry> c)
     {
         ImGui.PushStyleColor(ImGuiCol.Text, Plugin.Config.ChatColors[c.Value.Type]);
         string tag = Plugin.Config.Formats[c.Value.Type];
@@ -116,7 +85,7 @@ public class MainWindow : Window, IDisposable
     /// Toggles window being opened/closed based on current state of open variable
     /// </summary>
     /// <param name="player"></param>
-    internal void ToggleWindowOpen(Player? player)
+    public void ToggleWindowOpen(Player? player)
     {
 
         //If player is null, then we just open/close the window. Otherwise we set the selected player to the passed player
@@ -125,30 +94,16 @@ public class MainWindow : Window, IDisposable
             //if we're clicking on the current player and the window is already open, close it
             if (open == true && Plugin.SelectedPlayer != null && Plugin.SelectedPlayer.Name.Equals(player.Name))
             {
-                open = false;
                 Plugin.SelectedPlayer = null;
             }
             // open content in right panel
             else
             {
-
-                open = true;
                 Plugin.SelectedPlayer = player;
             }
         }
-        else
-        {
-            //if we're clicking on the current player and the window is already open, close it
-            if (open == true)
-            {
-                open = false;
-            }
-            // open content in right panel
-            else
-            {
-                open = true;
-            }
-        }
+
+        open = !open;
 
         //Stuff the selectable should do on click
         if (open)
@@ -167,7 +122,7 @@ public class MainWindow : Window, IDisposable
     /// Adds the player as a selectable element to the parent.
     /// </summary>
     /// <param name="player">Player to add.</param>
-    internal void AddPlayerSelectable(Player player)
+    public void AddPlayerSelectable(Player player)
     {
         ImGui.BeginGroup();
 
@@ -178,13 +133,15 @@ public class MainWindow : Window, IDisposable
 
         //TODO: padding is a bit wacky on the selectable and clicks with the one above it, either remove the padding or add margins
         ImGui.SameLine();
-        if(player.Name == Plugin.Config.CurrentPlayer)
+        if (player.Name == Plugin.Config.CurrentPlayer)
         {
             ImGui.Text(" " + player.Name + " (YOU)");
-        } else if (player.RemoveDisabled == true)
+        }
+        else if (player.RemoveDisabled == true)
         {
             ImGui.Text(" " + player.Name);
-        } else
+        }
+        else
         {
             ImGui.Text(player.Name);
         }
@@ -196,7 +153,7 @@ public class MainWindow : Window, IDisposable
     /// Only handles creating or adding to groups; defer removing to the groups window.<br/>
     /// TODO needs functional testing.
     /// </summary>
-    internal void ContextMenuPlayer(Player player)
+    public void ContextMenuPlayer(Player player)
     {
         if (ImGui.BeginPopupContextItem())
         {
@@ -234,12 +191,12 @@ public class MainWindow : Window, IDisposable
         {
             if (ImGui.MenuItem("Open Settings"))
             {
-                Plugin.ToggleConfigUI();
+                plugin.ToggleConfigUI();
             }
 
             if (ImGui.MenuItem("Add All in Range"))
             {
-                 AddAllInRange();
+                AddAllInRange();
             }
 
             ImGui.PushStyleColor(ImGuiCol.Text, Plugin.Config.Enabled == true ? Dalamud.Interface.Colors.ImGuiColors.HealerGreen : Dalamud.Interface.Colors.ImGuiColors.DalamudRed);
