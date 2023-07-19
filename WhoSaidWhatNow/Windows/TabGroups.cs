@@ -1,11 +1,8 @@
+using Dalamud.Interface;
+using ImGuiNET;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
-
-using Dalamud.Interface;
-
-using ImGuiNET;
-
 using WhoSaidWhatNow;
 using WhoSaidWhatNow.Objects;
 using WhoSaidWhatNow.Windows;

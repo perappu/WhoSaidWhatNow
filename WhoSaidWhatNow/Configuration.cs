@@ -1,10 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Numerics;
-
 using Dalamud.Configuration;
 using Dalamud.Game.Text;
 using Dalamud.Plugin;
+using System;
+using System.Collections.Generic;
+using System.Numerics;
 
 namespace WhoSaidWhatNow
 {
@@ -14,22 +13,23 @@ namespace WhoSaidWhatNow
         public int Version { get; set; } = 1;
 
         /// <summary>
-        /// Always start the plugin as off by default, to prevent crashes.
+        /// Start plugin as on by default for better UX. Improved UX outweighs performance issue for now
         /// </summary>
-        public bool Enabled { get; set; } = false;
+        public bool Enabled { get; set; } = true;
 
         /// <summary>
-        /// Whether the chat log window should autoscroll.
+        /// Whether the chat log window should autoscroll when opening log.
         /// </summary>
-        public bool Autoscroll { get; set; } = false;
+        public bool AutoscrollOnOpen { get; set; } = false;
 
         /// <summary>
         /// Player IDs that should always be tracked.
         /// </summary>
-        public List<uint> AlwaysTrackedPlayers = new List<uint>();
+        public List<Tuple<string, string>> AlwaysTrackedPlayers = new List<Tuple<string, string>>();
+
+        public string CurrentPlayer = String.Empty;
 
         // CHANNEL CONFIGURATION //
-        //I don't feel the need to generate the linkshell ones with a for loop, this is perfectly legible
         //Channel visibility toggle
         public IDictionary<XivChatType, bool> ChannelToggles = new Dictionary<XivChatType, bool>()
         {
@@ -102,7 +102,7 @@ namespace WhoSaidWhatNow
             { XivChatType.TellIncoming, "{0} >> {1}" },
             { XivChatType.TellOutgoing, ">> {0}: {1}" },
             { XivChatType.StandardEmote, "{1}" },
-            { XivChatType.CustomEmote, "{0} {1}" },
+            { XivChatType.CustomEmote, "{0}{1}" },
             { XivChatType.Shout, "{0} shouts: {1}" },
             { XivChatType.Yell, "{0} yells: {1}" },
             { XivChatType.Party, "({0}) {1}" },

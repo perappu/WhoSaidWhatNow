@@ -1,81 +1,55 @@
+using Dalamud.DrunkenToad;
+using Dalamud.Game.ClientState.Objects.SubKinds;
+using Dalamud.Game.ClientState.Objects.Types;
+using Dalamud.Interface.Windowing;
+using Dalamud.Logging;
+using ImGuiNET;
+using LiteDB;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-
-using Dalamud.Game.ClientState.Objects.Enums;
-using Dalamud.Game.ClientState.Objects.Types;
-using Dalamud.Interface;
-using Dalamud.Interface.Windowing;
-
-using ImGuiNET;
-
 using WhoSaidWhatNow.Objects;
+using WhoSaidWhatNow.Services;
 
 namespace WhoSaidWhatNow.Windows;
 
 public class MainWindow : Window, IDisposable
 {
+    private readonly Plugin plugin;
     internal static bool open = false;
     internal const String ID_PANEL_LEFT = "###WhoSaidWhatNow_LeftPanel_Child";
     internal const String ID_PANEL_RIGHT = "###WhoSaidWhatNow_RightPanel_Child";
 
+    //janky solution for autoscroll for now...
+    public static bool justOpened = false;
+
     private readonly WindowSizeConstraints closedConstraints = new WindowSizeConstraints
     {
-        MinimumSize = new Vector2(220, 330),
-        MaximumSize = new Vector2(220, 330)
+        MinimumSize = new Vector2(250, 330),
+        MaximumSize = new Vector2(250, int.MaxValue)
     };
     private readonly WindowSizeConstraints openConstraints = new WindowSizeConstraints
     {
-        MinimumSize = new Vector2(600, 330),
+        MinimumSize = new Vector2(700, 330),
         MaximumSize = new Vector2(int.MaxValue, int.MaxValue)
     };
 
-    public MainWindow() : base("Who Said What Now", ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse | ImGuiWindowFlags.MenuBar)
+    public MainWindow(Plugin plugin) : base("Who Said What Now", ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse | ImGuiWindowFlags.MenuBar)
     {
         this.SizeConstraints = closedConstraints;
+        this.plugin = plugin;
     }
 
     // I honestly have no idea how to dispose of windows correctly
     // TODO: make sure this is ok?
     public void Dispose() { }
 
-    /// <summary>
-    /// If current target is player, save to internal list.
-    /// </summary>
-    /// <returns>True if successful.</returns>
-    private bool AddPlayer()
-    {
-        if (Plugin.TargetManager.Target != null)
-        {
-            GameObject target = Plugin.TargetManager.Target;
-
-            if (target == null || target.ObjectKind != ObjectKind.Player)
-            {
-                return false;
-            }
-            else if (Plugin.Players.Any(x => x.ID == target.ObjectId))
-            {
-                return false;
-            }
-            else
-            {
-                Plugin.Players.Add(new Player(target));
-                return true;
-            }
-        }
-        else
-        {
-            return false;
-        }
-    }
-
-
-    private void RemovePlayer()
+    public void RemovePlayer()
     {
         if (Plugin.SelectedPlayer is not null)
         {
-            Plugin.Players.Remove(Plugin.SelectedPlayer);
+            PlayerService.RemovePlayer(Plugin.SelectedPlayer);
             open = false;
             Plugin.SelectedPlayer = null;
             //we have to manually close the window here
@@ -83,10 +57,25 @@ public class MainWindow : Window, IDisposable
         }
     }
 
+    public void AddAllInRange()
+    {
+        GameObject[]? playerArray = Plugin.ObjectTable.ToArray();
+        List<PlayerCharacter?> nearbyPlayers = playerArray!.Where(x => x.IsValidPlayerCharacter() && x.ObjectId != Plugin.ClientState.LocalPlayer!.ObjectId).Select(x => x as PlayerCharacter).ToList();
+
+        foreach (PlayerCharacter? nearbyPlayer in nearbyPlayers)
+        {
+            if (!Plugin.Players.Any(x => x.Name.Equals(nearbyPlayer.Name.ToString())))
+            {
+                PluginLog.LogDebug("nearby player found " + nearbyPlayer.Name.ToString());
+                PlayerService.AddPlayer(nearbyPlayer);
+            }
+        }
+    }
+
     /// <summary>
     /// Properly formats the passed data as a chat message and adds it to the log.
     /// </summary>
-    internal static void ShowMessage(KeyValuePair<DateTime, ChatEntry> c)
+    public static void ShowMessage(KeyValuePair<DateTime, ChatEntry> c)
     {
         ImGui.PushStyleColor(ImGuiCol.Text, Plugin.Config.ChatColors[c.Value.Type]);
         string tag = Plugin.Config.Formats[c.Value.Type];
@@ -98,45 +87,33 @@ public class MainWindow : Window, IDisposable
     /// Toggles window being opened/closed based on current state of open variable
     /// </summary>
     /// <param name="player"></param>
-    internal void ToggleWindowOpen(Player? player)
+    public void ToggleWindowOpen(Player? player)
     {
 
         //If player is null, then we just open/close the window. Otherwise we set the selected player to the passed player
         if (player != null)
         {
             //if we're clicking on the current player and the window is already open, close it
-            if (open == true && Plugin.SelectedPlayer != null && Plugin.SelectedPlayer.ID == player.ID)
+            if (open == true && Plugin.SelectedPlayer != null && Plugin.SelectedPlayer.Name.Equals(player.Name))
             {
-                open = false;
                 Plugin.SelectedPlayer = null;
             }
             // open content in right panel
             else
             {
-
-                open = true;
                 Plugin.SelectedPlayer = player;
             }
         }
-        else
-        {
-            //if we're clicking on the current player and the window is already open, close it
-            if (open == true)
-            {
-                open = false;
-            }
-            // open content in right panel
-            else
-            {
-                open = true;
-            }
-        }
+
+        open = !open;
 
         //Stuff the selectable should do on click
         if (open)
         {
 
             this.SizeConstraints = openConstraints;
+            justOpened = true;
+
         }
         else
         {
@@ -148,18 +125,29 @@ public class MainWindow : Window, IDisposable
     /// Adds the player as a selectable element to the parent.
     /// </summary>
     /// <param name="player">Player to add.</param>
-    private void AddPlayerSelectable(Player player)
+    public void AddPlayerSelectable(Player player)
     {
         ImGui.BeginGroup();
 
-        if (ImGui.Selectable("###WhoSaidWhatNow_Player_Selectable_" + player.ID, true, ImGuiSelectableFlags.None))
+        if (ImGui.Selectable("###WhoSaidWhatNow_Player_Selectable_" + player.Name, true, ImGuiSelectableFlags.None))
         {
             ToggleWindowOpen(player);
         }
 
         //TODO: padding is a bit wacky on the selectable and clicks with the one above it, either remove the padding or add margins
         ImGui.SameLine();
-        ImGui.Text(player.Name);
+        if (player.Name == Plugin.Config.CurrentPlayer)
+        {
+            ImGui.Text(" " + player.Name + " (YOU)");
+        }
+        else if (player.RemoveDisabled == true)
+        {
+            ImGui.Text(" " + player.Name);
+        }
+        else
+        {
+            ImGui.Text(player.Name);
+        }
         ImGui.EndGroup();
     }
 
@@ -171,9 +159,15 @@ public class MainWindow : Window, IDisposable
         {
             if (ImGui.MenuItem("Open Settings"))
             {
-                Plugin.DrawConfigUI();
+                plugin.ToggleConfigUI();
             }
-            ImGui.PushStyleColor(ImGuiCol.Text, new Vector4(1f, 0f, 0f, 1f));
+
+            if (ImGui.MenuItem("Add All in Range"))
+            {
+                AddAllInRange();
+            }
+
+            ImGui.PushStyleColor(ImGuiCol.Text, Plugin.Config.Enabled == true ? Dalamud.Interface.Colors.ImGuiColors.HealerGreen : Dalamud.Interface.Colors.ImGuiColors.DalamudRed);
             ImGui.Text(Plugin.Config.Enabled == true ? "On" : "Off");
             ImGui.PopStyleColor();
 
@@ -182,66 +176,7 @@ public class MainWindow : Window, IDisposable
 
         //INDIVIDUAL TAB
         ImGui.BeginTabBar("###WhoSaidWhatNow_Tab_Bar");
-        if (ImGui.BeginTabItem("Individual"))
-        {
-
-            // Creating left and right panels
-            // you can redeclare BeginChild() with the same ID to add things to them, which we do for chatlog
-            ImGui.BeginChild(ID_PANEL_LEFT, new Vector2(205 * ImGuiHelpers.GlobalScale, 0), true, ImGuiWindowFlags.MenuBar);
-
-            if (ImGui.BeginMenuBar())
-            {
-                if (ImGui.MenuItem("Add Target"))
-                {
-                    AddPlayer();
-                }
-
-                ImGui.BeginDisabled(Plugin.SelectedPlayer is null);
-                if (ImGui.MenuItem("Remove Target"))
-                {
-                    RemovePlayer();
-                }
-                ImGui.EndDisabled();
-                ImGui.EndMenuBar();
-            }
-
-            ImGui.EndChild();
-            ImGui.SameLine();
-            ImGui.BeginChild(ID_PANEL_RIGHT, new Vector2(0, 0), true);
-            ImGui.EndChild();
-
-            //Populating selectable list
-            foreach (var p in Plugin.Players)
-            {
-                ImGui.BeginChild(ID_PANEL_LEFT);
-                AddPlayerSelectable(p);
-                ImGui.EndChild();
-            }
-
-            // Build the chat log
-            // it's worth noting all of this stuff stays in memory and is only hidden when it's "closed"
-            ImGui.BeginChild(ID_PANEL_RIGHT);
-            ImGui.BeginGroup();
-            if (Plugin.SelectedPlayer is not null)
-            {
-                foreach (var c in from KeyValuePair<DateTime, ChatEntry> c in Plugin.ChatEntries
-                                  where Plugin.Config.ChannelToggles[c.Value.Type] == true && c.Value.Sender.Name.Contains(Plugin.SelectedPlayer.Name)
-                                  select c)
-                {
-                    ShowMessage(c);
-                }
-            }
-            ImGui.EndGroup();
-
-            if (Plugin.Config.Autoscroll)
-            {
-                //i don't understand math, make this actually work better
-                ImGui.SetScrollHereY(1.0f);
-            }
-
-            ImGui.EndChild();
-            ImGui.EndTabItem();
-        }
+        var individual = new TabIndividual(this);
 
         //GROUP TAB
         var groups = new TabGroups();
