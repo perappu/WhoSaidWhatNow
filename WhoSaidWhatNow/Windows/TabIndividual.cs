@@ -55,11 +55,6 @@ public class TabIndividual
             {
                 ImGui.BeginChild(MainWindow.ID_PANEL_LEFT);
                 mainWindow.AddPlayerSelectable(p);
-                if (ImGui.IsItemHovered())
-                {
-                    ImGui.SetTooltip("Right-click for more...");
-                }
-                mainWindow.ContextMenuPlayer(p);
                 ImGui.EndChild();
             }
 

@@ -151,41 +151,6 @@ public class MainWindow : Window, IDisposable
         ImGui.EndGroup();
     }
 
-    /// <summary>
-    /// Add a context menu for tracked players to the parent element.<br/>
-    /// Only handles creating or adding to groups; defer removing to the groups window.<br/>
-    /// TODO needs functional testing.
-    /// </summary>
-    public void ContextMenuPlayer(Player player)
-    {
-        if (ImGui.BeginPopupContextItem())
-        {
-            if (ImGui.BeginMenu("Add to group..."))
-            {
-                // User can either create a new group...
-                if (ImGui.Selectable("Create Group"))
-                {
-                    // TODO make name somewhat generated, otherwise key error
-                    Plugin.Groups.Add("New Group", new List<Player> { player });
-                    ImGui.CloseCurrentPopup();
-
-                }
-                ImGui.Separator();
-                // ... or add to an existing group.
-                foreach (var (k, v) in Plugin.Groups)
-                {
-                    if (ImGui.Selectable(k))
-                    {
-                        v.Add(player);
-                        ImGui.CloseCurrentPopup();
-                    }
-                }
-                ImGui.EndMenu();
-            }
-            ImGui.EndPopup();
-        }
-    }
-
     //Draw() the main window
     public override void Draw()
     {

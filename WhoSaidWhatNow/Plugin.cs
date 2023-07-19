@@ -9,6 +9,7 @@ using Dalamud.IoC;
 using Dalamud.Plugin;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using WhoSaidWhatNow.Objects;
 using WhoSaidWhatNow.Services;
 using WhoSaidWhatNow.Windows;
