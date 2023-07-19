@@ -4,7 +4,6 @@ using Dalamud.Game.ClientState;
 using Dalamud.Game.ClientState.Objects;
 using Dalamud.Game.Command;
 using Dalamud.Game.Gui;
-using Dalamud.Game.Text;
 using Dalamud.Interface.Windowing;
 using Dalamud.IoC;
 using Dalamud.Plugin;
@@ -26,7 +25,7 @@ namespace WhoSaidWhatNow
 
         public static Player? SelectedPlayer = null;
         public static List<Player> Players = new List<Player>();
-        public static IDictionary<String, List<Player>> Groups = new Dictionary<String, List<Player>>();
+        public static List<Dictionary<Player, Boolean>> Groups = new List<Dictionary<Player, Boolean>> { Players.ToDictionary(p => p, p => false) };
         public static SortedList<DateTime, ChatEntry> ChatEntries = new SortedList<DateTime, ChatEntry>();
 
         private WindowSystem WindowSystem { get; set; }
