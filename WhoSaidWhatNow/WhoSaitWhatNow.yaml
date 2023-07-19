@@ -2,8 +2,6 @@ name: WhoSaidWhatNow
 author: perappu
 punchline: Track chat logs on a per character basis.
 description: |-
-    Per character chat history plugin, evolution of Maia-Everett/dalamud-snooper.
-    Main command /whowhat
+ Per character chat history plugin, evolution of Maia-Everett/dalamud-snooper.
+ Main command /whowhat
 repo_url: https://github.com/perappu/WhoSaidWhatNow
-categoryTags:
-    - utility
