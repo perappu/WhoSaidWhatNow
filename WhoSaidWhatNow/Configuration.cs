@@ -1,10 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Numerics;
-
 using Dalamud.Configuration;
 using Dalamud.Game.Text;
 using Dalamud.Plugin;
+using System;
+using System.Collections.Generic;
+using System.Numerics;
 
 namespace WhoSaidWhatNow
 {
@@ -19,9 +18,9 @@ namespace WhoSaidWhatNow
         public bool Enabled { get; set; } = true;
 
         /// <summary>
-        /// Whether the chat log window should autoscroll.
+        /// Whether the chat log window should autoscroll when opening log.
         /// </summary>
-        public bool Autoscroll { get; set; } = false;
+        public bool AutoscrollOnOpen { get; set; } = false;
 
         /// <summary>
         /// Player IDs that should always be tracked.
@@ -31,7 +30,6 @@ namespace WhoSaidWhatNow
         public string CurrentPlayer = String.Empty;
 
         // CHANNEL CONFIGURATION //
-        //I don't feel the need to generate the linkshell ones with a for loop, this is perfectly legible
         //Channel visibility toggle
         public IDictionary<XivChatType, bool> ChannelToggles = new Dictionary<XivChatType, bool>()
         {

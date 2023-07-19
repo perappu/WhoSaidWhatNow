@@ -1,10 +1,9 @@
+using Dalamud.DrunkenToad;
+using Dalamud.Interface.Windowing;
+using ImGuiNET;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
-using Dalamud.DrunkenToad;
-using Dalamud.Interface.Windowing;
-
-using ImGuiNET;
 using WhoSaidWhatNow.Services;
 
 namespace WhoSaidWhatNow.Windows;
@@ -46,10 +45,10 @@ public class ConfigWindow : Window, IDisposable
                 Plugin.Config.Enabled = enabled;
                 Plugin.Config.Save();
             }
-            bool autoscroll = Plugin.Config.Autoscroll;
-            if (ImGui.Checkbox("Autoscrolling On/Off", ref autoscroll))
+            bool autoscroll = Plugin.Config.AutoscrollOnOpen;
+            if (ImGui.Checkbox("Autoscroll to bottom when opening log (may or may not be functional)", ref autoscroll))
             {
-                Plugin.Config.Autoscroll = autoscroll;
+                Plugin.Config.AutoscrollOnOpen = autoscroll;
                 Plugin.Config.Save();
             }
 

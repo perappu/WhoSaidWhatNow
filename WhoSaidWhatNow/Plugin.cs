@@ -1,17 +1,18 @@
+using Dalamud.Data;
+using Dalamud.DrunkenToad;
+using Dalamud.Game.ClientState;
+using Dalamud.Game.ClientState.Objects;
 using Dalamud.Game.Command;
+using Dalamud.Game.Gui;
+using Dalamud.Game.Text;
+using Dalamud.Interface.Windowing;
 using Dalamud.IoC;
 using Dalamud.Plugin;
-using Dalamud.Interface.Windowing;
-using Dalamud.Game.ClientState;
-using Dalamud.Game.Gui;
-using Dalamud.Logging;
-using Dalamud.Game.ClientState.Objects;
+using System;
 using System.Collections.Generic;
 using WhoSaidWhatNow.Objects;
-using System;
 using WhoSaidWhatNow.Services;
 using WhoSaidWhatNow.Windows;
-using Dalamud.Data;
 
 namespace WhoSaidWhatNow
 {
@@ -114,10 +115,12 @@ namespace WhoSaidWhatNow
 
             if (args.Equals("on"))
             {
+                ChatGuiExtensions.PluginPrint(Plugin.ChatGui, "WhoWhat is ON.");
                 Config.Enabled = true;
             }
             else if (args.Equals("off"))
             {
+                ChatGuiExtensions.PluginPrint(Plugin.ChatGui, "WhoWhat is OFF.");
                 Config.Enabled = false;
             }
             else if (args.Equals("refresh"))
@@ -127,6 +130,7 @@ namespace WhoSaidWhatNow
                 ConfigurationService.refresh();
                 this.MainWindow.IsOpen = true;
                 this.ConfigWindow.IsOpen = true;
+                ChatGuiExtensions.PluginPrint(Plugin.ChatGui, "WhoWhat refreshed. All temporary tracked players removed.");
             }
             else if (args.Equals("reset"))
             {
@@ -135,6 +139,7 @@ namespace WhoSaidWhatNow
                 ConfigurationService.reset();
                 this.MainWindow.IsOpen = true;
                 this.ConfigWindow.IsOpen = true;
+                ChatGuiExtensions.PluginPrint(Plugin.ChatGui, "WhoWhat refreshed. Most settings reset.");
             }
 
             else if (args.Equals("config"))

@@ -1,9 +1,7 @@
-using System;
-
 using Dalamud.Game.Gui;
 using Dalamud.Game.Text;
 using Dalamud.Game.Text.SeStringHandling;
-
+using System;
 using WhoSaidWhatNow.Objects;
 
 namespace WhoSaidWhatNow

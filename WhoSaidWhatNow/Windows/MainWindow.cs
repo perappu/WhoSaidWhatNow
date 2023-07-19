@@ -1,16 +1,15 @@
+using Dalamud.DrunkenToad;
+using Dalamud.Game.ClientState.Objects.SubKinds;
+using Dalamud.Game.ClientState.Objects.Types;
+using Dalamud.Interface.Windowing;
+using Dalamud.Logging;
+using ImGuiNET;
+using LiteDB;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using Dalamud.Game.ClientState.Objects.SubKinds;
-using Dalamud.Game.ClientState.Objects.Types;
-using Dalamud.Interface.Windowing;
-using Dalamud.DrunkenToad;
-
-using ImGuiNET;
 using WhoSaidWhatNow.Objects;
-using LiteDB;
-using Dalamud.Logging;
 using WhoSaidWhatNow.Services;
 
 namespace WhoSaidWhatNow.Windows;
@@ -21,6 +20,9 @@ public class MainWindow : Window, IDisposable
     internal static bool open = false;
     internal const String ID_PANEL_LEFT = "###WhoSaidWhatNow_LeftPanel_Child";
     internal const String ID_PANEL_RIGHT = "###WhoSaidWhatNow_RightPanel_Child";
+
+    //janky solution for autoscroll for now...
+    public static bool justOpened = false;
 
     private readonly WindowSizeConstraints closedConstraints = new WindowSizeConstraints
     {
@@ -110,6 +112,7 @@ public class MainWindow : Window, IDisposable
         {
 
             this.SizeConstraints = openConstraints;
+            justOpened = true;
 
         }
         else

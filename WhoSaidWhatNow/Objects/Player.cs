@@ -1,10 +1,10 @@
-using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Game.ClientState.Objects.SubKinds;
+using Dalamud.Game.ClientState.Objects.Types;
 using System;
+using WhoSaidWhatNow.Services;
 
 namespace WhoSaidWhatNow.Objects
 {
-
 
     /// <summary>
     /// Player object
@@ -42,7 +42,7 @@ namespace WhoSaidWhatNow.Objects
         {
             ID = gameObject.ObjectId;
             Name = gameObject.Name.ToString();
-            PlayerCharacter? player = CastPlayer(gameObject);
+            PlayerCharacter? player = PlayerService.CastPlayer(gameObject);
             RemoveDisabled = removeDisabled;
             TimeAdded = DateTime.UtcNow;
 

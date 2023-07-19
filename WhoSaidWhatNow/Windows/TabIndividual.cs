@@ -1,11 +1,11 @@
+using Dalamud.Game.ClientState.Objects.Enums;
+using Dalamud.Interface;
+using Dalamud.Logging;
+using ImGuiNET;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using Dalamud.Game.ClientState.Objects.Enums;
-using Dalamud.Interface;
-
-using ImGuiNET;
 using WhoSaidWhatNow.Objects;
 using WhoSaidWhatNow.Services;
 
@@ -78,10 +78,11 @@ public class TabIndividual
             }
             ImGui.EndGroup();
 
-            if (Plugin.Config.Autoscroll)
+            if (Plugin.Config.AutoscrollOnOpen && MainWindow.justOpened)
             {
                 //i don't understand math, make this actually work better
-                ImGui.SetScrollHereY(1.0f);
+                ImGui.SetScrollHereY(0.999f);
+                MainWindow.justOpened = false;
             }
 
             ImGui.EndChild();
