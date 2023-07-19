@@ -1,20 +1,14 @@
-using System;
-
 using Dalamud.Game.Gui;
 using Dalamud.Game.Text;
 using Dalamud.Game.Text.SeStringHandling;
-
+using System;
 using WhoSaidWhatNow.Objects;
 
 namespace WhoSaidWhatNow
 {
 
     /// <summary>
-    /// ChatListener class is heavily based around how Snooper handles messages
-    /// <br/>
-    /// However, we only keep messages if the player is already being tracked -- otherwise they are discarded
-    /// <br/>
-    /// I'm hesitant to keep the entire chat log in memory, need to find a way to read the backlog instead of just reacting to the message event if possible
+    /// ChatListener handles OnChatMessage and related events
     /// </summary>
     internal class ChatListener : IDisposable
     {

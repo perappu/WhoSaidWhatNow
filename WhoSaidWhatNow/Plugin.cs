@@ -1,106 +1,183 @@
+using Dalamud.Data;
+using Dalamud.DrunkenToad;
+using Dalamud.Game.ClientState;
+using Dalamud.Game.ClientState.Objects;
 using Dalamud.Game.Command;
+using Dalamud.Game.Gui;
+using Dalamud.Interface.Windowing;
 using Dalamud.IoC;
 using Dalamud.Plugin;
-using System.IO;
-using System.Reflection;
-using Dalamud.Interface.Windowing;
-using WhoSaidWhatNow.Windows;
-using Dalamud.Game.ClientState;
-using Dalamud.Game.Gui;
-using Dalamud.Logging;
-using Dalamud.Game.ClientState.Objects;
-using Dalamud.Game;
-using System.Collections.Generic;
-using WhoSaidWhatNow.Objects;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using WhoSaidWhatNow.Objects;
+using WhoSaidWhatNow.Services;
+using WhoSaidWhatNow.Windows;
 
 namespace WhoSaidWhatNow
 {
     public sealed class Plugin : IDalamudPlugin
     {
+
         public string Name => "Who Said What Now";
         private const string COMMAND = "/whowhat";
         public static Configuration Config = null!;
+        public static ConfigurationService ConfigHelper = null!;
+
         public static Player? SelectedPlayer = null;
         public static List<Player> Players = new List<Player>();
         public static List<Dictionary<Player, Boolean>> Groups = new List<Dictionary<Player, Boolean>> { Players.ToDictionary(p => p, p => false) };
         public static SortedList<DateTime, ChatEntry> ChatEntries = new SortedList<DateTime, ChatEntry>();
-        public static TargetManager TargetManager = null!;
-        private static ChatListener s_chatListener = null!;
-        private static CommandManager s_commandManager = null!;
-        public static ClientState ClientState = null!;
 
-        private static DalamudPluginInterface s_pluginInterface = null!;
-        private static WindowSystem WindowSystem = new("WhoSaidWhatNow");
+        private WindowSystem WindowSystem { get; set; }
+        public MainWindow MainWindow { get; }
+        public ConfigWindow ConfigWindow { get; }
 
-        //TODO: Make sure we're only actually declaring stuff we need
-        //I went a little ham because of what I thought was required by onmessagehandled
-        public Plugin(
-            [RequiredVersion("1.0")] DalamudPluginInterface pluginInterface,
-            [RequiredVersion("1.0")] CommandManager commandManager,
-            [RequiredVersion("1.0")] ClientState clientState,
-            [RequiredVersion("1.0")] ChatGui chatGui,
-            [RequiredVersion("1.0")] TargetManager targetManager,
-            [RequiredVersion("1.0")] SigScanner sigScanner)
+        [PluginService]
+        [RequiredVersion("1.0")]
+        public static DalamudPluginInterface PluginInterface { get; private set; } = null!;
+
+        [PluginService]
+        [RequiredVersion("1.0")]
+        public static CommandManager CommandManager { get; private set; } = null!;
+
+        [PluginService]
+        [RequiredVersion("1.0")]
+        public static DataManager DataManager { get; private set; } = null!;
+
+        [PluginService]
+        [RequiredVersion("1.0")]
+        public static TargetManager TargetManager { get; private set; } = null!;
+
+        [PluginService]
+        [RequiredVersion("1.0")]
+        public static ClientState ClientState { get; private set; } = null!;
+
+        [PluginService]
+        [RequiredVersion("1.0")]
+        public static ChatGui ChatGui { get; private set; } = null!;
+
+        [PluginService]
+        [RequiredVersion("1.0")]
+        public static ObjectTable ObjectTable { get; private set; } = null!;
+
+        internal ChatListener ChatListener { get; private set; } = null!;
+
+        public PlayerService PlayerService { get; set; } = null!;
+
+        public Plugin()
         {
-            s_pluginInterface = pluginInterface;
-            s_commandManager = commandManager;
-            TargetManager = targetManager;
 
             // initiatize our configuration
-            Config = s_pluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
-            Config.Initialize(s_pluginInterface);
+            Config = PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
+            Config.Initialize(PluginInterface);
 
-            // create the listener
-            s_chatListener = new ChatListener(chatGui);
+            ConfigHelper = new ConfigurationService();
 
-            //add our windows
-            WindowSystem.AddWindow(new ConfigWindow());
-            WindowSystem.AddWindow(new MainWindow());
+            // setup UI
+            this.MainWindow = new MainWindow(this);
+            this.ConfigWindow = new ConfigWindow(this);
 
-            //TODO: add a command for the config window?
-            //and one for on/off toggle
-            s_commandManager.AddHandler(COMMAND, new CommandInfo(OnCommand)
+            this.WindowSystem = new WindowSystem("WhoSaidWhatNow");
+            this.WindowSystem.AddWindow(this.ConfigWindow);
+            this.WindowSystem.AddWindow(this.MainWindow);
+
+            PluginInterface.UiBuilder.Draw += DrawUI;
+            PluginInterface.UiBuilder.OpenConfigUi += DrawConfigUI;
+
+            // add events/listeners
+            Plugin.ClientState.Login += OnLogin;
+            Plugin.ClientState.Logout += OnLogout;
+            this.ChatListener = new ChatListener(ChatGui);
+            this.PlayerService = new PlayerService();
+
+            // commands
+            CommandManager.AddHandler(COMMAND, new CommandInfo(OnCommand)
             {
-                HelpMessage = "Open settings"
+                HelpMessage = "Open main window"
             });
-
-            s_pluginInterface.UiBuilder.Draw += DrawUI;
-            s_pluginInterface.UiBuilder.OpenConfigUi += DrawConfigUI;
-
-            Plugin.ClientState = clientState;
-            Plugin.ClientState.Login += onLogin;
-        }
-
-        void onLogin(object? sender, EventArgs e)
-        {
-            // TODO add self, Tier is doing
         }
 
         //TODO: make sure we're disposing of everything we need to appropriately
         public void Dispose()
         {
-            s_chatListener.Dispose();
+            ChatListener.Dispose();
+            PluginInterface.UiBuilder.Draw -= DrawUI;
+            PluginInterface.UiBuilder.OpenConfigUi -= DrawConfigUI;
             WindowSystem.RemoveAllWindows();
-            s_commandManager.RemoveHandler(COMMAND);
-            Plugin.ClientState.Login -= onLogin;
+            CommandManager.RemoveHandler(COMMAND);
+            Plugin.ClientState.Login -= OnLogin;
+            Plugin.ClientState.Logout -= OnLogout;
         }
 
-        private static void OnCommand(string command, string args)
+        private void OnCommand(string command, string args)
         {
-            // in response to the slash command, just display our main ui
-            WindowSystem.GetWindow("Who Said What Now")!.IsOpen = true;
+
+            if (args.Equals("on"))
+            {
+                ChatGuiExtensions.PluginPrint(Plugin.ChatGui, "WhoWhat is ON.");
+                Config.Enabled = true;
+            }
+            else if (args.Equals("off"))
+            {
+                ChatGuiExtensions.PluginPrint(Plugin.ChatGui, "WhoWhat is OFF.");
+                Config.Enabled = false;
+            }
+            else if (args.Equals("refresh"))
+            {
+                this.MainWindow.IsOpen = false;
+                this.ConfigWindow.IsOpen = false;
+                ConfigurationService.refresh();
+                this.MainWindow.IsOpen = true;
+                this.ConfigWindow.IsOpen = true;
+                ChatGuiExtensions.PluginPrint(Plugin.ChatGui, "WhoWhat refreshed. All temporary tracked players removed.");
+            }
+            else if (args.Equals("reset"))
+            {
+                this.MainWindow.IsOpen = false;
+                this.ConfigWindow.IsOpen = false;
+                ConfigurationService.reset();
+                this.MainWindow.IsOpen = true;
+                this.ConfigWindow.IsOpen = true;
+                ChatGuiExtensions.PluginPrint(Plugin.ChatGui, "WhoWhat refreshed. Most settings reset.");
+            }
+
+            else if (args.Equals("config"))
+            {
+                this.ConfigWindow.IsOpen = !this.ConfigWindow.IsOpen;
+            }
+            else
+            {
+                this.MainWindow.IsOpen = !this.MainWindow.IsOpen;
+            }
         }
 
-        private static void DrawUI()
+        //set the current player when logging in
+        void OnLogin(object? sender, EventArgs e)
+        {
+            ConfigurationService.refresh();
+        }
+
+        //close all windows when logging out so that the windows refresh
+        void OnLogout(object? sender, EventArgs e)
+        {
+            this.MainWindow.IsOpen = false;
+        }
+
+        private void DrawUI()
         {
             WindowSystem.Draw();
         }
 
-        public static void DrawConfigUI()
+        public void DrawConfigUI()
         {
-            WindowSystem.GetWindow("Who Said What Now - Settings")!.IsOpen = true;
+            this.ConfigWindow.IsOpen = true;
         }
+
+        public void ToggleConfigUI()
+        {
+            this.ConfigWindow.IsOpen = !this.ConfigWindow.IsOpen;
+        }
+
     }
 }
