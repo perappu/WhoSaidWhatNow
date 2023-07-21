@@ -46,6 +46,9 @@ public class TabGroups
                             isActive = true;
                             g[p] = true;
                             // TODO filter or don't
+                        } else {
+                            isActive = false;
+                            g[p] = false;
                         }
                     }
                     ImGui.EndChild();
