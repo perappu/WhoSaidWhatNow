@@ -6,18 +6,18 @@ using System.Numerics;
 using WhoSaidWhatNow;
 using WhoSaidWhatNow.Objects;
 using WhoSaidWhatNow.Windows;
-using System.Text;
-using Dalamud.Logging;
 
 
 public class TabGroups
 {
 
-    public TabGroups()
+    public TabGroups(MainWindow main)
     {
 
         if (ImGui.BeginTabItem("Groups"))
         {
+            main.toggleWindow(true);
+
             ImGui.BeginTabBar("###groups");
             // populate the list of selectable groups.
             for (var i = 0; i < Plugin.Groups.Count; i++)
@@ -35,24 +35,19 @@ public class TabGroups
                         }
                         ImGui.EndPopup();
                     }
-                    ImGui.BeginChild(MainWindow.ID_PANEL_LEFT, new Vector2(205 * ImGuiHelpers.GlobalScale, 0), true); ;
+                    ImGui.BeginChild(MainWindow.ID_PANEL_LEFT, new Vector2(205 * ImGuiHelpers.GlobalScale, 0), true);
                     foreach (var p in Plugin.Players)
                     {
                         bool isActive;
                         g.TryGetValue(p, out isActive);
-                        if (ImGui.Checkbox(p.Name, ref isActive))
-                        {
-                            g[p] = isActive;
-                        }
-                        else
-                        {
-                            g[p] = isActive;
-                        }
+                        ImGui.Checkbox(p.Name, ref isActive);
+                        g[p] = isActive;
                     }
                     ImGui.EndChild();
+                    ImGui.SameLine();
 
                     // construct chatlog.
-                    ImGui.BeginChild(MainWindow.ID_PANEL_RIGHT, new Vector2(0, 0), true);
+                    ImGui.BeginChild(MainWindow.ID_PANEL_RIGHT);
                     ImGui.BeginGroup();
                     // for all chat entries;
                     foreach (var c in Plugin.ChatEntries)
@@ -61,8 +56,8 @@ public class TabGroups
                         if (Plugin.Config.ChannelToggles[c.Value.Type] == true)
                         {
                             // and if the player is among the tracked;
-                            var p = Plugin.Players.Find(p => p.Name == c.Value.Sender.Name);
-                            if (p != null && g[p])
+                            var p = Plugin.Players.Find(p => c.Value.Sender.Name.Contains(p.Name));
+                            if (g[p!])
                             {
                                 MainWindow.ShowMessage(c);
                             }
