@@ -97,15 +97,15 @@ public class MainWindow : Window, IDisposable
             if (ChatOpen == true && Plugin.SelectedPlayer != null && Plugin.SelectedPlayer.Name.Equals(player.Name))
             {
                 Plugin.SelectedPlayer = null;
+                ChatOpen = false;
             }
             // open content in right panel
             else
             {
                 Plugin.SelectedPlayer = player;
+                ChatOpen = true;
             }
         }
-
-        ChatOpen = !ChatOpen;
 
         //Stuff the selectable should do on click
         if (ChatOpen)
