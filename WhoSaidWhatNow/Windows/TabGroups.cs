@@ -35,7 +35,7 @@ public class TabGroups
 
                         if (ImGui.Button("Delete"))
                         {
-                            // TODO remove group
+                            Plugin.Groups.Remove(index);
                         }
 
                         ImGui.EndPopup();
