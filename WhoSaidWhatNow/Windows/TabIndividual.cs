@@ -19,6 +19,12 @@ public class TabIndividual
         if (ImGui.BeginTabItem("Individual"))
         {
 
+            //janky handling for if we're coming back to this tab from the groups tab
+            if (Plugin.SelectedPlayer is null)
+            {
+                mainWindow.toggleWindow(false);
+            }
+
             // Creating left and right panels
             // you can redeclare BeginChild() with the same ID to add things to them, which we do for chatlog
             ImGui.BeginChild(MainWindow.ID_PANEL_LEFT, new Vector2(230 * ImGuiHelpers.GlobalScale, 0), true, ImGuiWindowFlags.MenuBar);
@@ -42,7 +48,7 @@ public class TabIndividual
                     ImGui.EndDisabled();
                 }
 
-                ImGui.EndMenuBar();
+                    ImGui.EndMenuBar();
             }
 
             ImGui.EndChild();
@@ -62,6 +68,7 @@ public class TabIndividual
             // it's worth noting all of this stuff stays in memory and is only hidden when it's "closed"
             ImGui.BeginChild(MainWindow.ID_PANEL_RIGHT);
             ImGui.BeginGroup();
+
             if (Plugin.SelectedPlayer is not null)
             {
                 foreach (var c in from KeyValuePair<DateTime, ChatEntry> c in Plugin.ChatEntries
@@ -70,7 +77,7 @@ public class TabIndividual
                 {
                     MainWindow.ShowMessage(c);
                 }
-            }
+            } 
             ImGui.EndGroup();
 
             if (Plugin.Config.AutoscrollOnOpen && MainWindow.justOpened)

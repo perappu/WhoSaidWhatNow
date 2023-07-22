@@ -17,19 +17,19 @@ namespace WhoSaidWhatNow.Windows;
 public class MainWindow : Window, IDisposable
 {
     private readonly Plugin plugin;
-    internal static bool open = false;
+    public static bool ChatOpen = false;
     internal const String ID_PANEL_LEFT = "###WhoSaidWhatNow_LeftPanel_Child";
     internal const String ID_PANEL_RIGHT = "###WhoSaidWhatNow_RightPanel_Child";
 
     //janky solution for autoscroll for now...
     public static bool justOpened = false;
 
-    private readonly WindowSizeConstraints closedConstraints = new WindowSizeConstraints
+    public readonly WindowSizeConstraints closedConstraints = new WindowSizeConstraints
     {
         MinimumSize = new Vector2(250, 330),
         MaximumSize = new Vector2(250, int.MaxValue)
     };
-    private readonly WindowSizeConstraints openConstraints = new WindowSizeConstraints
+    public readonly WindowSizeConstraints openConstraints = new WindowSizeConstraints
     {
         MinimumSize = new Vector2(700, 330),
         MaximumSize = new Vector2(int.MaxValue, int.MaxValue)
@@ -50,7 +50,7 @@ public class MainWindow : Window, IDisposable
         if (Plugin.SelectedPlayer is not null)
         {
             PlayerService.RemovePlayer(Plugin.SelectedPlayer);
-            open = false;
+            ChatOpen = false;
             Plugin.SelectedPlayer = null;
             //we have to manually close the window here
             this.SizeConstraints = closedConstraints;
@@ -94,7 +94,7 @@ public class MainWindow : Window, IDisposable
         if (player != null)
         {
             //if we're clicking on the current player and the window is already open, close it
-            if (open == true && Plugin.SelectedPlayer != null && Plugin.SelectedPlayer.Name.Equals(player.Name))
+            if (ChatOpen == true && Plugin.SelectedPlayer != null && Plugin.SelectedPlayer.Name.Equals(player.Name))
             {
                 Plugin.SelectedPlayer = null;
             }
@@ -105,10 +105,10 @@ public class MainWindow : Window, IDisposable
             }
         }
 
-        open = !open;
+        ChatOpen = !ChatOpen;
 
         //Stuff the selectable should do on click
-        if (open)
+        if (ChatOpen)
         {
 
             this.SizeConstraints = openConstraints;
@@ -126,7 +126,7 @@ public class MainWindow : Window, IDisposable
     // </summary
     public void toggleWindow(bool open)
     {
-        MainWindow.open = open;
+        MainWindow.ChatOpen = open;
         SizeConstraints = open ? openConstraints : closedConstraints;
     }
 
