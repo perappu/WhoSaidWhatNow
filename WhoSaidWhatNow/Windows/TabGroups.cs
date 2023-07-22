@@ -53,6 +53,9 @@ public class TabGroups
                     ImGui.SameLine();
 
                     // construct chatlog.
+                    ImGui.BeginChild(MainWindow.ID_PANEL_RIGHT, new Vector2(0, 0), true);
+                    ImGui.EndChild();
+
                     ImGui.BeginChild(MainWindow.ID_PANEL_RIGHT);
                     ImGui.BeginGroup();
                     // for all chat entries;
@@ -71,6 +74,7 @@ public class TabGroups
                     }
                     ImGui.EndGroup();
                     ImGui.EndChild();
+
 
                     ImGui.EndTabItem();
 
