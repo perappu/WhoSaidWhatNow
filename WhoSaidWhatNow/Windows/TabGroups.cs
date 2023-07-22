@@ -1,11 +1,10 @@
 using Dalamud.Interface;
 using ImGuiNET;
 using System;
-using System.Collections.Generic;
 using System.Numerics;
 using WhoSaidWhatNow;
-using WhoSaidWhatNow.Objects;
 using WhoSaidWhatNow.Windows;
+using System.Linq;
 
 
 public class TabGroups
@@ -20,28 +19,34 @@ public class TabGroups
 
             ImGui.BeginTabBar("###groups");
             // populate the list of selectable groups.
-            for (var i = 0; i < Plugin.Groups.Count; i++)
+            foreach (var g in Plugin.Groups)
             {
-                var g = Plugin.Groups[i];
-                var name = "Group " + (i + 1);
-                if (ImGui.BeginTabItem(name))
+                var index = g.Key;
+                var group = g.Value;
+                var name = group.NAME;
+                var players = group.PLAYERS;
+                if (ImGui.BeginTabItem($"{name}###Tab_{index}"))
                 {
                     if (ImGui.BeginPopupContextItem())
                     {
-                        ImGui.InputText("##edit", ref name, (uint)name.Length * sizeof(Char));
-                        if (i > 0)
+                        var input = String.Empty;
+                        ImGui.InputTextWithHint($"##{index}", "Enter the group name...", ref name, 30);
+                        Plugin.Groups[index] = (name, players);
+
+                        if (ImGui.Button("Delete"))
                         {
-                            ImGui.Button("Delete");
+                            // TODO remove group
                         }
+
                         ImGui.EndPopup();
                     }
                     ImGui.BeginChild(MainWindow.ID_PANEL_LEFT, new Vector2(205 * ImGuiHelpers.GlobalScale, 0), true);
                     foreach (var p in Plugin.Players)
                     {
                         bool isActive;
-                        g.TryGetValue(p, out isActive);
+                        players.TryGetValue(p, out isActive);
                         ImGui.Checkbox(p.Name, ref isActive);
-                        g[p] = isActive;
+                        players[p] = isActive;
                     }
                     ImGui.EndChild();
                     ImGui.SameLine();
@@ -57,7 +62,7 @@ public class TabGroups
                         {
                             // and if the player is among the tracked;
                             var p = Plugin.Players.Find(p => c.Value.Sender.Name.Contains(p.Name));
-                            if (g[p!])
+                            if (players[p!])
                             {
                                 MainWindow.ShowMessage(c);
                             }
@@ -73,7 +78,7 @@ public class TabGroups
 
             if (ImGui.TabItemButton("+", ImGuiTabItemFlags.Trailing | ImGuiTabItemFlags.NoTooltip))
             {
-                Plugin.Groups.Add(new Dictionary<Player, Boolean>());
+                Plugin.Groups.Add($"{Plugin.Groups.Count + 1}", ($"Group {Plugin.Groups.Count + 1}", Plugin.Players.ToDictionary(p => p, p => false)));
                 ImGui.EndTabItem();
             }
 
