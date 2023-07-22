@@ -121,6 +121,15 @@ public class MainWindow : Window, IDisposable
         }
     }
 
+    // <summary>
+    // Force toggles the window open/closed.
+    // </summary
+    public void toggleWindow(bool open)
+    {
+        MainWindow.open = open;
+        SizeConstraints = open ? openConstraints : closedConstraints;
+    }
+
     /// <summary>
     /// Adds the player as a selectable element to the parent.
     /// </summary>
@@ -179,7 +188,7 @@ public class MainWindow : Window, IDisposable
         var individual = new TabIndividual(this);
 
         //GROUP TAB
-        var groups = new TabGroups();
+        var groups = new TabGroups(this);
 
         ImGui.EndTabBar();
 

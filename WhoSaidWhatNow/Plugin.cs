@@ -26,7 +26,7 @@ namespace WhoSaidWhatNow
 
         public static Player? SelectedPlayer = null;
         public static List<Player> Players = new List<Player>();
-        public static List<Dictionary<Player, Boolean>> Groups = new List<Dictionary<Player, Boolean>> { Players.ToDictionary(p => p, p => false) };
+        public static Dictionary<String, (String NAME, Dictionary<Player, Boolean> PLAYERS)> Groups = new Dictionary<String, (String, Dictionary<Player, Boolean>)> { { "1", ("Group 1", Players.ToDictionary(p => p, p => false)) } };
         public static SortedList<DateTime, ChatEntry> ChatEntries = new SortedList<DateTime, ChatEntry>();
 
         private WindowSystem WindowSystem { get; set; }
