@@ -12,12 +12,9 @@ https://raw.githubusercontent.com/perappu/WhoSaidWhatNow/master/repo.json
 * View individual chat logs for specified characters
 * Tracking can be turned on/off within the plugin
 * Stores all chat logs as tabs on a single collapsible window
-* View all tracked characters as one group or individually
+* View tracked characters individually or within user-defined, renamable groups
+* Automatic tracking for specified players in defined in settings
+* Button to "Add All in Range", tracking all players visible to the plugin
 * Enable/disable specific chat channels (i.e. /say, /em, /cwls2, etc)
 
- ## Future
- 
- * User-defined groups for specified characters only
- * Automatically whitelist names to always be tracked
- * Enable hiding/showing user's messages in viewed log
- * Read backlog when plugin is enabled
+![ffxiv_dx11_2023-07-21_23-30-21](https://github.com/perappu/WhoSaidWhatNow/assets/13854524/f8f9a672-d988-4f6b-bcd0-9313fd98aec3)
