@@ -10,9 +10,11 @@ using System.Linq;
 
 public class TabGroups
 {
+    private static int counter = 1;
 
     public TabGroups(MainWindow main)
     {
+
 
         if (ImGui.BeginTabItem("Groups"))
         {
@@ -83,7 +85,8 @@ public class TabGroups
 
             if (ImGui.TabItemButton("+", ImGuiTabItemFlags.Trailing | ImGuiTabItemFlags.NoTooltip))
             {
-                Plugin.Groups.Add($"{Plugin.Groups.Count + 1}", ($"Group {Plugin.Groups.Count + 1}", Plugin.Players.ToDictionary(p => p, p => false)));
+                TabGroups.counter++;
+                Plugin.Groups.Add($"{TabGroups.counter}", ($"Group {TabGroups.counter}", Plugin.Players.ToDictionary(p => p, p => false)));
                 ImGui.EndTabItem();
             }
 
