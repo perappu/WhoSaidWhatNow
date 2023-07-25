@@ -4,3 +4,4 @@ bin/
 *.user
 .editorconfig
 .vscode/
+DalamudPackager.2.1.11/**
