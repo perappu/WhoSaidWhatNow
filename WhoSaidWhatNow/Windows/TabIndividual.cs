@@ -1,11 +1,11 @@
 using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Interface;
-using Dalamud.Logging;
 using ImGuiNET;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using System.Text.RegularExpressions;
 using WhoSaidWhatNow.Objects;
 using WhoSaidWhatNow.Services;
 
@@ -13,7 +13,7 @@ namespace WhoSaidWhatNow.Windows;
 
 public class TabIndividual
 {
-    public TabIndividual(MainWindow mainWindow)
+    public TabIndividual(MainWindow mainWindow, Plugin plugin)
     {
 
         if (ImGui.BeginTabItem("Individual"))
@@ -47,16 +47,34 @@ public class TabIndividual
                     }
                     ImGui.EndDisabled();
                 }
-
-                    ImGui.EndMenuBar();
+                ImGui.EndMenuBar();
             }
 
             ImGui.EndChild();
             ImGui.SameLine();
-            ImGui.BeginChild(MainWindow.ID_PANEL_RIGHT, new Vector2(0, 0), true);
+
+            //initialize right window with menu bar
+            ImGui.BeginChild(MainWindow.ID_PANEL_RIGHT, new Vector2(0, 0), true, ImGuiWindowFlags.MenuBar);
+
+            if (ImGui.BeginMenuBar())
+            {
+                if (ImGui.MenuItem("Save Log"))
+                {
+                    plugin.FileDialogManager.SaveFileDialog("Save log...", "Text File{.txt}",
+                        Regex.Replace(Plugin.SelectedPlayer.Name, "[^a-zA-Z0-9]", String.Empty) + "-" + DateTime.Now.ToString("yyyy-MM-dd") + ".txt",
+                        ".txt", (isOk, selectedFile) =>
+                        {
+                            if (isOk)
+                            {
+                                FileService.SaveIndividualLog(selectedFile);
+                            }
+                        });
+                }
+                ImGui.EndMenuBar();
+            }
             ImGui.EndChild();
 
-            //Populating selectable list
+            //Reopen left window, populate selectable list
             foreach (var p in Plugin.Players)
             {
                 ImGui.BeginChild(MainWindow.ID_PANEL_LEFT);
@@ -64,9 +82,10 @@ public class TabIndividual
                 ImGui.EndChild();
             }
 
-            // Build the chat log
+            // Reopen right window, build the chat log
             // it's worth noting all of this stuff stays in memory and is only hidden when it's "closed"
             ImGui.BeginChild(MainWindow.ID_PANEL_RIGHT);
+
             ImGui.BeginGroup();
 
             if (Plugin.SelectedPlayer is not null)
