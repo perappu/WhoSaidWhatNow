@@ -133,10 +133,8 @@ namespace WhoSaidWhatNow
             else if (args.Equals("refresh"))
             {
                 this.MainWindow.IsOpen = false;
-                this.ConfigWindow.IsOpen = false;
                 ConfigurationService.refresh();
                 this.MainWindow.IsOpen = true;
-                this.ConfigWindow.IsOpen = true;
                 ChatGuiExtensions.PluginPrint(Plugin.ChatGui, "WhoWhat refreshed. All temporary tracked players removed.");
             }
             else if (args.Equals("reset"))
@@ -162,7 +160,10 @@ namespace WhoSaidWhatNow
         //set the current player when logging in
         void OnLogin(object? sender, EventArgs e)
         {
-            ConfigurationService.refresh();
+            Plugin.Players.Clear();
+            Plugin.Config.CurrentPlayer = string.Empty;
+            PlayerService.SetCurrentPlayer();
+            PlayerService.CheckTrackedPlayers();
         }
 
         //close all windows when logging out so that the windows refresh
@@ -170,6 +171,7 @@ namespace WhoSaidWhatNow
         {
             this.MainWindow.IsOpen = false;
             SelectedPlayer = null;
+            Plugin.Players.Clear();
         }
 
         private void DrawUI()

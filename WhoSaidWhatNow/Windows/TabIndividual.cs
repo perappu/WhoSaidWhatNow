@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using System.Text.RegularExpressions;
 using WhoSaidWhatNow.Objects;
 using WhoSaidWhatNow.Services;
 
@@ -31,6 +30,10 @@ public class TabIndividual
 
             if (ImGui.BeginMenuBar())
             {
+                //i can not believe i have to wrap this in a group to show the hover when the button is disabled
+
+                //button to add targetmanager targeted player
+                ImGui.BeginGroup();
                 ImGui.BeginDisabled(!(Plugin.TargetManager.Target != null && Plugin.TargetManager.Target.ObjectKind == ObjectKind.Player));
                 //push font to make our menus with FA icons
                 ImGui.PushFont(UiBuilder.IconFont);
@@ -39,31 +42,51 @@ public class TabIndividual
                     PlayerService.AddPlayer(Plugin.TargetManager.Target);
                 }
                 ImGui.PopFont();
+                ImGui.EndDisabled();
+                ImGui.EndGroup();
                 if (ImGui.IsItemHovered())
                 {
                     ImGui.SetTooltip("Add currently targeted player");
                 }
-                
-                ImGui.EndDisabled();
 
-                if (Plugin.SelectedPlayer is not null)
+                // button to remove selected player
+                ImGui.BeginGroup();
+                ImGui.BeginDisabled(Plugin.SelectedPlayer == null ? true : false);
+                ImGui.PushFont(UiBuilder.IconFont);
+                if (ImGui.MenuItem(FontAwesomeIcon.UserMinus.ToIconString()))
                 {
-                    ImGui.BeginDisabled(Plugin.SelectedPlayer.RemoveDisabled);
-                    ImGui.PushFont(UiBuilder.IconFont);
-                    if (ImGui.MenuItem(FontAwesomeIcon.UserMinus.ToIconString()))
-                    {
-                        mainWindow.RemovePlayer();
-                    }
-                    ImGui.PopFont();
-                    if (ImGui.IsItemHovered())
-                    {
-                        ImGui.SetTooltip("Remove currently opened player");
-                    }
-                    ImGui.EndDisabled();
+                    mainWindow.RemovePlayer();
                 }
+                ImGui.PopFont();
+                ImGui.EndDisabled();
+                ImGui.EndGroup();
+                if (ImGui.IsItemHovered())
+                {
+                    ImGui.SetTooltip("Remove currently opened player");
+                }
+
+                ImGui.SameLine(ImGui.GetWindowWidth() - 40);
+
+                // button to remove all manually tracked players, does a refresh() behind the scenes so it's actually rebuilding the list entirely
+                ImGui.BeginGroup();
+                ImGui.BeginDisabled(!ImGui.GetIO().KeyShift);
+                ImGui.PushFont(UiBuilder.IconFont);
+                if (ImGui.MenuItem(FontAwesomeIcon.UserSlash.ToIconString()))
+                {
+                    ConfigurationService.refresh();
+                }
+                ImGui.PopFont();
+                ImGui.EndDisabled();
+                ImGui.EndGroup();
+                if (ImGui.IsItemHovered())
+                {
+                    ImGui.SetTooltip("Hold shift to clear all manually added players");
+                }
+
+
                 ImGui.EndMenuBar();
             }
-            
+
             ImGui.EndChild();
             ImGui.SameLine();
 
@@ -88,7 +111,7 @@ public class TabIndividual
                 ImGui.EndMenuBar();
             }
             ImGui.EndChild();
-            
+
 
             //Reopen left window, populate selectable list
             foreach (var p in Plugin.Players)
@@ -112,7 +135,7 @@ public class TabIndividual
                 {
                     MainWindow.ShowMessage(c);
                 }
-            } 
+            }
             ImGui.EndGroup();
 
             if (Plugin.Config.AutoscrollOnOpen && MainWindow.justOpened)

@@ -20,6 +20,7 @@ namespace WhoSaidWhatNow.Services
         {
             Plugin.Config.AlwaysTrackedPlayers = new List<Tuple<string, string>>();
             Plugin.Players.Clear();
+            Plugin.ChatEntries.Clear();
             Plugin.Config.CurrentPlayer = string.Empty;
             PlayerService.SetCurrentPlayer();
             PlayerService.CheckTrackedPlayers();
