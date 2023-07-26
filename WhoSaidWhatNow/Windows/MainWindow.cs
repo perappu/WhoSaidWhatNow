@@ -185,10 +185,10 @@ public class MainWindow : Window, IDisposable
 
         //INDIVIDUAL TAB
         ImGui.BeginTabBar("###WhoSaidWhatNow_Tab_Bar");
-        var individual = new TabIndividual(this, plugin);
+        var individual = new TabIndividual(this);
 
         //GROUP TAB
-        var groups = new TabGroups(this, plugin);
+        var groups = new TabGroups(this);
 
         ImGui.EndTabBar();
 
