@@ -57,15 +57,19 @@ public class TabGroups
                     // construct chatlog.
                     ImGui.BeginChild(MainWindow.ID_PANEL_RIGHT, new Vector2(0, 0), true, ImGuiWindowFlags.MenuBar);
 
+                    //push font to make our menus with FA icons
+                    ImGui.PushFont(UiBuilder.IconFont);
+
                     // add menu bar with chat log button
                     if (ImGui.BeginMenuBar())
                     {
-                        if (ImGui.MenuItem("Save Log"))
+                        if (ImGui.MenuItem(FontAwesomeIcon.Save.ToIconString()))
                         {
                             FileService.OpenFileDialog(plugin, g);
                         }
                         ImGui.EndMenuBar();
                     }
+                    ImGui.PopFont();
 
                     ImGui.EndChild();
 
