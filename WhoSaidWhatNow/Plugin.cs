@@ -62,9 +62,7 @@ namespace WhoSaidWhatNow
         [RequiredVersion("1.0")]
         public static ObjectTable ObjectTable { get; private set; } = null!;
 
-        [PluginService]
-        [RequiredVersion("1.0")]
-        public static FileDialogManager FileDialogManager { get; set; } = null!;
+        public FileDialogManager FileDialogManager { get; set; } = null!;
 
         internal ChatListener ChatListener { get; private set; } = null!;
 
@@ -82,6 +80,7 @@ namespace WhoSaidWhatNow
             // setup UI
             this.MainWindow = new MainWindow(this);
             this.ConfigWindow = new ConfigWindow(this);
+            this.FileDialogManager = new FileDialogManager();
 
             this.WindowSystem = new WindowSystem("WhoSaidWhatNow");
             this.WindowSystem.AddWindow(this.ConfigWindow);

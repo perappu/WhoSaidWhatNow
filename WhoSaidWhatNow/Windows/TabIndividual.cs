@@ -13,7 +13,7 @@ namespace WhoSaidWhatNow.Windows;
 
 public class TabIndividual
 {
-    public TabIndividual(MainWindow mainWindow)
+    public TabIndividual(MainWindow mainWindow, Plugin plugin)
     {
 
         if (ImGui.BeginTabItem("Individual"))
@@ -60,7 +60,7 @@ public class TabIndividual
             {
                 if (ImGui.MenuItem("Save Log"))
                 {
-                    Plugin.FileDialogManager.SaveFileDialog("Save log...", "Text File{.txt}",
+                    plugin.FileDialogManager.SaveFileDialog("Save log...", "Text File{.txt}",
                         Regex.Replace(Plugin.SelectedPlayer.Name, "[^a-zA-Z0-9]", String.Empty) + "-" + DateTime.Now.ToString("yyyy-MM-dd") + ".txt",
                         ".txt", (isOk, selectedFile) =>
                         {

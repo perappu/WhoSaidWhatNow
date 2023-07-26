@@ -13,9 +13,8 @@ public class TabGroups
 {
     private static int counter = 1;
 
-    public TabGroups(MainWindow main)
+    public TabGroups(MainWindow main, Plugin plugin)
     {
-
 
         if (ImGui.BeginTabItem("Groups"))
         {
@@ -63,7 +62,7 @@ public class TabGroups
                     {
                         if (ImGui.MenuItem("Save Log"))
                         {
-                            Plugin.FileDialogManager.SaveFileDialog("Save log...", "Text File{.txt}",
+                            plugin.FileDialogManager.SaveFileDialog("Save log...", "Text File{.txt}",
                                 Regex.Replace(group.NAME, "[^a-zA-Z0-9]", String.Empty) + "-" + DateTime.Now.ToString("yyyy-MM-dd") + ".txt",
                                 ".txt", (isOk, selectedFile) =>
                                 {
