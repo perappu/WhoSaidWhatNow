@@ -1,11 +1,11 @@
 using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Interface;
-using Dalamud.Logging;
 using ImGuiNET;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using System.Text.RegularExpressions;
 using WhoSaidWhatNow.Objects;
 using WhoSaidWhatNow.Services;
 
@@ -13,7 +13,7 @@ namespace WhoSaidWhatNow.Windows;
 
 public class TabIndividual
 {
-    public TabIndividual(MainWindow mainWindow)
+    public TabIndividual(MainWindow mainWindow, Plugin plugin)
     {
 
         if (ImGui.BeginTabItem("Individual"))
@@ -32,31 +32,65 @@ public class TabIndividual
             if (ImGui.BeginMenuBar())
             {
                 ImGui.BeginDisabled(!(Plugin.TargetManager.Target != null && Plugin.TargetManager.Target.ObjectKind == ObjectKind.Player));
-                if (ImGui.MenuItem("Add Target"))
+                //push font to make our menus with FA icons
+                ImGui.PushFont(UiBuilder.IconFont);
+                if (ImGui.MenuItem(FontAwesomeIcon.UserPlus.ToIconString()))
                 {
                     PlayerService.AddPlayer(Plugin.TargetManager.Target);
                 }
+                ImGui.PopFont();
+                if (ImGui.IsItemHovered())
+                {
+                    ImGui.SetTooltip("Add currently targeted player");
+                }
+                
                 ImGui.EndDisabled();
 
                 if (Plugin.SelectedPlayer is not null)
                 {
                     ImGui.BeginDisabled(Plugin.SelectedPlayer.RemoveDisabled);
-                    if (ImGui.MenuItem("Remove Target"))
+                    ImGui.PushFont(UiBuilder.IconFont);
+                    if (ImGui.MenuItem(FontAwesomeIcon.UserMinus.ToIconString()))
                     {
                         mainWindow.RemovePlayer();
                     }
+                    ImGui.PopFont();
+                    if (ImGui.IsItemHovered())
+                    {
+                        ImGui.SetTooltip("Remove currently opened player");
+                    }
                     ImGui.EndDisabled();
                 }
-
-                    ImGui.EndMenuBar();
+                ImGui.EndMenuBar();
             }
-
+            
             ImGui.EndChild();
             ImGui.SameLine();
-            ImGui.BeginChild(MainWindow.ID_PANEL_RIGHT, new Vector2(0, 0), true);
-            ImGui.EndChild();
 
-            //Populating selectable list
+            //initialize right window with menu bar
+            ImGui.BeginChild(MainWindow.ID_PANEL_RIGHT, new Vector2(0, 0), true, ImGuiWindowFlags.MenuBar);
+
+            if (ImGui.BeginMenuBar())
+            {
+                //push font to make our menus with FA icons
+                ImGui.PushFont(UiBuilder.IconFont);
+                if (ImGui.MenuItem(FontAwesomeIcon.Save.ToIconString()))
+                {
+                    FileService.OpenFileDialog(plugin, Plugin.SelectedPlayer.Name);
+
+                }
+                ImGui.PopFont();
+
+                if (ImGui.IsItemHovered())
+                {
+                    ImGui.SetTooltip("Save log to .txt file");
+                }
+                ImGui.EndMenuBar();
+            }
+            ImGui.EndChild();
+            
+
+            //Reopen left window, populate selectable list
             foreach (var p in Plugin.Players)
             {
                 ImGui.BeginChild(MainWindow.ID_PANEL_LEFT);
@@ -64,9 +98,10 @@ public class TabIndividual
                 ImGui.EndChild();
             }
 
-            // Build the chat log
+            // Reopen right window, build the chat log
             // it's worth noting all of this stuff stays in memory and is only hidden when it's "closed"
             ImGui.BeginChild(MainWindow.ID_PANEL_RIGHT);
+
             ImGui.BeginGroup();
 
             if (Plugin.SelectedPlayer is not null)

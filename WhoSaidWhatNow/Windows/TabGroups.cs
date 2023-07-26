@@ -6,15 +6,15 @@ using System.Numerics;
 using WhoSaidWhatNow;
 using WhoSaidWhatNow.Windows;
 using System.Linq;
-
+using System.Text.RegularExpressions;
+using WhoSaidWhatNow.Services;
 
 public class TabGroups
 {
     private static int counter = 1;
 
-    public TabGroups(MainWindow main)
+    public TabGroups(MainWindow main, Plugin plugin)
     {
-
 
         if (ImGui.BeginTabItem("Groups"))
         {
@@ -55,7 +55,25 @@ public class TabGroups
                     ImGui.SameLine();
 
                     // construct chatlog.
-                    ImGui.BeginChild(MainWindow.ID_PANEL_RIGHT, new Vector2(0, 0), true);
+                    ImGui.BeginChild(MainWindow.ID_PANEL_RIGHT, new Vector2(0, 0), true, ImGuiWindowFlags.MenuBar);
+
+                    // add menu bar with chat log button
+                    if (ImGui.BeginMenuBar())
+                    {
+                        //push font to make our menus with FA icons
+                        ImGui.PushFont(UiBuilder.IconFont);
+                        if (ImGui.MenuItem(FontAwesomeIcon.Save.ToIconString()))
+                        {
+                            FileService.OpenFileDialog(plugin, g);
+                        }
+                        ImGui.PopFont();
+                        if (ImGui.IsItemHovered())
+                        {
+                            ImGui.SetTooltip("Save log to .txt file");
+                        }
+                        ImGui.EndMenuBar();
+                    }
+
                     ImGui.EndChild();
 
                     ImGui.BeginChild(MainWindow.ID_PANEL_RIGHT);

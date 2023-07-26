@@ -138,7 +138,7 @@ public class MainWindow : Window, IDisposable
     {
         ImGui.BeginGroup();
 
-        if (ImGui.Selectable("###WhoSaidWhatNow_Player_Selectable_" + player.Name, true, ImGuiSelectableFlags.None))
+        if (ImGui.Selectable("###WhoSaidWhatNow_Player_Selectable_" + player.Name, player.Name.Equals(Plugin.SelectedPlayer?.Name), ImGuiSelectableFlags.None))
         {
             ToggleWindowOpen(player);
         }
@@ -185,10 +185,10 @@ public class MainWindow : Window, IDisposable
 
         //INDIVIDUAL TAB
         ImGui.BeginTabBar("###WhoSaidWhatNow_Tab_Bar");
-        var individual = new TabIndividual(this);
+        var individual = new TabIndividual(this, plugin);
 
         //GROUP TAB
-        var groups = new TabGroups(this);
+        var groups = new TabGroups(this, plugin);
 
         ImGui.EndTabBar();
 

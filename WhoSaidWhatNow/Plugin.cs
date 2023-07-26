@@ -4,6 +4,7 @@ using Dalamud.Game.ClientState;
 using Dalamud.Game.ClientState.Objects;
 using Dalamud.Game.Command;
 using Dalamud.Game.Gui;
+using Dalamud.Interface.ImGuiFileDialog;
 using Dalamud.Interface.Windowing;
 using Dalamud.IoC;
 using Dalamud.Plugin;
@@ -61,6 +62,8 @@ namespace WhoSaidWhatNow
         [RequiredVersion("1.0")]
         public static ObjectTable ObjectTable { get; private set; } = null!;
 
+        public FileDialogManager FileDialogManager { get; set; } = null!;
+
         internal ChatListener ChatListener { get; private set; } = null!;
 
         public PlayerService PlayerService { get; set; } = null!;
@@ -77,6 +80,7 @@ namespace WhoSaidWhatNow
             // setup UI
             this.MainWindow = new MainWindow(this);
             this.ConfigWindow = new ConfigWindow(this);
+            this.FileDialogManager = new FileDialogManager();
 
             this.WindowSystem = new WindowSystem("WhoSaidWhatNow");
             this.WindowSystem.AddWindow(this.ConfigWindow);
@@ -84,6 +88,7 @@ namespace WhoSaidWhatNow
 
             PluginInterface.UiBuilder.Draw += DrawUI;
             PluginInterface.UiBuilder.OpenConfigUi += DrawConfigUI;
+            PluginInterface.UiBuilder.Draw += FileDialogManager.Draw;
 
             // add events/listeners
             Plugin.ClientState.Login += OnLogin;
@@ -96,6 +101,7 @@ namespace WhoSaidWhatNow
             {
                 HelpMessage = "Open main window"
             });
+
         }
 
         //TODO: make sure we're disposing of everything we need to appropriately
@@ -104,6 +110,7 @@ namespace WhoSaidWhatNow
             ChatListener.Dispose();
             PluginInterface.UiBuilder.Draw -= DrawUI;
             PluginInterface.UiBuilder.OpenConfigUi -= DrawConfigUI;
+            PluginInterface.UiBuilder.Draw -= FileDialogManager.Draw;
             WindowSystem.RemoveAllWindows();
             CommandManager.RemoveHandler(COMMAND);
             Plugin.ClientState.Login -= OnLogin;

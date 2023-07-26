@@ -26,7 +26,7 @@ namespace WhoSaidWhatNow.Objects
         {
             string time = this.Time.ToShortTimeString();
             string sender = this.Sender.Name + "" + this.Sender.Server;
-            string msg = this.Message;
+            string msg = this.Message.Trim();
 
             return $"[{time}]" + String.Format(tag, sender, msg);
         }
