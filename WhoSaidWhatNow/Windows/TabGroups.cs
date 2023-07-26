@@ -79,17 +79,25 @@ public class TabGroups
                     ImGui.BeginChild(MainWindow.ID_PANEL_RIGHT);
                     ImGui.BeginGroup();
                     // for all chat entries;
+
                     foreach (var c in Plugin.ChatEntries)
                     {
-                        // if we are displaying this type of message;
-                        if (Plugin.Config.ChannelToggles[c.Value.Type] == true)
+                        try
                         {
-                            // and if the player is among the tracked;
-                            var p = Plugin.Players.Find(p => c.Value.Sender.Name.Contains(p.Name));
-                            if (players[p!])
+                            // if we are displaying this type of message;
+                            if (Plugin.Config.ChannelToggles[c.Value.Type] == true)
                             {
-                                MainWindow.ShowMessage(c);
+                                // and if the player is among the tracked;
+                                var p = Plugin.Players.Find(p => c.Value.Sender.Name.Contains(p.Name));
+                                if (players[p!])
+                                {
+                                    MainWindow.ShowMessage(c);
+                                }
                             }
+                        }
+                        catch
+                        {
+                            // trying to access a player that doesn't exist, just ignore
                         }
                     }
                     ImGui.EndGroup();
