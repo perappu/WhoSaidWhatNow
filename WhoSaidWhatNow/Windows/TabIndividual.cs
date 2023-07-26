@@ -60,15 +60,7 @@ public class TabIndividual
             {
                 if (ImGui.MenuItem("Save Log"))
                 {
-                    plugin.FileDialogManager.SaveFileDialog("Save log...", "Text File{.txt}",
-                        Regex.Replace(Plugin.SelectedPlayer.Name, "[^a-zA-Z0-9]", String.Empty) + "-" + DateTime.Now.ToString("yyyy-MM-dd") + ".txt",
-                        ".txt", (isOk, selectedFile) =>
-                        {
-                            if (isOk)
-                            {
-                                FileService.SaveIndividualLog(selectedFile);
-                            }
-                        });
+                    FileService.OpenFileDialog(plugin, Plugin.SelectedPlayer.Name);
                 }
                 ImGui.EndMenuBar();
             }

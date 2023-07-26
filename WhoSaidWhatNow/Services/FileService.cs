@@ -2,13 +2,49 @@ using Dalamud.DrunkenToad;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using WhoSaidWhatNow.Objects;
 
 namespace WhoSaidWhatNow.Services
 {
     public class FileService
     {
-        
+        /// <summary>
+        /// OpenFileDialog for individual
+        /// </summary>
+        /// <param name="plugin">the plugin</param>
+        /// <param name="playerName">player name</param>
+        public static void OpenFileDialog(Plugin plugin, string playerName)
+        {
+            plugin.FileDialogManager.SaveFileDialog("Save log...", "Text File{.txt}",
+            Regex.Replace(playerName, "[^a-zA-Z0-9]", String.Empty) + "-" + DateTime.Now.ToString("yyyy-MM-dd") + ".txt",
+            ".txt", (isOk, selectedFile) =>
+            {
+                if (isOk)
+                {
+                    FileService.SaveIndividualLog(selectedFile);
+                }
+            });
+        }
+
+        /// <summary>
+        /// OpenFileDialog for groups
+        /// </summary>
+        /// <param name="plugin">the plugin</param>
+        /// <param name="group">KeyValuePair string for group name, Dictionary<Player, Boolean> for contents of group</param>
+        public static void OpenFileDialog(Plugin plugin, KeyValuePair<string, (string NAME, Dictionary<Player, bool> PLAYERS)> group)
+        {
+            plugin.FileDialogManager.SaveFileDialog("Save log...", "Text File{.txt}",
+                Regex.Replace(group.Key, "[^a-zA-Z0-9]", String.Empty) + "-" + DateTime.Now.ToString("yyyy-MM-dd") + ".txt",
+                ".txt", (isOk, selectedFile) =>
+                {
+                    if (isOk)
+                    {
+                        FileService.SaveGroupLog(selectedFile, group.Value.PLAYERS);
+                    }
+                });
+        }
+
         /// <summary>
         /// Save individual character log to file
         /// </summary>
