@@ -29,24 +29,35 @@ public class TabIndividual
             // you can redeclare BeginChild() with the same ID to add things to them, which we do for chatlog
             ImGui.BeginChild(MainWindow.ID_PANEL_LEFT, new Vector2(230 * ImGuiHelpers.GlobalScale, 0), true, ImGuiWindowFlags.MenuBar);
 
-            //push font to make our menus with FA icons
-            ImGui.PushFont(UiBuilder.IconFont);
-
             if (ImGui.BeginMenuBar())
             {
                 ImGui.BeginDisabled(!(Plugin.TargetManager.Target != null && Plugin.TargetManager.Target.ObjectKind == ObjectKind.Player));
+                //push font to make our menus with FA icons
+                ImGui.PushFont(UiBuilder.IconFont);
                 if (ImGui.MenuItem(FontAwesomeIcon.UserPlus.ToIconString()))
                 {
                     PlayerService.AddPlayer(Plugin.TargetManager.Target);
                 }
+                ImGui.PopFont();
+                if (ImGui.IsItemHovered())
+                {
+                    ImGui.SetTooltip("Add currently targeted player");
+                }
+                
                 ImGui.EndDisabled();
 
                 if (Plugin.SelectedPlayer is not null)
                 {
                     ImGui.BeginDisabled(Plugin.SelectedPlayer.RemoveDisabled);
+                    ImGui.PushFont(UiBuilder.IconFont);
                     if (ImGui.MenuItem(FontAwesomeIcon.UserMinus.ToIconString()))
                     {
                         mainWindow.RemovePlayer();
+                    }
+                    ImGui.PopFont();
+                    if (ImGui.IsItemHovered())
+                    {
+                        ImGui.SetTooltip("Remove currently opened player");
                     }
                     ImGui.EndDisabled();
                 }
@@ -61,14 +72,23 @@ public class TabIndividual
 
             if (ImGui.BeginMenuBar())
             {
+                //push font to make our menus with FA icons
+                ImGui.PushFont(UiBuilder.IconFont);
                 if (ImGui.MenuItem(FontAwesomeIcon.Save.ToIconString()))
                 {
                     FileService.OpenFileDialog(plugin, Plugin.SelectedPlayer.Name);
+
+                }
+                ImGui.PopFont();
+
+                if (ImGui.IsItemHovered())
+                {
+                    ImGui.SetTooltip("Save log to .txt file");
                 }
                 ImGui.EndMenuBar();
             }
             ImGui.EndChild();
-            ImGui.PopFont();
+            
 
             //Reopen left window, populate selectable list
             foreach (var p in Plugin.Players)

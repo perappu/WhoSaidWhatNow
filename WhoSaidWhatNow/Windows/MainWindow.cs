@@ -138,7 +138,7 @@ public class MainWindow : Window, IDisposable
     {
         ImGui.BeginGroup();
 
-        if (ImGui.Selectable("###WhoSaidWhatNow_Player_Selectable_" + player.Name, true, ImGuiSelectableFlags.None))
+        if (ImGui.Selectable("###WhoSaidWhatNow_Player_Selectable_" + player.Name, player.Name.Equals(Plugin.SelectedPlayer?.Name), ImGuiSelectableFlags.None))
         {
             ToggleWindowOpen(player);
         }
