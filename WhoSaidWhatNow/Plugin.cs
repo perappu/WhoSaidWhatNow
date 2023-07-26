@@ -169,6 +169,7 @@ namespace WhoSaidWhatNow
         void OnLogout(object? sender, EventArgs e)
         {
             this.MainWindow.IsOpen = false;
+            SelectedPlayer = null;
         }
 
         private void DrawUI()
