@@ -7,12 +7,12 @@ using System.Collections.Generic;
 using System.Linq;
 using WhoSaidWhatNow.Objects;
 
-namespace WhoSaidWhatNow.Services
+namespace WhoSaidWhatNow.Utils
 {
-    public class PlayerService
+    public class PlayerUtils
     {
 
-        public PlayerService() { }
+        public PlayerUtils() { }
 
         /// <summary>
         /// Attempts to add given GameObject to tracked players

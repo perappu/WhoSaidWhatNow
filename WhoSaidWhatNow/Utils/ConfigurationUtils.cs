@@ -2,9 +2,9 @@ using Dalamud.Logging;
 using System;
 using System.Collections.Generic;
 
-namespace WhoSaidWhatNow.Services
+namespace WhoSaidWhatNow.Utils
 {
-    public class ConfigurationService
+    public class ConfigurationUtils
     {
 
         public static void refresh()
@@ -12,8 +12,8 @@ namespace WhoSaidWhatNow.Services
             PluginLog.LogDebug("refresh called");
             Plugin.Players.Clear();
             Plugin.Config.CurrentPlayer = string.Empty;
-            PlayerService.SetCurrentPlayer();
-            PlayerService.CheckTrackedPlayers();
+            PlayerUtils.SetCurrentPlayer();
+            PlayerUtils.CheckTrackedPlayers();
         }
 
         public static void reset()
@@ -22,8 +22,8 @@ namespace WhoSaidWhatNow.Services
             Plugin.Players.Clear();
             Plugin.ChatEntries.Clear();
             Plugin.Config.CurrentPlayer = string.Empty;
-            PlayerService.SetCurrentPlayer();
-            PlayerService.CheckTrackedPlayers();
+            PlayerUtils.SetCurrentPlayer();
+            PlayerUtils.CheckTrackedPlayers();
         }
 
 

@@ -1,7 +1,10 @@
 using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Game.ClientState.Objects.Types;
+using Dalamud.Logging;
+using FFXIVClientStructs.FFXIV.Common.Math;
 using System;
 using WhoSaidWhatNow.Services;
+using WhoSaidWhatNow.Utils;
 
 namespace WhoSaidWhatNow.Objects
 {
@@ -20,6 +23,25 @@ namespace WhoSaidWhatNow.Objects
         public bool RemoveDisabled { get; set; }
         public DateTime TimeAdded { get; set; }
 
+        public Vector4 NameColor { get; set; }
+
+        private Vector4 SetNameColor(string name)
+        {
+            int nameHash = name.GetHashCode();
+            //float val1 = (float)(((nameHash >> (nameHash.ToString()[1] * 8)) & 0xFF) / 255.0) + 0.4f;
+            //float val2 = (float)(((nameHash >> (nameHash.ToString()[2] * 8)) & 0xFF) / 255.0) + 0.4f;
+            //float val3 = (float)(((nameHash >> (nameHash.ToString()[3] * 8)) & 0xFF) / 255.0) + 0.4f;
+
+            Random rand = new Random(nameHash);
+            float val1 = (float)rand.NextDouble() + (float)rand.NextDouble();
+            float val2 = (float)rand.NextDouble() + (float)rand.NextDouble();
+            float val3 = (float)rand.NextDouble() + (float)rand.NextDouble();
+
+            Vector4 newColor = new Vector4(val1, val2, val3, 1f);
+            PluginLog.LogDebug(newColor.ToString());
+            return newColor;
+        }
+
         public Player(uint id, string name, string server, bool removeDisabled = false)
         {
             ID = id;
@@ -27,6 +49,7 @@ namespace WhoSaidWhatNow.Objects
             Server = server;
             RemoveDisabled = removeDisabled;
             TimeAdded = DateTime.UtcNow;
+            NameColor = SetNameColor(Name);
         }
 
         public Player(string name, string server, bool removeDisabled = false)
@@ -36,13 +59,14 @@ namespace WhoSaidWhatNow.Objects
             Server = server;
             RemoveDisabled = removeDisabled;
             TimeAdded = DateTime.UtcNow;
+            NameColor = SetNameColor(Name);
         }
-        
+
         public Player(GameObject gameObject, bool removeDisabled = false)
         {
             ID = gameObject.ObjectId;
             Name = gameObject.Name.ToString();
-            PlayerCharacter? player = PlayerService.CastPlayer(gameObject);
+            PlayerCharacter? player = PlayerUtils.CastPlayer(gameObject);
             RemoveDisabled = removeDisabled;
             TimeAdded = DateTime.UtcNow;
 
@@ -54,6 +78,7 @@ namespace WhoSaidWhatNow.Objects
             {
                 Server = "ServerNotFound";
             }
+            NameColor = SetNameColor(Name);
         }
 
         public Player(PlayerCharacter playerCharacter, bool removeDisabled = false)
@@ -71,6 +96,7 @@ namespace WhoSaidWhatNow.Objects
             {
                 Server = "ServerNotFound";
             }
+            NameColor = SetNameColor(Name);
         }
 
     }

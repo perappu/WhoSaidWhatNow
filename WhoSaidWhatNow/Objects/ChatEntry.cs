@@ -1,5 +1,7 @@
 using Dalamud.Game.Text;
+using ImGuiNET;
 using System;
+using WhoSaidWhatNow.Windows;
 
 namespace WhoSaidWhatNow.Objects
 {

@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using WhoSaidWhatNow.Services;
+using WhoSaidWhatNow.Utils;
 
 namespace WhoSaidWhatNow.Windows;
 
@@ -87,8 +88,8 @@ public class ConfigWindow : Window, IDisposable
                     ImGui.TableNextColumn();
                     if (ImGui.Button("Remove##" + player.Item1))
                     {
-                        PlayerService.RemoveTrackedPlayer(player);
-                        PlayerService.CheckTrackedPlayers();
+                        PlayerUtils.RemoveTrackedPlayer(player);
+                        PlayerUtils.CheckTrackedPlayers();
                     }
                     ImGui.TableNextColumn();
                     ImGui.TableNextRow();
@@ -108,7 +109,7 @@ public class ConfigWindow : Window, IDisposable
             {
                 if (newName.IsValidCharacterName() && !newServer.Equals(""))
                 {
-                    PlayerService.AddTrackedPlayer(new Tuple<string,string>(newName, worldNames[newServer]));
+                    PlayerUtils.AddTrackedPlayer(new Tuple<string,string>(newName, worldNames[newServer]));
                     newName = string.Empty;
                     newServer = 0;
                 }

@@ -1,24 +1,26 @@
 using Dalamud.Game.Gui;
 using Dalamud.Game.Text;
 using Dalamud.Game.Text.SeStringHandling;
+using Dalamud.Game.Text.SeStringHandling.Payloads;
+using Dalamud.Logging;
 using System;
 using WhoSaidWhatNow.Objects;
 
-namespace WhoSaidWhatNow
+namespace WhoSaidWhatNow.Services
 {
 
     /// <summary>
-    /// ChatListener handles OnChatMessage and related events
+    /// ChatService handles OnChatMessage and related events
     /// </summary>
-    internal class ChatListener : IDisposable
+    internal class ChatService : IDisposable
     {
         internal ChatGui? gui;
 
-        public ChatListener(ChatGui gui)
+        public ChatService(ChatGui gui)
 
         {
             this.gui = gui;
-            this.gui.ChatMessage += OnChatMessage;
+            this.gui.CheckMessageHandled += OnChatMessage;
         }
 
         //THIS IS VERY IMPORTANT
@@ -26,17 +28,17 @@ namespace WhoSaidWhatNow
         //I accidentally had like 15+ once. my game crashed
         public void Dispose()
         {
-            gui!.ChatMessage -= OnChatMessage;
+            gui!.CheckMessageHandled -= OnChatMessage;
         }
 
         private void OnChatMessage(XivChatType type, uint senderId, ref SeString sender, ref SeString message, ref bool isHandled)
         {
             if (Plugin.Config.Enabled == true)
             {
-                string senderName = sender.ToString();
+                var senderName = sender.ToString();
                 //The basic ToString here includes any friends list icons and the server name, so we have to do Contains() for now
                 //this would be gross if it was messages but it should be okay given a person will probably only have 4-5 players tracked a time
-                Player? result = Plugin.Players.Find(x => senderName.Contains(x.Name));
+                var result = Plugin.Players.Find(x => senderName.Contains(x.Name));
                 //PluginLog.Debug("onchat message triggered" + senderName);
 
                 if (result != null)

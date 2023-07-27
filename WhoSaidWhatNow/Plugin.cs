@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using WhoSaidWhatNow.Objects;
 using WhoSaidWhatNow.Services;
+using WhoSaidWhatNow.Utils;
 using WhoSaidWhatNow.Windows;
 
 namespace WhoSaidWhatNow
@@ -23,7 +24,7 @@ namespace WhoSaidWhatNow
         public string Name => "Who Said What Now";
         private const string COMMAND = "/whowhat";
         public static Configuration Config = null!;
-        public static ConfigurationService ConfigHelper = null!;
+        public static ConfigurationUtils ConfigHelper = null!;
 
         public static Player? SelectedPlayer = null;
         public static List<Player> Players = new List<Player>();
@@ -64,9 +65,9 @@ namespace WhoSaidWhatNow
 
         public FileDialogManager FileDialogManager { get; set; } = null!;
 
-        internal ChatListener ChatListener { get; private set; } = null!;
+        internal ChatService ChatListener { get; private set; } = null!;
 
-        public PlayerService PlayerService { get; set; } = null!;
+        public PlayerUtils PlayerService { get; set; } = null!;
 
         public Plugin()
         {
@@ -75,7 +76,7 @@ namespace WhoSaidWhatNow
             Config = PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
             Config.Initialize(PluginInterface);
 
-            ConfigHelper = new ConfigurationService();
+            ConfigHelper = new ConfigurationUtils();
 
             // setup UI
             this.MainWindow = new MainWindow(this);
@@ -93,8 +94,8 @@ namespace WhoSaidWhatNow
             // add events/listeners
             Plugin.ClientState.Login += OnLogin;
             Plugin.ClientState.Logout += OnLogout;
-            this.ChatListener = new ChatListener(ChatGui);
-            this.PlayerService = new PlayerService();
+            this.ChatListener = new ChatService(ChatGui);
+            this.PlayerService = new PlayerUtils();
 
             // commands
             CommandManager.AddHandler(COMMAND, new CommandInfo(OnCommand)
@@ -133,7 +134,7 @@ namespace WhoSaidWhatNow
             else if (args.Equals("refresh"))
             {
                 this.MainWindow.IsOpen = false;
-                ConfigurationService.refresh();
+                ConfigurationUtils.refresh();
                 this.MainWindow.IsOpen = true;
                 ChatGuiExtensions.PluginPrint(Plugin.ChatGui, "WhoWhat refreshed. All temporary tracked players removed.");
             }
@@ -141,7 +142,7 @@ namespace WhoSaidWhatNow
             {
                 this.MainWindow.IsOpen = false;
                 this.ConfigWindow.IsOpen = false;
-                ConfigurationService.reset();
+                ConfigurationUtils.reset();
                 this.MainWindow.IsOpen = true;
                 this.ConfigWindow.IsOpen = true;
                 ChatGuiExtensions.PluginPrint(Plugin.ChatGui, "WhoWhat refreshed. Most settings reset.");
@@ -162,8 +163,8 @@ namespace WhoSaidWhatNow
         {
             Plugin.Players.Clear();
             Plugin.Config.CurrentPlayer = string.Empty;
-            PlayerService.SetCurrentPlayer();
-            PlayerService.CheckTrackedPlayers();
+            PlayerUtils.SetCurrentPlayer();
+            PlayerUtils.CheckTrackedPlayers();
         }
 
         //close all windows when logging out so that the windows refresh

@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using WhoSaidWhatNow.Objects;
-using WhoSaidWhatNow.Services;
+using WhoSaidWhatNow.Utils;
 
 namespace WhoSaidWhatNow.Windows;
 
@@ -49,7 +49,7 @@ public class MainWindow : Window, IDisposable
     {
         if (Plugin.SelectedPlayer is not null)
         {
-            PlayerService.RemovePlayer(Plugin.SelectedPlayer);
+            PlayerUtils.RemovePlayer(Plugin.SelectedPlayer);
             ChatOpen = false;
             Plugin.SelectedPlayer = null;
             //we have to manually close the window here
@@ -67,7 +67,7 @@ public class MainWindow : Window, IDisposable
             if (!Plugin.Players.Any(x => x.Name.Equals(nearbyPlayer.Name.ToString())))
             {
                 PluginLog.LogDebug("nearby player found " + nearbyPlayer.Name.ToString());
-                PlayerService.AddPlayer(nearbyPlayer);
+                PlayerUtils.AddPlayer(nearbyPlayer);
             }
         }
     }
@@ -77,10 +77,18 @@ public class MainWindow : Window, IDisposable
     /// </summary>
     public static void ShowMessage(KeyValuePair<DateTime, ChatEntry> c)
     {
-        ImGui.PushStyleColor(ImGuiCol.Text, Plugin.Config.ChatColors[c.Value.Type]);
-        string tag = Plugin.Config.Formats[c.Value.Type];
-        ImGui.TextWrapped(c.Value.CreateMessage(tag));
-        ImGui.PopStyleColor();
+        Tuple<string?, string> tag = Plugin.Config.GUIFormats[c.Value.Type];
+
+        ChatUtils.ColoredText($"[{c.Value.Time.ToShortTimeString}]", Plugin.Config.ChatColors[c.Value.Type]);
+        if(tag.Item1 != null) {
+            ChatUtils.ColoredText(c.Value.Sender.Name, c.Value.Sender.NameColor);
+        } else
+        {
+            ChatUtils.ColoredText(tag.Item1, c.Value.Sender.NameColor);
+            ChatUtils.ColoredText(c.Value.Sender.Name, c.Value.Sender.NameColor);
+        }
+        ChatUtils.ColoredText(String.Format(tag.Item2,c.Value.Message), Plugin.Config.ChatColors[c.Value.Type]);
+
     }
 
     /// <summary>

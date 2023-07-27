@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using WhoSaidWhatNow.Objects;
-using WhoSaidWhatNow.Services;
+using WhoSaidWhatNow.Utils;
 
 namespace WhoSaidWhatNow.Windows;
 
@@ -39,7 +39,7 @@ public class TabIndividual
                 ImGui.PushFont(UiBuilder.IconFont);
                 if (ImGui.MenuItem(FontAwesomeIcon.UserPlus.ToIconString()))
                 {
-                    PlayerService.AddPlayer(Plugin.TargetManager.Target);
+                    PlayerUtils.AddPlayer(Plugin.TargetManager.Target);
                 }
                 ImGui.PopFont();
                 ImGui.EndDisabled();
@@ -73,7 +73,7 @@ public class TabIndividual
                 ImGui.PushFont(UiBuilder.IconFont);
                 if (ImGui.MenuItem(FontAwesomeIcon.UserSlash.ToIconString()))
                 {
-                    ConfigurationService.refresh();
+                    ConfigurationUtils.refresh();
                 }
                 ImGui.PopFont();
                 ImGui.EndDisabled();
@@ -99,7 +99,7 @@ public class TabIndividual
                 ImGui.PushFont(UiBuilder.IconFont);
                 if (ImGui.MenuItem(FontAwesomeIcon.Save.ToIconString()))
                 {
-                    FileService.OpenFileDialog(plugin, Plugin.SelectedPlayer.Name);
+                    FileUtils.OpenFileDialog(plugin, Plugin.SelectedPlayer.Name);
 
                 }
                 ImGui.PopFont();

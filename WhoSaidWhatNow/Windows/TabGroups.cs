@@ -7,7 +7,7 @@ using WhoSaidWhatNow;
 using WhoSaidWhatNow.Windows;
 using System.Linq;
 using System.Text.RegularExpressions;
-using WhoSaidWhatNow.Services;
+using WhoSaidWhatNow.Utils;
 
 public class TabGroups
 {
@@ -64,7 +64,7 @@ public class TabGroups
                         ImGui.PushFont(UiBuilder.IconFont);
                         if (ImGui.MenuItem(FontAwesomeIcon.Save.ToIconString()))
                         {
-                            FileService.OpenFileDialog(plugin, g);
+                            FileUtils.OpenFileDialog(plugin, g);
                         }
                         ImGui.PopFont();
                         if (ImGui.IsItemHovered())
