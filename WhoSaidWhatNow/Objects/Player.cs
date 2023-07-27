@@ -25,7 +25,7 @@ namespace WhoSaidWhatNow.Objects
 
         public Vector4 NameColor { get; set; }
 
-        private Vector4 SetNameColor(string name)
+        private void SetNameColor(string name)
         {
             int nameHash = name.GetHashCode();
             //float val1 = (float)(((nameHash >> (nameHash.ToString()[1] * 8)) & 0xFF) / 255.0) + 0.4f;
@@ -39,7 +39,7 @@ namespace WhoSaidWhatNow.Objects
 
             Vector4 newColor = new Vector4(val1, val2, val3, 1f);
             PluginLog.LogDebug(newColor.ToString());
-            return newColor;
+            NameColor = newColor;
         }
 
         public Player(uint id, string name, string server, bool removeDisabled = false)
@@ -49,7 +49,7 @@ namespace WhoSaidWhatNow.Objects
             Server = server;
             RemoveDisabled = removeDisabled;
             TimeAdded = DateTime.UtcNow;
-            NameColor = SetNameColor(Name);
+            SetNameColor(Name);
         }
 
         public Player(string name, string server, bool removeDisabled = false)
@@ -59,7 +59,7 @@ namespace WhoSaidWhatNow.Objects
             Server = server;
             RemoveDisabled = removeDisabled;
             TimeAdded = DateTime.UtcNow;
-            NameColor = SetNameColor(Name);
+            SetNameColor(Name);
         }
 
         public Player(GameObject gameObject, bool removeDisabled = false)
@@ -78,7 +78,7 @@ namespace WhoSaidWhatNow.Objects
             {
                 Server = "ServerNotFound";
             }
-            NameColor = SetNameColor(Name);
+            SetNameColor(Name);
         }
 
         public Player(PlayerCharacter playerCharacter, bool removeDisabled = false)
@@ -96,7 +96,7 @@ namespace WhoSaidWhatNow.Objects
             {
                 Server = "ServerNotFound";
             }
-            NameColor = SetNameColor(Name);
+            SetNameColor(Name);
         }
 
     }

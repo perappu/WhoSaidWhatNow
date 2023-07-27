@@ -51,7 +51,7 @@ public class TabIndividual
 
                 // button to remove selected player
                 ImGui.BeginGroup();
-                ImGui.BeginDisabled(Plugin.SelectedPlayer == null ? true : false);
+                ImGui.BeginDisabled(!(Plugin.SelectedPlayer != null && !Plugin.SelectedPlayer.RemoveDisabled));
                 ImGui.PushFont(UiBuilder.IconFont);
                 if (ImGui.MenuItem(FontAwesomeIcon.UserMinus.ToIconString()))
                 {

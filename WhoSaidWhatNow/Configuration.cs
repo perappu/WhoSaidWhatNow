@@ -97,35 +97,35 @@ namespace WhoSaidWhatNow
         };
 
         //Channel format for when printing message
-        public readonly IDictionary<XivChatType, Tuple<string?, string>> GUIFormats = new Dictionary<XivChatType, Tuple<string?, string>>()
+        public readonly IDictionary<XivChatType, Tuple<string, string>> GUIFormats = new Dictionary<XivChatType, Tuple<string, string>>()
         {
-            { XivChatType.Say, new Tuple<string?, string>("",": {0}") },
-            { XivChatType.TellIncoming, new Tuple<string?, string>(""," >> {0}")},
-            { XivChatType.TellOutgoing, new Tuple<string?, string>(">> ",": {0}") },
-            { XivChatType.StandardEmote, new Tuple<string?, string>(null,"{0}") },
-            { XivChatType.CustomEmote, new Tuple<string?, string>("","{0}") },
-            { XivChatType.Shout, new Tuple<string?, string>(""," shouts: {0}") },
-            { XivChatType.Yell, new Tuple<string?, string>(""," yells: {0}")},
-            { XivChatType.Party, new Tuple<string?, string>("(",") {0}") },
-            { XivChatType.CrossParty, new Tuple<string?, string>("(",") {0}") },
-            { XivChatType.Alliance, new Tuple<string?, string>("((",")) {0}") },
-            { XivChatType.FreeCompany, new Tuple<string?, string>("[FC]<","> {0}") },
-            { XivChatType.Ls1, new Tuple<string?, string>("[LS1]<","> {0}")},
-            { XivChatType.Ls2, new Tuple<string?, string>("[LS2]<","> {0}")},
-            { XivChatType.Ls3, new Tuple<string?, string>("[LS3]<","> {0}")},
-            { XivChatType.Ls4, new Tuple<string?, string>("[LS4]<","> {0}")},
-            { XivChatType.Ls5, new Tuple < string ?, string >("[LS5]<", "> {0}")},
-            { XivChatType.Ls6, new Tuple < string ?, string >("[LS6]<", "> {0}")},
-            { XivChatType.Ls7, new Tuple < string ?, string >("[LS7]<", "> {0}")},
-            { XivChatType.Ls8, new Tuple < string ?, string >("[LS8]<", "> {0}")},
-            { XivChatType.CrossLinkShell1, new Tuple < string ?, string >("[CWLS1]<","> {0}")},
-            { XivChatType.CrossLinkShell2, new Tuple < string ?, string >("[CWLS2]<","> {0}")},
-            { XivChatType.CrossLinkShell3, new Tuple < string ?, string >("[CWLS3]<","> {0}")},
-            { XivChatType.CrossLinkShell4, new Tuple < string ?, string >("[CWLS4]<","> {0}")},
-            { XivChatType.CrossLinkShell5, new Tuple < string ?, string >("[CWLS5]<","> {0}")},
-            { XivChatType.CrossLinkShell6, new Tuple < string ?, string >("[CWLS6]<","> {0}")},
-            { XivChatType.CrossLinkShell7, new Tuple < string ?, string >("[CWLS7]<","> {0}")},
-            { XivChatType.CrossLinkShell8, new Tuple < string ?, string >("[CWLS8]<","> {0}")}
+            { XivChatType.Say, new Tuple<string, string>("",": {0}") },
+            { XivChatType.TellIncoming, new Tuple<string, string>(""," >> {0}")},
+            { XivChatType.TellOutgoing, new Tuple<string, string>(">> ",": {0}") },
+            { XivChatType.StandardEmote, new Tuple<string, string>("","{0}") },
+            { XivChatType.CustomEmote, new Tuple<string, string>("","{0}") },
+            { XivChatType.Shout, new Tuple<string, string>(""," shouts: {0}") },
+            { XivChatType.Yell, new Tuple<string, string>(""," yells: {0}")},
+            { XivChatType.Party, new Tuple<string, string>("(",") {0}") },
+            { XivChatType.CrossParty, new Tuple<string, string>("(",") {0}") },
+            { XivChatType.Alliance, new Tuple<string, string>("((",")) {0}") },
+            { XivChatType.FreeCompany, new Tuple<string, string>("[FC]<","> {0}") },
+            { XivChatType.Ls1, new Tuple<string, string>("[LS1]<","> {0}")},
+            { XivChatType.Ls2, new Tuple<string, string>("[LS2]<","> {0}")},
+            { XivChatType.Ls3, new Tuple<string, string>("[LS3]<","> {0}")},
+            { XivChatType.Ls4, new Tuple<string, string>("[LS4]<","> {0}")},
+            { XivChatType.Ls5, new Tuple < string, string >("[LS5]<", "> {0}")},
+            { XivChatType.Ls6, new Tuple < string, string >("[LS6]<", "> {0}")},
+            { XivChatType.Ls7, new Tuple < string, string >("[LS7]<", "> {0}")},
+            { XivChatType.Ls8, new Tuple < string, string >("[LS8]<", "> {0}")},
+            { XivChatType.CrossLinkShell1, new Tuple < string, string >("[CWLS1]<","> {0}")},
+            { XivChatType.CrossLinkShell2, new Tuple < string, string >("[CWLS2]<","> {0}")},
+            { XivChatType.CrossLinkShell3, new Tuple < string, string >("[CWLS3]<","> {0}")},
+            { XivChatType.CrossLinkShell4, new Tuple < string, string >("[CWLS4]<","> {0}")},
+            { XivChatType.CrossLinkShell5, new Tuple < string, string >("[CWLS5]<","> {0}")},
+            { XivChatType.CrossLinkShell6, new Tuple < string, string >("[CWLS6]<","> {0}")},
+            { XivChatType.CrossLinkShell7, new Tuple < string, string >("[CWLS7]<","> {0}")},
+            { XivChatType.CrossLinkShell8, new Tuple < string, string >("[CWLS8]<","> {0}")}
         };
 
         public readonly IDictionary<XivChatType, string> Formats = new Dictionary<XivChatType, string>()

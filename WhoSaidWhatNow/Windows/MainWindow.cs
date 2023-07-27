@@ -77,14 +77,12 @@ public class MainWindow : Window, IDisposable
     /// </summary>
     public static void ShowMessage(KeyValuePair<DateTime, ChatEntry> c)
     {
-        Tuple<string?, string> tag = Plugin.Config.GUIFormats[c.Value.Type];
+        Tuple<string, string> tag = Plugin.Config.GUIFormats[c.Value.Type];
 
-        ChatUtils.ColoredText($"[{c.Value.Time.ToShortTimeString}]", Plugin.Config.ChatColors[c.Value.Type]);
-        if(tag.Item1 != null) {
-            ChatUtils.ColoredText(c.Value.Sender.Name, c.Value.Sender.NameColor);
-        } else
-        {
-            ChatUtils.ColoredText(tag.Item1, c.Value.Sender.NameColor);
+        ChatUtils.ColoredText($"[{c.Value.Time.ToShortTimeString()}]", Plugin.Config.ChatColors[c.Value.Type], false);
+
+        ChatUtils.ColoredText(String.Format(tag.Item1, c.Value.Message), Plugin.Config.ChatColors[c.Value.Type]);
+        if (c.Value.Type != Dalamud.Game.Text.XivChatType.StandardEmote) {
             ChatUtils.ColoredText(c.Value.Sender.Name, c.Value.Sender.NameColor);
         }
         ChatUtils.ColoredText(String.Format(tag.Item2,c.Value.Message), Plugin.Config.ChatColors[c.Value.Type]);

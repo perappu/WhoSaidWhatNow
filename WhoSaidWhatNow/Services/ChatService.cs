@@ -20,7 +20,7 @@ namespace WhoSaidWhatNow.Services
 
         {
             this.gui = gui;
-            this.gui.CheckMessageHandled += OnChatMessage;
+            this.gui.ChatMessage += OnChatMessage;
         }
 
         //THIS IS VERY IMPORTANT
@@ -28,7 +28,7 @@ namespace WhoSaidWhatNow.Services
         //I accidentally had like 15+ once. my game crashed
         public void Dispose()
         {
-            gui!.CheckMessageHandled -= OnChatMessage;
+            gui!.ChatMessage -= OnChatMessage;
         }
 
         private void OnChatMessage(XivChatType type, uint senderId, ref SeString sender, ref SeString message, ref bool isHandled)

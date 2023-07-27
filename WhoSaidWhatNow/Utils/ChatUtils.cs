@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 
 namespace WhoSaidWhatNow.Utils
 {
-    internal class ChatUtils
+    public class ChatUtils
     {
 
-        public static void ColoredText(string text, Vector4 color)
+        public static void ColoredText(string text, Vector4 color, bool sameline = true)
         {
-            ImGui.SameLine();
+            if (sameline) ImGui.SameLine();
             ImGui.PushStyleColor(ImGuiCol.Text, color);
             ImGui.TextWrapped(text);
             ImGui.PopStyleColor();
