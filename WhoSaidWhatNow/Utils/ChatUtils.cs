@@ -8,14 +8,19 @@ namespace WhoSaidWhatNow.Utils
 {
     public static class ChatUtils
     {
-
-        public static unsafe void WrappedColoredText(Dictionary<string, Vector4> lines)
+        /// <summary>
+        /// prints a single "paragraph" of colored text all on one line
+        /// i never want to convert C++ code to C# ever again
+        /// https://github.com/ocornut/imgui/issues/2313#issuecomment-458084296
+        /// </summary>
+        /// <param name="chunks">Dictionary<string, Vector4> of color chunks of text to put on same wrapped line</param>
+        public static unsafe void WrappedColoredText(Dictionary<string, Vector4> chunks)
         {
             float wrapWidth = ImGui.GetWindowContentRegionMax().X- ImGui.GetWindowContentRegionMin().X;
 
-            foreach (var line in lines)
+            foreach (var chunk in chunks)
             {
-                var bytes = Encoding.UTF8.GetBytes(line.Key);
+                var bytes = Encoding.UTF8.GetBytes(chunk.Key);
                 fixed (byte* text = bytes)
                 {
                     byte* textStart = text;
@@ -34,10 +39,11 @@ namespace WhoSaidWhatNow.Utils
                             drawEnd = ImGuiNative.ImFont_CalcWordWrapPositionA(Font, 1.0f, textStart, textEnd, widthRemaining);
                         }
 
-                        ImGui.PushStyleColor(ImGuiCol.Text, line.Value);
+                        ImGui.PushStyleColor(ImGuiCol.Text, chunk.Value);
                         ImGuiNative.igTextUnformatted(textStart, drawEnd);
                         ImGui.PopStyleColor();
 
+                        //non-native SameLine will add spaces
                         if (textStart == drawEnd || drawEnd == textEnd)
                         {
                             ImGuiNative.igSameLine(0,0);
@@ -57,9 +63,17 @@ namespace WhoSaidWhatNow.Utils
                     } while (true);
                 }
             }
+            //we printed the entire chat chunk, so put a manual newline
             ImGui.NewLine();
         }
 
+        
+        /// <summary>
+        /// shorthand function for colored text
+        /// </summary>
+        /// <param name="text">text to print</param>
+        /// <param name="color">Vector4 color</param>
+        /// <param name="sameline">whether or not this should include sameline at start, true by default</param>
         public static void ColoredText(string text, Vector4 color, bool sameline = true)
         {
             if (sameline) ImGui.SameLine();

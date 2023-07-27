@@ -64,10 +64,13 @@ public class MainWindow : Window, IDisposable
 
         foreach (PlayerCharacter? nearbyPlayer in nearbyPlayers)
         {
-            if (!Plugin.Players.Any(x => x.Name.Equals(nearbyPlayer.Name.ToString())))
+            if (nearbyPlayer is not null)
             {
-                PluginLog.LogDebug("nearby player found " + nearbyPlayer.Name.ToString());
-                PlayerUtils.AddPlayer(nearbyPlayer);
+                if (!Plugin.Players.Any(x => x.Name.Equals(nearbyPlayer.Name.ToString())))
+                {
+                    PluginLog.LogDebug("nearby player found " + nearbyPlayer.Name.ToString());
+                    PlayerUtils.AddPlayer(nearbyPlayer);
+                }
             }
         }
     }
@@ -77,35 +80,27 @@ public class MainWindow : Window, IDisposable
     /// </summary>
     public static void ShowMessage(KeyValuePair<DateTime, ChatEntry> c)
     {
+        //tuple representing text that goes before/after player name
         Tuple<string, string> tag = Plugin.Config.GUIFormats[c.Value.Type];
 
-        //ChatUtils.ColoredText($"[{c.Value.Time.ToShortTimeString()}]", Plugin.Config.ChatColors[c.Value.Type], false);
+        //dictionary for each chunk of text
+        Dictionary<string, Vector4> chunks = new Dictionary<string, Vector4>();
 
-        //if (tag.Item1 != String.Empty)
-        //{
-        //    ChatUtils.ColoredText(tag.Item1, Plugin.Config.ChatColors[c.Value.Type]);
-        //}
+        //timestamp
+        chunks.Add($"[{c.Value.Time.ToShortTimeString()}] ", Plugin.Config.ChatColors[c.Value.Type]);
 
-        //if (c.Value.Type != Dalamud.Game.Text.XivChatType.StandardEmote)
-        //{
-        //    ChatUtils.ColoredText(c.Value.Sender.Name, c.Value.Sender.NameColor);
-        //}
+        //if there isn't anything before the player name, ignore item1
+        if (tag.Item1 != String.Empty)
+            chunks.Add(tag.Item1, Plugin.Config.ChatColors[c.Value.Type]);
 
-        //ChatUtils.ColoredText(String.Format(tag.Item2, c.Value.Message), Plugin.Config.ChatColors[c.Value.Type]);
-
-        Dictionary<string, Vector4> lines = new Dictionary<string, Vector4>();
-
-        lines.Add($"[{c.Value.Time.ToShortTimeString()}] ", Plugin.Config.ChatColors[c.Value.Type]);
-
-        if (tag.Item1 != String.Empty) 
-            lines.Add(tag.Item1, Plugin.Config.ChatColors[c.Value.Type]);
-
+        //leave out sender name if it's a standard emote
         if (c.Value.Type != Dalamud.Game.Text.XivChatType.StandardEmote)
-            lines.Add(c.Value.Sender.GetNameTag(), c.Value.Sender.NameColor);
+            chunks.Add(c.Value.Sender.GetNameTag(), c.Value.Sender.NameColor);
 
-        lines.Add(String.Format(tag.Item2, c.Value.Message), Plugin.Config.ChatColors[c.Value.Type]);
+        //add message
+        chunks.Add(String.Format(tag.Item2, c.Value.Message), Plugin.Config.ChatColors[c.Value.Type]);
 
-        ChatUtils.WrappedColoredText(lines);
+        ChatUtils.WrappedColoredText(chunks);
 
     }
 
@@ -174,15 +169,15 @@ public class MainWindow : Window, IDisposable
         ImGui.SameLine();
         if (player.Name == Plugin.Config.CurrentPlayer)
         {
-            ImGui.Text(" " + player.Name + " (YOU)");
+            ImGui.TextUnformatted(" " + player.Name + " (YOU)");
         }
         else if (player.RemoveDisabled == true)
         {
-            ImGui.Text(" " + player.Name);
+            ImGui.TextUnformatted(" " + player.Name);
         }
         else
         {
-            ImGui.Text(player.Name);
+            ImGui.TextUnformatted(player.Name);
         }
         ImGui.EndGroup();
         ImGui.PopStyleColor();
