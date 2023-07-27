@@ -6,7 +6,6 @@ using WhoSaidWhatNow.Windows;
 namespace WhoSaidWhatNow.Objects
 {
     //ChatEntry object
-    //this is pretty much lifted straight from Snooper
     public class ChatEntry
     {
         public uint SenderID { get; set; }
@@ -19,7 +18,7 @@ namespace WhoSaidWhatNow.Objects
         {
             SenderID = senderId;
             Sender = sender;
-            Message = message;
+            Message = message.Trim();
             Type = type;
             Time = time;
         }
@@ -27,8 +26,8 @@ namespace WhoSaidWhatNow.Objects
         public string CreateMessage(string tag)
         {
             string time = this.Time.ToShortTimeString();
-            string sender = this.Sender.Name + "" + this.Sender.Server;
-            string msg = this.Message.Trim();
+            string sender = this.Sender.GetNameTag();
+            string msg = this.Message;
 
             return $"[{time}]" + String.Format(tag, sender, msg);
         }

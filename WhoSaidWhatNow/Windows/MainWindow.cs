@@ -79,13 +79,29 @@ public class MainWindow : Window, IDisposable
     {
         Tuple<string, string> tag = Plugin.Config.GUIFormats[c.Value.Type];
 
-        ChatUtils.ColoredText($"[{c.Value.Time.ToShortTimeString()}]", Plugin.Config.ChatColors[c.Value.Type], false);
+        //ChatUtils.ColoredText($"[{c.Value.Time.ToShortTimeString()}]", Plugin.Config.ChatColors[c.Value.Type], false);
 
-        ChatUtils.ColoredText(String.Format(tag.Item1, c.Value.Message), Plugin.Config.ChatColors[c.Value.Type]);
-        if (c.Value.Type != Dalamud.Game.Text.XivChatType.StandardEmote) {
-            ChatUtils.ColoredText(c.Value.Sender.Name, c.Value.Sender.NameColor);
-        }
-        ChatUtils.ColoredText(String.Format(tag.Item2,c.Value.Message), Plugin.Config.ChatColors[c.Value.Type]);
+        //if (tag.Item1 != String.Empty)
+        //{
+        //    ChatUtils.ColoredText(tag.Item1, Plugin.Config.ChatColors[c.Value.Type]);
+        //}
+
+        //if (c.Value.Type != Dalamud.Game.Text.XivChatType.StandardEmote)
+        //{
+        //    ChatUtils.ColoredText(c.Value.Sender.Name, c.Value.Sender.NameColor);
+        //}
+
+        //ChatUtils.ColoredText(String.Format(tag.Item2, c.Value.Message), Plugin.Config.ChatColors[c.Value.Type]);
+
+        Dictionary<string, Vector4> lines = new Dictionary<string, Vector4>();
+        lines.Add($"[{c.Value.Time.ToShortTimeString()}]", Plugin.Config.ChatColors[c.Value.Type]);
+        if (tag.Item1 != String.Empty) 
+            lines.Add(tag.Item1, Plugin.Config.ChatColors[c.Value.Type]);
+        if (c.Value.Type != Dalamud.Game.Text.XivChatType.StandardEmote)
+            lines.Add(c.Value.Sender.Name, c.Value.Sender.NameColor);
+        lines.Add(String.Format(tag.Item2, c.Value.Message), Plugin.Config.ChatColors[c.Value.Type]);
+
+        ChatUtils.WrappedColoredText(lines);
 
     }
 

@@ -99,5 +99,9 @@ namespace WhoSaidWhatNow.Objects
             SetNameColor(Name);
         }
 
+        public string GetNameTag()
+        {
+            return Name + "" + Server;
+        }
     }
 }
