@@ -18,7 +18,7 @@ namespace WhoSaidWhatNow.Objects
         {
             SenderID = senderId;
             Sender = sender;
-            Message = message.Trim();
+            Message = message;
             Type = type;
             Time = time;
         }

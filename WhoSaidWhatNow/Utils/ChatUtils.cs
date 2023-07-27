@@ -13,7 +13,6 @@ namespace WhoSaidWhatNow.Utils
         {
             float wrapWidth = ImGui.GetWindowContentRegionMax().X- ImGui.GetWindowContentRegionMin().X;
 
-            //PluginLog.LogDebug(wrapWidth.ToString());
             foreach (var line in lines)
             {
                 var bytes = Encoding.UTF8.GetBytes(line.Key);

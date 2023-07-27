@@ -65,7 +65,7 @@ namespace WhoSaidWhatNow
 
         //TODO: Custom chat color values, ideally using ingame colors
         //Default chat color values
-        public readonly IDictionary<XivChatType, Vector4> ChatColors = new Dictionary<XivChatType, Vector4>()
+        public IDictionary<XivChatType, Vector4> ChatColors = new Dictionary<XivChatType, Vector4>()
         {
             { XivChatType.Say, new Vector4(0.969f,0.969f,0.961f, 1f)},
             { XivChatType.TellIncoming, new Vector4(1f,0.784f,0.929f, 1f) },
