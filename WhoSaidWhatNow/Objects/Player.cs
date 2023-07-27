@@ -28,17 +28,16 @@ namespace WhoSaidWhatNow.Objects
         private void SetNameColor(string name)
         {
             int nameHash = name.GetHashCode();
-            //float val1 = (float)(((nameHash >> (nameHash.ToString()[1] * 8)) & 0xFF) / 255.0) + 0.4f;
-            //float val2 = (float)(((nameHash >> (nameHash.ToString()[2] * 8)) & 0xFF) / 255.0) + 0.4f;
-            //float val3 = (float)(((nameHash >> (nameHash.ToString()[3] * 8)) & 0xFF) / 255.0) + 0.4f;
+            float val1 = (float)(((nameHash >> (nameHash.ToString()[1] * 8)) & 0xFF) / 255.0) + 0.4f;
+            float val2 = (float)(((nameHash >> (nameHash.ToString()[2] * 8)) & 0xFF) / 255.0) + 0.4f;
+            float val3 = (float)(((nameHash >> (nameHash.ToString()[3] * 8)) & 0xFF) / 255.0) + 0.4f;
 
-            Random rand = new Random(nameHash);
-            float val1 = (float)rand.NextDouble() + (float)rand.NextDouble();
-            float val2 = (float)rand.NextDouble() + (float)rand.NextDouble();
-            float val3 = (float)rand.NextDouble() + (float)rand.NextDouble();
+            //Random rand = new Random(nameHash);
+            //float val1 = (float)rand.NextDouble() + 0.2f;
+            //float val2 = (float)rand.NextDouble() + 0.2f;
+            //float val3 = (float)rand.NextDouble() + 0.2f;
 
             Vector4 newColor = new Vector4(val1, val2, val3, 1f);
-            PluginLog.LogDebug(newColor.ToString());
             NameColor = newColor;
         }
 

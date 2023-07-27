@@ -11,49 +11,54 @@ namespace WhoSaidWhatNow.Utils
 
         public static unsafe void WrappedColoredText(Dictionary<string, Vector4> lines)
         {
-            float wrapWidth = ImGui.GetContentRegionAvail().X;
+            float wrapWidth = ImGui.GetWindowContentRegionMax().X- ImGui.GetWindowContentRegionMin().X;
 
+            //PluginLog.LogDebug(wrapWidth.ToString());
             foreach (var line in lines)
             {
                 var bytes = Encoding.UTF8.GetBytes(line.Key);
-                byte* textStart = (byte*)bytes[0];
-                byte* textEnd = (byte*)bytes[bytes.Length-1];
-
-                ImFont* Font = ImGui.GetFont().NativePtr;
-
-                do
+                fixed (byte* text = bytes)
                 {
-                    float widthRemaining = ImGui.GetContentRegionAvail().X;
-                    byte* drawEnd = ImGuiNative.ImFont_CalcWordWrapPositionA(Font, 1.0f, textStart, textEnd, wrapWidth - widthRemaining);
+                    byte* textStart = text;
+                    byte* textEnd = text + bytes.Length;
 
-                    if (textStart == drawEnd || drawEnd == textEnd)
+                    ImFont* Font = ImGui.GetFont().NativePtr;
+
+                    do
                     {
-                        ImGui.NewLine();
-                        drawEnd = ImGuiNative.ImFont_CalcWordWrapPositionA(Font, 1.0f, textStart, textEnd, wrapWidth - widthRemaining);
-                    }
+                        float widthRemaining = ImGui.GetContentRegionAvail().X;
+                        byte* drawEnd = ImGuiNative.ImFont_CalcWordWrapPositionA(Font, 1.0f, textStart, textEnd, widthRemaining);
 
-                    ImGui.PushStyleColor(ImGuiCol.Text, line.Value);
-                    ImGuiNative.igTextUnformatted(textStart, textStart == drawEnd ? null : drawEnd);
-                    ImGui.PopStyleColor();
+                        if (textStart == drawEnd)
+                        {
+                            ImGui.NewLine();
+                            drawEnd = ImGuiNative.ImFont_CalcWordWrapPositionA(Font, 1.0f, textStart, textEnd, widthRemaining);
+                        }
 
-                    if (textStart == drawEnd || drawEnd == textEnd)
-                    {
-                        ImGuiNative.igSameLine(0.0f, 0.0f);
-                        break;
-                    }
+                        ImGui.PushStyleColor(ImGuiCol.Text, line.Value);
+                        ImGuiNative.igTextUnformatted(textStart, drawEnd);
+                        ImGui.PopStyleColor();
 
-                    while (textStart < textEnd)
-                    {
-                        byte c = (byte)textStart;
-                        if (c == ' ') { textStart++; }
-                        else if (c == '\n') { textStart++; break; }
-                        else { break; }
-                    }
-                } while (true);
+                        if (textStart == drawEnd || drawEnd == textEnd)
+                        {
+                            ImGuiNative.igSameLine(0,0);
+                            break;
+                        }
 
+                        textStart = drawEnd;
+
+                        while (textStart < textEnd)
+                        {
+                            char c = (char)*textStart;
+                            if (c == ' ') {
+                                textStart++; }
+                            else {
+                                break; }
+                        }
+                    } while (true);
+                }
             }
-
-
+            ImGui.NewLine();
         }
 
         public static void ColoredText(string text, Vector4 color, bool sameline = true)

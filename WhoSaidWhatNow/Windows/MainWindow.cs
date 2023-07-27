@@ -94,11 +94,15 @@ public class MainWindow : Window, IDisposable
         //ChatUtils.ColoredText(String.Format(tag.Item2, c.Value.Message), Plugin.Config.ChatColors[c.Value.Type]);
 
         Dictionary<string, Vector4> lines = new Dictionary<string, Vector4>();
-        lines.Add($"[{c.Value.Time.ToShortTimeString()}]", Plugin.Config.ChatColors[c.Value.Type]);
+
+        lines.Add($"[{c.Value.Time.ToShortTimeString()}] ", Plugin.Config.ChatColors[c.Value.Type]);
+
         if (tag.Item1 != String.Empty) 
             lines.Add(tag.Item1, Plugin.Config.ChatColors[c.Value.Type]);
+
         if (c.Value.Type != Dalamud.Game.Text.XivChatType.StandardEmote)
-            lines.Add(c.Value.Sender.Name, c.Value.Sender.NameColor);
+            lines.Add(c.Value.Sender.GetNameTag(), c.Value.Sender.NameColor);
+
         lines.Add(String.Format(tag.Item2, c.Value.Message), Plugin.Config.ChatColors[c.Value.Type]);
 
         ChatUtils.WrappedColoredText(lines);
@@ -158,6 +162,7 @@ public class MainWindow : Window, IDisposable
     /// <param name="player">Player to add.</param>
     public void AddPlayerSelectable(Player player)
     {
+        ImGui.PushStyleColor(ImGuiCol.Text, player.NameColor);
         ImGui.BeginGroup();
 
         if (ImGui.Selectable("###WhoSaidWhatNow_Player_Selectable_" + player.Name, player.Name.Equals(Plugin.SelectedPlayer?.Name), ImGuiSelectableFlags.None))
@@ -180,6 +185,7 @@ public class MainWindow : Window, IDisposable
             ImGui.Text(player.Name);
         }
         ImGui.EndGroup();
+        ImGui.PopStyleColor();
     }
 
     //Draw() the main window

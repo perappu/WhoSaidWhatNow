@@ -99,13 +99,13 @@ namespace WhoSaidWhatNow
         //Channel format for when printing message
         public readonly IDictionary<XivChatType, Tuple<string, string>> GUIFormats = new Dictionary<XivChatType, Tuple<string, string>>()
         {
-            { XivChatType.Say, new Tuple<string, string>("",": {0}") },
-            { XivChatType.TellIncoming, new Tuple<string, string>(""," >> {0}")},
+            { XivChatType.Say, new Tuple<string, string>(" ",": {0}") },
+            { XivChatType.TellIncoming, new Tuple<string, string>(" "," >> {0}")},
             { XivChatType.TellOutgoing, new Tuple<string, string>(">> ",": {0}") },
-            { XivChatType.StandardEmote, new Tuple<string, string>("","{0}") },
-            { XivChatType.CustomEmote, new Tuple<string, string>("","{0}") },
-            { XivChatType.Shout, new Tuple<string, string>(""," shouts: {0}") },
-            { XivChatType.Yell, new Tuple<string, string>(""," yells: {0}")},
+            { XivChatType.StandardEmote, new Tuple<string, string>(String.Empty,"{0}") },
+            { XivChatType.CustomEmote, new Tuple<string, string>(" ","{0}") },
+            { XivChatType.Shout, new Tuple<string, string>(" "," shouts: {0}") },
+            { XivChatType.Yell, new Tuple<string, string>(" "," yells: {0}")},
             { XivChatType.Party, new Tuple<string, string>("(",") {0}") },
             { XivChatType.CrossParty, new Tuple<string, string>("(",") {0}") },
             { XivChatType.Alliance, new Tuple<string, string>("((",")) {0}") },
