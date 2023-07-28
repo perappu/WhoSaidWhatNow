@@ -6,8 +6,10 @@ using Lumina.Excel.GeneratedSheets;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
+using WhoSaidWhatNow.Objects;
 using WhoSaidWhatNow.Services;
 using WhoSaidWhatNow.Utils;
+using static Lumina.Data.Parsing.Layer.LayerCommon;
 
 namespace WhoSaidWhatNow.Windows;
 
@@ -15,6 +17,7 @@ public class ConfigWindow : Window, IDisposable
 {
     private string newName = String.Empty;
     private int newServer = 0;
+    private Vector4 newColor = Vector4.One;
     internal const String ID_PANEL_LEFT = "###WhoSaidWhatNowConfig_LeftPanel_Child";
     private readonly Plugin plugin;
     private readonly string[] worldNames = DataManagerExtensions.WorldNames(Plugin.DataManager);
@@ -81,9 +84,10 @@ public class ConfigWindow : Window, IDisposable
             ImGui.Text("They can only be removed via this page.");
             ImGui.NewLine();
 
-            if (ImGui.BeginTable("alwaysTrackedPlayers", 4, ImGuiTableFlags.SizingFixedFit))
+            if (ImGui.BeginTable("alwaysTrackedPlayers", 5, ImGuiTableFlags.SizingFixedFit))
             {
                 ImGui.TableSetupColumn("");
+                ImGui.TableSetupColumn("Color", ImGuiTableColumnFlags.WidthStretch, 60);
                 ImGui.TableSetupColumn("Player Name", ImGuiTableColumnFlags.WidthStretch, 150);
                 ImGui.TableSetupColumn("Server", ImGuiTableColumnFlags.WidthStretch, 150);
                 ImGui.TableSetupColumn("");
@@ -91,20 +95,25 @@ public class ConfigWindow : Window, IDisposable
                 ImGui.TableHeadersRow();
                 ImGui.TableNextRow();
 
-                List<Tuple<string, string, Vector4>> templist = new List<Tuple<string, string, Vector4>>(Plugin.Config.AlwaysTrackedPlayers);
                 //build table of existing data
-                foreach (var player in templist)
+                foreach (var player in Plugin.Config.AlwaysTrackedPlayers)
                 {
-                    ImGui.PushStyleColor(ImGuiCol.Text, player.Item3);
                     ImGui.TableNextColumn();
                     ImGui.TableNextColumn();
-                    ImGui.Text(player.Item1);
+                    var v = player.Color;
+                    if (ImGui.ColorEdit4($"##picker" + player.Name, ref v, ImGuiColorEditFlags.NoAlpha | ImGuiColorEditFlags.NoInputs))
+                    {
+                        PlayerUtils.ColorTrackedPlayer(player, v);
+                    }
+                    ImGui.PushStyleColor(ImGuiCol.Text, player.Color);
                     ImGui.TableNextColumn();
-                    ImGui.Text(player.Item2);
+                    ImGui.Text(player.Name);
+                    ImGui.TableNextColumn();
+                    ImGui.Text(player.Server);
                     ImGui.TableNextColumn();
                     ImGui.PopStyleColor();
-                    
-                    if (ImGui.Button("Remove##" + player.Item1))
+
+                    if (ImGui.Button("Remove##" + player.Name))
                     {
                         PlayerUtils.RemoveTrackedPlayer(player);
                         PlayerUtils.CheckTrackedPlayers();
@@ -114,6 +123,12 @@ public class ConfigWindow : Window, IDisposable
                 }
                 //ui elements for adding new player
                 ImGui.TableNextColumn();
+                ImGui.TableNextColumn();
+                var newCol = newColor;
+                if (ImGui.ColorEdit4($"##pickerNewName", ref newCol, ImGuiColorEditFlags.NoAlpha | ImGuiColorEditFlags.NoInputs))
+                {
+                    newColor = newCol;
+                }
                 ImGui.TableNextColumn();
                 ImGui.SetNextItemWidth(-1);
                 ImGui.InputText("##inputNewName", ref newName, 100);
@@ -125,7 +140,7 @@ public class ConfigWindow : Window, IDisposable
                 {
                     if (newName.IsValidCharacterName() && !newServer.Equals(""))
                     {
-                        PlayerUtils.AddTrackedPlayer(new Tuple<string, string, Vector4>(newName, worldNames[newServer], PlayerUtils.SetNameColor(newName)));
+                        PlayerUtils.AddTrackedPlayer(new TrackedPlayer(newName, worldNames[newServer], newColor));
                         newName = string.Empty;
                         newServer = 0;
                     }
@@ -156,7 +171,7 @@ public class ConfigWindow : Window, IDisposable
 
                 foreach (var part in parts)
                 {
-                   
+
                     foreach (var chan in part)
                     {
                         ImGui.TableNextColumn();

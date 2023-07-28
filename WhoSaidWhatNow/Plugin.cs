@@ -9,6 +9,7 @@ using Dalamud.Game.Gui;
 using Dalamud.Interface.ImGuiFileDialog;
 using Dalamud.Interface.Windowing;
 using Dalamud.IoC;
+using Dalamud.Logging;
 using Dalamud.Plugin;
 using ImGuiNET;
 using System;
@@ -83,11 +84,14 @@ namespace WhoSaidWhatNow
             try { 
                 Config = PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
             } 
-            catch
+            catch (Exception e)
             {
+                PluginLog.LogDebug(e.Message + " occured. Generating new config file.");
                 Config = new Configuration();
+            } finally
+            {
+                Config.Initialize(PluginInterface);
             }
-            Config.Initialize(PluginInterface);
 
             ConfigHelper = new ConfigurationUtils();
 

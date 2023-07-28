@@ -2,6 +2,7 @@ using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Logging;
+using Lumina.Excel.GeneratedSheets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +13,6 @@ namespace WhoSaidWhatNow.Utils
 {
     public class PlayerUtils
     {
-
         public PlayerUtils() { }
 
         /// <summary>
@@ -74,7 +74,7 @@ namespace WhoSaidWhatNow.Utils
             PluginLog.LogDebug("Currently Logged In Player was changed or null. New: " + Plugin.Config.CurrentPlayer);
         }
 
-        public static void AddTrackedPlayer(Tuple<string, string, Vector4> player)
+        public static void AddTrackedPlayer(TrackedPlayer player)
         {
             Plugin.Config.AlwaysTrackedPlayers.Add(player);
             CheckTrackedPlayers();
@@ -82,17 +82,25 @@ namespace WhoSaidWhatNow.Utils
             SortPlayers();
         }
 
-        public static void RemoveTrackedPlayer(Tuple<string, string, Vector4> player)
+        public static void RemoveTrackedPlayer(TrackedPlayer player)
         {
             Plugin.Config.AlwaysTrackedPlayers.Remove(player);
-            var findPlayer = Plugin.Players.Find(x => x.Name.Equals(player.Item1));
+            var findPlayer = Plugin.Players.Find(x => x.Name.Equals(player.Name));
             if (findPlayer is not null)
             {
                 findPlayer.RemoveDisabled = false;
-                PluginLog.LogDebug("Removed whitelisted player: " + player.Item1 + " " + player.Item2);
+                PluginLog.LogDebug("Removed whitelisted player: " + player.Name + " " + player.Name);
             }
             Plugin.Config.Save();
             SortPlayers();
+        }
+
+        public static void ColorTrackedPlayer(TrackedPlayer player, Vector4 color)
+        {
+            var findPlayer = Plugin.Players.Find(x => x.Name == player.Name);
+            if (findPlayer is not null) findPlayer.NameColor = color;
+            player.Color = color;
+            Plugin.Config.Save();
         }
 
         /// <summary>
@@ -103,15 +111,16 @@ namespace WhoSaidWhatNow.Utils
         {
             foreach (var player in Plugin.Config.AlwaysTrackedPlayers)
             {
-                var findPlayer = Plugin.Players.Find(x => x.Name.Equals(player.Item1));
+                var findPlayer = Plugin.Players.Find(x => x.Name.Equals(player.Name));
                 if (findPlayer is null)
                 {
                     //create new tracked player w/o an ID
-                    Plugin.Players.Add(new Player(player.Item1, player.Item2, player.Item3, true));
-                    PluginLog.LogDebug("Added new whitelisted player: " + player.Item1 + " " + player.Item2);
+                    Plugin.Players.Add(new Player(player.Name, player.Server, player.Color, true));
+                    PluginLog.LogDebug("Added new whitelisted player: " + player.Name + " " + player.Server);
                 }
                 else
                 {
+                    findPlayer.NameColor = player.Color;
                     findPlayer.RemoveDisabled = true;
                 }
             }

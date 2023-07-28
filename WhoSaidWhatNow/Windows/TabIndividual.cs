@@ -114,7 +114,7 @@ public class TabIndividual
                 ImGui.PushFont(UiBuilder.IconFont);
                 if (ImGui.MenuItem(FontAwesomeIcon.UserCheck.ToIconString()))
                 {
-                    PlayerUtils.AddTrackedPlayer(new Tuple<string,string, Vector4>(Plugin.SelectedPlayer.Name, Plugin.SelectedPlayer.Server, Plugin.SelectedPlayer.NameColor));
+                    PlayerUtils.AddTrackedPlayer(new TrackedPlayer(Plugin.SelectedPlayer.Name, Plugin.SelectedPlayer.Server, Plugin.SelectedPlayer.NameColor));
                 }
                 ImGui.PopFont();
                 ImGui.EndDisabled();

@@ -5,6 +5,7 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
+using WhoSaidWhatNow.Objects;
 
 namespace WhoSaidWhatNow
 {
@@ -26,7 +27,7 @@ namespace WhoSaidWhatNow
         /// <summary>
         /// Player IDs that should always be tracked.
         /// </summary>
-        public List<Tuple<string, string, Vector4>> AlwaysTrackedPlayers = new List<Tuple<string, string, Vector4>>();
+        public List<TrackedPlayer> AlwaysTrackedPlayers = new List<TrackedPlayer>();
 
         public string CurrentPlayer = String.Empty;
 

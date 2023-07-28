@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Numerics;
+using WhoSaidWhatNow.Objects;
 
 namespace WhoSaidWhatNow.Utils
 {
@@ -22,7 +23,7 @@ namespace WhoSaidWhatNow.Utils
 
         public static void reset()
         {
-            Plugin.Config.AlwaysTrackedPlayers = new List<Tuple<string, string, Vector4>>();
+            Plugin.Config.AlwaysTrackedPlayers = new List<TrackedPlayer>();
             Plugin.Players.Clear();
             Plugin.ChatEntries.Clear();
             Plugin.Config.CurrentPlayer = string.Empty;
