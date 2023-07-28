@@ -45,7 +45,7 @@ public class MainWindow : Window, IDisposable
     // TODO: make sure this is ok?
     public void Dispose() { }
 
-    public void RemovePlayer()
+    public void RemovePlayerGUI()
     {
         if (Plugin.SelectedPlayer is not null)
         {
@@ -57,52 +57,30 @@ public class MainWindow : Window, IDisposable
         }
     }
 
+    /// <summary>
+    /// Add all players in range, as detected by the ObjectTable
+    /// </summary>
     public void AddAllInRange()
     {
         GameObject[]? playerArray = Plugin.ObjectTable.ToArray();
         List<PlayerCharacter?> nearbyPlayers = playerArray!.Where(x => x.IsValidPlayerCharacter() && x.ObjectId != Plugin.ClientState.LocalPlayer!.ObjectId).Select(x => x as PlayerCharacter).ToList();
 
+        int i = 0;
         foreach (PlayerCharacter? nearbyPlayer in nearbyPlayers)
         {
             if (nearbyPlayer is not null)
             {
                 if (!Plugin.Players.Any(x => x.Name.Equals(nearbyPlayer.Name.ToString())))
                 {
-                    PluginLog.LogDebug("nearby player found " + nearbyPlayer.Name.ToString());
+                    //PluginLog.LogDebug("nearby player found " + nearbyPlayer.Name.ToString());
                     PlayerUtils.AddPlayer(nearbyPlayer);
+                    i++;
                 }
             }
         }
+        PluginLog.LogDebug($"Added {i} players in range");
     }
 
-    /// <summary>
-    /// Properly formats the passed data as a chat message and adds it to the log.
-    /// </summary>
-    public static void ShowMessage(KeyValuePair<DateTime, ChatEntry> c)
-    {
-        //tuple representing text that goes before/after player name
-        Tuple<string, string> tag = Plugin.Config.GUIFormats[c.Value.Type];
-
-        //dictionary for each chunk of text
-        Dictionary<string, Vector4> chunks = new Dictionary<string, Vector4>();
-
-        //timestamp. no intellisense i am not simplifying this, it looks like ass
-        chunks.Add($"[{c.Value.Time.ToShortTimeString()}] ", Plugin.Config.ChatColors[c.Value.Type]);
-
-        //if there isn't anything before the player name, ignore item1
-        if (tag.Item1 != String.Empty)
-            chunks.Add(tag.Item1, Plugin.Config.ChatColors[c.Value.Type]);
-
-        //leave out sender name if it's a standard emote
-        if (c.Value.Type != Dalamud.Game.Text.XivChatType.StandardEmote)
-            chunks.Add(c.Value.Sender.GetNameTag(), c.Value.Sender.NameColor);
-
-        //add message
-        chunks.Add(String.Format(tag.Item2, c.Value.Message), Plugin.Config.ChatColors[c.Value.Type]);
-
-        ChatUtils.WrappedColoredText(chunks);
-
-    }
 
     /// <summary>
     /// Toggles window being opened/closed based on current state of open variable

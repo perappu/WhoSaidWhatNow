@@ -1,4 +1,3 @@
-using Dalamud.Configuration;
 using Dalamud.Data;
 using Dalamud.DrunkenToad;
 using Dalamud.Game.ClientState;
@@ -11,7 +10,6 @@ using Dalamud.Interface.Windowing;
 using Dalamud.IoC;
 using Dalamud.Logging;
 using Dalamud.Plugin;
-using ImGuiNET;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -86,8 +84,8 @@ namespace WhoSaidWhatNow
             } 
             catch (Exception e)
             {
-                PluginLog.LogDebug(e.Message + " occured. Generating new config file.");
                 Config = new Configuration();
+                PluginLog.LogDebug(e.Message + " occured. Generating new config file.");
             } finally
             {
                 Config.Initialize(PluginInterface);

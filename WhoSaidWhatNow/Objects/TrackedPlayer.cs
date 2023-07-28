@@ -19,5 +19,9 @@ namespace WhoSaidWhatNow.Objects
             Server = server;
             Color = color;
         }
+        public string GetNameTag()
+        {
+            return Name + "" + Server;
+        }
     }
 }

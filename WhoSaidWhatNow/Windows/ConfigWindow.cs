@@ -1,15 +1,10 @@
 using Dalamud.DrunkenToad;
 using Dalamud.Interface.Windowing;
-using Dalamud.Logging;
 using ImGuiNET;
-using Lumina.Excel.GeneratedSheets;
 using System;
-using System.Collections.Generic;
 using System.Numerics;
 using WhoSaidWhatNow.Objects;
-using WhoSaidWhatNow.Services;
 using WhoSaidWhatNow.Utils;
-using static Lumina.Data.Parsing.Layer.LayerCommon;
 
 namespace WhoSaidWhatNow.Windows;
 
@@ -87,7 +82,7 @@ public class ConfigWindow : Window, IDisposable
             if (ImGui.BeginTable("alwaysTrackedPlayers", 5, ImGuiTableFlags.SizingFixedFit))
             {
                 ImGui.TableSetupColumn("");
-                ImGui.TableSetupColumn("Color", ImGuiTableColumnFlags.WidthStretch, 60);
+                ImGui.TableSetupColumn("Color", ImGuiTableColumnFlags.WidthStretch, 30);
                 ImGui.TableSetupColumn("Player Name", ImGuiTableColumnFlags.WidthStretch, 150);
                 ImGui.TableSetupColumn("Server", ImGuiTableColumnFlags.WidthStretch, 150);
                 ImGui.TableSetupColumn("");
@@ -96,12 +91,13 @@ public class ConfigWindow : Window, IDisposable
                 ImGui.TableNextRow();
 
                 //build table of existing data
+                //TODO: sometimes remove raises System.InvalidOperationException because it doesn't like you editing the list it's iterating through
                 foreach (var player in Plugin.Config.AlwaysTrackedPlayers)
                 {
                     ImGui.TableNextColumn();
                     ImGui.TableNextColumn();
                     var v = player.Color;
-                    if (ImGui.ColorEdit4($"##picker" + player.Name, ref v, ImGuiColorEditFlags.NoAlpha | ImGuiColorEditFlags.NoInputs))
+                    if (ImGui.ColorEdit4($"##picker{player.Name}{player.Server}", ref v, ImGuiColorEditFlags.NoAlpha | ImGuiColorEditFlags.NoInputs))
                     {
                         PlayerUtils.ColorTrackedPlayer(player, v);
                     }
@@ -113,7 +109,7 @@ public class ConfigWindow : Window, IDisposable
                     ImGui.TableNextColumn();
                     ImGui.PopStyleColor();
 
-                    if (ImGui.Button("Remove##" + player.Name))
+                    if (ImGui.Button($"Remove##{player.Name}{player.Server}"))
                     {
                         PlayerUtils.RemoveTrackedPlayer(player);
                         PlayerUtils.CheckTrackedPlayers();
@@ -125,7 +121,7 @@ public class ConfigWindow : Window, IDisposable
                 ImGui.TableNextColumn();
                 ImGui.TableNextColumn();
                 var newCol = newColor;
-                if (ImGui.ColorEdit4($"##pickerNewName", ref newCol, ImGuiColorEditFlags.NoAlpha | ImGuiColorEditFlags.NoInputs))
+                if (ImGui.ColorEdit4("##pickerNewName", ref newCol, ImGuiColorEditFlags.NoAlpha | ImGuiColorEditFlags.NoInputs))
                 {
                     newColor = newCol;
                 }
@@ -143,6 +139,7 @@ public class ConfigWindow : Window, IDisposable
                         PlayerUtils.AddTrackedPlayer(new TrackedPlayer(newName, worldNames[newServer], newColor));
                         newName = string.Empty;
                         newServer = 0;
+                        newColor = Vector4.One;
                     }
                 }
                 ImGui.EndTable();
@@ -161,7 +158,7 @@ public class ConfigWindow : Window, IDisposable
             var parts = IEnumerableExtensions.Split(Plugin.Config.ChannelToggles, (Plugin.Config.ChannelToggles.Count / 2) - 2);
             //generate checkbox for each chat channel
 
-            if (ImGui.BeginTable("alwaysTrackedPlayers", 3, ImGuiTableFlags.SizingFixedSame))
+            if (ImGui.BeginTable("channelsEnabled", 3, ImGuiTableFlags.SizingFixedSame))
             {
                 ImGui.TableSetupColumn("###col1", ImGuiTableColumnFlags.WidthStretch, 300);
                 ImGui.TableSetupColumn("###col2", ImGuiTableColumnFlags.WidthStretch, 300);

@@ -55,7 +55,7 @@ public class TabIndividual
                 ImGui.PushFont(UiBuilder.IconFont);
                 if (ImGui.MenuItem(FontAwesomeIcon.UserMinus.ToIconString()))
                 {
-                    mainWindow.RemovePlayer();
+                    mainWindow.RemovePlayerGUI();
                 }
                 ImGui.PopFont();
                 ImGui.EndDisabled();
@@ -147,7 +147,7 @@ public class TabIndividual
                                   where Plugin.Config.ChannelToggles[c.Value.Type] == true && c.Value.Sender.Name.Contains(Plugin.SelectedPlayer.Name)
                                   select c)
                 {
-                    MainWindow.ShowMessage(c);
+                    ChatUtils.ShowMessage(c);
                 }
             }
             ImGui.EndGroup();

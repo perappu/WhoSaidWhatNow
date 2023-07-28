@@ -62,7 +62,7 @@ namespace WhoSaidWhatNow.Utils
                         var tag = Plugin.Config.Formats[c.Value.Type];
                         file.WriteLine(c.Value.CreateMessage(tag));
                     }
-                    Plugin.ChatGui.PluginPrint("Successfully saved log: " + path);
+                    Plugin.ChatGui.PluginPrint($"Successfully saved log: {path}");
                 }
             }
             catch
@@ -98,7 +98,7 @@ namespace WhoSaidWhatNow.Utils
                         }
                     }
 
-                    Plugin.ChatGui.PluginPrint("Successfully saved log: " + path);
+                    Plugin.ChatGui.PluginPrint($"Successfully saved log: {path}");
                 }
             }
             catch
