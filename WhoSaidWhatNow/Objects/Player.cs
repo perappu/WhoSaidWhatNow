@@ -32,17 +32,17 @@ namespace WhoSaidWhatNow.Objects
             Server = server;
             RemoveDisabled = removeDisabled;
             TimeAdded = DateTime.UtcNow;
-            SetNameColor(Name);
+            NameColor = PlayerUtils.SetNameColor(Name);
         }
 
-        public Player(string name, string server, bool removeDisabled = false)
+        public Player(string name, string server, Vector4 nameColor, bool removeDisabled = false)
         {
             ID = null;
             Name = name;
             Server = server;
             RemoveDisabled = removeDisabled;
             TimeAdded = DateTime.UtcNow;
-            SetNameColor(Name);
+            NameColor = nameColor;
         }
 
         public Player(GameObject gameObject, bool removeDisabled = false)
@@ -61,7 +61,7 @@ namespace WhoSaidWhatNow.Objects
             {
                 Server = "ServerNotFound";
             }
-            SetNameColor(Name);
+            NameColor = PlayerUtils.SetNameColor(Name);
         }
 
         public Player(PlayerCharacter playerCharacter, bool removeDisabled = false)
@@ -79,17 +79,7 @@ namespace WhoSaidWhatNow.Objects
             {
                 Server = "ServerNotFound";
             }
-            SetNameColor(Name);
-        }
-
-        //setters and getters i guess
-        private void SetNameColor(string name)
-        {
-            Vector4 nameColor = ConfigurationUtils.GenerateRgba((uint)name.GetHashCode());
-            nameColor.X += 0.2f;
-            nameColor.Y += 0.2f;
-            nameColor.Z += 0.2f;
-            NameColor = nameColor;
+            NameColor = PlayerUtils.SetNameColor(Name);
         }
 
         public string GetNameTag()

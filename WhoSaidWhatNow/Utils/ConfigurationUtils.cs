@@ -22,7 +22,7 @@ namespace WhoSaidWhatNow.Utils
 
         public static void reset()
         {
-            Plugin.Config.AlwaysTrackedPlayers = new List<Tuple<string, string>>();
+            Plugin.Config.AlwaysTrackedPlayers = new List<Tuple<string, string, Vector4>>();
             Plugin.Players.Clear();
             Plugin.ChatEntries.Clear();
             Plugin.Config.CurrentPlayer = string.Empty;

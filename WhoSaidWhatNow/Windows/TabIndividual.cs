@@ -83,7 +83,6 @@ public class TabIndividual
                     ImGui.SetTooltip("Hold shift to clear all manually added players");
                 }
 
-
                 ImGui.EndMenuBar();
             }
 
@@ -100,7 +99,6 @@ public class TabIndividual
                 if (ImGui.MenuItem(FontAwesomeIcon.Save.ToIconString()))
                 {
                     FileUtils.OpenFileDialog(plugin, Plugin.SelectedPlayer.Name);
-
                 }
                 ImGui.PopFont();
 
@@ -116,7 +114,7 @@ public class TabIndividual
                 ImGui.PushFont(UiBuilder.IconFont);
                 if (ImGui.MenuItem(FontAwesomeIcon.UserCheck.ToIconString()))
                 {
-                    PlayerUtils.AddTrackedPlayer(new Tuple<string,string>(Plugin.SelectedPlayer.Name, Plugin.SelectedPlayer.Server));
+                    PlayerUtils.AddTrackedPlayer(new Tuple<string,string, Vector4>(Plugin.SelectedPlayer.Name, Plugin.SelectedPlayer.Server, Plugin.SelectedPlayer.NameColor));
                 }
                 ImGui.PopFont();
                 ImGui.EndDisabled();
@@ -143,7 +141,6 @@ public class TabIndividual
             ImGui.BeginChild(MainWindow.ID_PANEL_RIGHT);
 
             ImGui.BeginGroup();
-
             if (Plugin.SelectedPlayer is not null)
             {
                 foreach (var c in from KeyValuePair<DateTime, ChatEntry> c in Plugin.ChatEntries

@@ -1,5 +1,6 @@
 using Dalamud.DrunkenToad;
 using Dalamud.Interface.Windowing;
+using Dalamud.Logging;
 using ImGuiNET;
 using Lumina.Excel.GeneratedSheets;
 using System;
@@ -90,53 +91,47 @@ public class ConfigWindow : Window, IDisposable
                 ImGui.TableHeadersRow();
                 ImGui.TableNextRow();
 
-                List<Tuple<string, string>> templist = new List<Tuple<string, string>>(Plugin.Config.AlwaysTrackedPlayers);
+                List<Tuple<string, string, Vector4>> templist = new List<Tuple<string, string, Vector4>>(Plugin.Config.AlwaysTrackedPlayers);
                 //build table of existing data
-                foreach (var playerName in templist)
+                foreach (var player in templist)
                 {
-                    var player = Plugin.Players.Find(x => x.Name == playerName.Item1);
-                    if(player != null) {
-                        ImGui.PushStyleColor(ImGuiCol.Text, player.NameColor);
-                    }
+                    ImGui.PushStyleColor(ImGuiCol.Text, player.Item3);
                     ImGui.TableNextColumn();
                     ImGui.TableNextColumn();
-                    ImGui.Text(playerName.Item1);
+                    ImGui.Text(player.Item1);
                     ImGui.TableNextColumn();
-                    ImGui.Text(playerName.Item2);
+                    ImGui.Text(player.Item2);
                     ImGui.TableNextColumn();
-                    if (player != null)
+                    ImGui.PopStyleColor();
+                    
+                    if (ImGui.Button("Remove##" + player.Item1))
                     {
-                        ImGui.PopStyleColor();
-                    }
-                    if (ImGui.Button("Remove##" + playerName.Item1))
-                    {
-                        PlayerUtils.RemoveTrackedPlayer(playerName);
+                        PlayerUtils.RemoveTrackedPlayer(player);
                         PlayerUtils.CheckTrackedPlayers();
                     }
                     ImGui.TableNextColumn();
                     ImGui.TableNextRow();
                 }
-            }
-
-            //ui elements for adding new player
-            ImGui.TableNextColumn();
-            ImGui.TableNextColumn();
-            ImGui.SetNextItemWidth(-1);
-            ImGui.InputText("##inputNewName", ref newName, 100);
-            ImGui.TableNextColumn();
-            ImGui.SetNextItemWidth(-1);
-            ImGui.Combo("##servers", ref newServer, worldNames, worldNames.Length);
-            ImGui.TableNextColumn();
-            if (ImGui.Button("Add"))
-            {
-                if (newName.IsValidCharacterName() && !newServer.Equals(""))
+                //ui elements for adding new player
+                ImGui.TableNextColumn();
+                ImGui.TableNextColumn();
+                ImGui.SetNextItemWidth(-1);
+                ImGui.InputText("##inputNewName", ref newName, 100);
+                ImGui.TableNextColumn();
+                ImGui.SetNextItemWidth(-1);
+                ImGui.Combo("##servers", ref newServer, worldNames, worldNames.Length);
+                ImGui.TableNextColumn();
+                if (ImGui.Button("Add"))
                 {
-                    PlayerUtils.AddTrackedPlayer(new Tuple<string, string>(newName, worldNames[newServer]));
-                    newName = string.Empty;
-                    newServer = 0;
+                    if (newName.IsValidCharacterName() && !newServer.Equals(""))
+                    {
+                        PlayerUtils.AddTrackedPlayer(new Tuple<string, string, Vector4>(newName, worldNames[newServer], PlayerUtils.SetNameColor(newName)));
+                        newName = string.Empty;
+                        newServer = 0;
+                    }
                 }
+                ImGui.EndTable();
             }
-            ImGui.EndTable();
 
             ImGui.EndChild();
             ImGui.EndTabItem();
@@ -147,25 +142,41 @@ public class ConfigWindow : Window, IDisposable
         {
             ImGui.BeginChild(ConfigWindow.ID_PANEL_LEFT, new Vector2(0, 0), true);
 
+
+            var parts = IEnumerableExtensions.Split(Plugin.Config.ChannelToggles, (Plugin.Config.ChannelToggles.Count / 2) - 2);
             //generate checkbox for each chat channel
-                foreach (var chan in Plugin.Config.ChannelToggles)
+
+            if (ImGui.BeginTable("alwaysTrackedPlayers", 3, ImGuiTableFlags.SizingFixedSame))
+            {
+                ImGui.TableSetupColumn("###col1", ImGuiTableColumnFlags.WidthStretch, 300);
+                ImGui.TableSetupColumn("###col2", ImGuiTableColumnFlags.WidthStretch, 300);
+                ImGui.TableSetupColumn("###col3", ImGuiTableColumnFlags.WidthStretch, 300);
+
+                ImGui.TableNextRow();
+
+                foreach (var part in parts)
                 {
-                    bool val = chan.Value;
-                    ImGui.PushStyleColor(ImGuiCol.Text, Plugin.Config.ChatColors[chan.Key]);
-                    if (ImGui.Checkbox(chan.Key.ToString(), ref val))
+                   
+                    foreach (var chan in part)
                     {
-
-                        Plugin.Config.ChannelToggles[chan.Key] = val;
-
-                        Plugin.Config.Save();
-
+                        ImGui.TableNextColumn();
+                        bool val = chan.Value;
+                        ImGui.PushStyleColor(ImGuiCol.Text, Plugin.Config.ChatColors[chan.Key]);
+                        if (ImGui.Checkbox(chan.Key.ToString(), ref val))
+                        {
+                            Plugin.Config.ChannelToggles[chan.Key] = val;
+                            Plugin.Config.Save();
+                        }
+                        ImGui.PopStyleColor();
                     }
-                    ImGui.PopStyleColor();
+                    ImGui.TableNextRow();
                 }
 
-            ImGui.EndChild();
+            }
+            ImGui.EndTable();
             ImGui.EndTabItem();
         }
 
     }
 }
+

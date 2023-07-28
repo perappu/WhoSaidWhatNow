@@ -26,7 +26,7 @@ namespace WhoSaidWhatNow
         /// <summary>
         /// Player IDs that should always be tracked.
         /// </summary>
-        public List<Tuple<string, string>> AlwaysTrackedPlayers = new List<Tuple<string, string>>();
+        public List<Tuple<string, string, Vector4>> AlwaysTrackedPlayers = new List<Tuple<string, string, Vector4>>();
 
         public string CurrentPlayer = String.Empty;
 

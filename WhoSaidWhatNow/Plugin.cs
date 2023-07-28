@@ -1,3 +1,4 @@
+using Dalamud.Configuration;
 using Dalamud.Data;
 using Dalamud.DrunkenToad;
 using Dalamud.Game.ClientState;
@@ -9,6 +10,7 @@ using Dalamud.Interface.ImGuiFileDialog;
 using Dalamud.Interface.Windowing;
 using Dalamud.IoC;
 using Dalamud.Plugin;
+using ImGuiNET;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -78,7 +80,13 @@ namespace WhoSaidWhatNow
         {
 
             // initiatize our configuration
-            Config = PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
+            try { 
+                Config = PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
+            } 
+            catch
+            {
+                Config = new Configuration();
+            }
             Config.Initialize(PluginInterface);
 
             ConfigHelper = new ConfigurationUtils();
