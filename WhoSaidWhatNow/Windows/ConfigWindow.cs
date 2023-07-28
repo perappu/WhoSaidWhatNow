@@ -52,6 +52,12 @@ public class ConfigWindow : Window, IDisposable
                 Plugin.Config.AutoscrollOnOpen = autoscroll;
                 Plugin.Config.Save();
             }
+            ImGui.Separator();
+            ImGui.TextWrapped("This button will match WhoWhat's colors to Character Configuration > Log Window Settings.");
+            if (ImGui.Button("Set Colors to Character Log Text Colors")) {
+                ConfigurationUtils.GetConfigColors();
+                Plugin.Config.Save();
+            }
 
             ImGui.EndChild();
             ImGui.EndTabItem();

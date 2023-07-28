@@ -86,7 +86,7 @@ public class MainWindow : Window, IDisposable
         //dictionary for each chunk of text
         Dictionary<string, Vector4> chunks = new Dictionary<string, Vector4>();
 
-        //timestamp
+        //timestamp. no intellisense i am not simplifying this, it looks like ass
         chunks.Add($"[{c.Value.Time.ToShortTimeString()}] ", Plugin.Config.ChatColors[c.Value.Type]);
 
         //if there isn't anything before the player name, ignore item1

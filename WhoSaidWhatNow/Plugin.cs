@@ -3,6 +3,7 @@ using Dalamud.DrunkenToad;
 using Dalamud.Game.ClientState;
 using Dalamud.Game.ClientState.Objects;
 using Dalamud.Game.Command;
+using Dalamud.Game.Config;
 using Dalamud.Game.Gui;
 using Dalamud.Interface.ImGuiFileDialog;
 using Dalamud.Interface.Windowing;
@@ -62,6 +63,10 @@ namespace WhoSaidWhatNow
         [PluginService]
         [RequiredVersion("1.0")]
         public static ObjectTable ObjectTable { get; private set; } = null!;
+
+        [PluginService]
+        [RequiredVersion("1.0")]
+        public static GameConfig GameConfig { get; private set; } = null!;
 
         public FileDialogManager FileDialogManager { get; set; } = null!;
 
