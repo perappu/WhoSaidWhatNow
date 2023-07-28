@@ -108,6 +108,23 @@ public class TabIndividual
                 {
                     ImGui.SetTooltip("Save log to .txt file");
                 }
+
+                //push font to make our menus with FA icons
+
+                ImGui.BeginGroup();
+                ImGui.BeginDisabled(Plugin.SelectedPlayer == null || Plugin.SelectedPlayer.RemoveDisabled);
+                ImGui.PushFont(UiBuilder.IconFont);
+                if (ImGui.MenuItem(FontAwesomeIcon.UserCheck.ToIconString()))
+                {
+                    PlayerUtils.AddTrackedPlayer(new Tuple<string,string>(Plugin.SelectedPlayer.Name, Plugin.SelectedPlayer.Server));
+                }
+                ImGui.PopFont();
+                ImGui.EndDisabled();
+                ImGui.EndGroup();
+                if (ImGui.IsItemHovered())
+                {
+                    ImGui.SetTooltip("Add player to favorites");
+                }
                 ImGui.EndMenuBar();
             }
             ImGui.EndChild();

@@ -63,7 +63,6 @@ namespace WhoSaidWhatNow
             { XivChatType.CrossLinkShell8, true}
         };
 
-        //TODO: Custom chat color values, ideally using ingame colors
         //Default chat color values
         public IDictionary<XivChatType, Vector4> ChatColors = new Dictionary<XivChatType, Vector4>()
         {
@@ -128,6 +127,7 @@ namespace WhoSaidWhatNow
             { XivChatType.CrossLinkShell8, new Tuple < string, string >("[CWLS8]<","> {0}")}
         };
 
+        //Formats for log export
         public readonly IDictionary<XivChatType, string> Formats = new Dictionary<XivChatType, string>()
         {
             { XivChatType.Say, "{0}: {1}" },

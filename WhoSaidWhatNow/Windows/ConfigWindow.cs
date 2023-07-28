@@ -1,6 +1,7 @@
 using Dalamud.DrunkenToad;
 using Dalamud.Interface.Windowing;
 using ImGuiNET;
+using Lumina.Excel.GeneratedSheets;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
@@ -29,23 +30,26 @@ public class ConfigWindow : Window, IDisposable
 
     public override void Draw()
     {
-        // can't ref a property, so use a local copy for config variables
-
         // design philosophy for us right now is we save automatically
         // if we have more options we may change later, but honestly I think some larger plugins also do this so we're fine
 
         ImGui.BeginTabBar("###WhoSaidWhatNowConfig_Tab_Bar");
+
+        //GENERAL SETTINGS TAB
         if (ImGui.BeginTabItem("General"))
         {
             // replace the existing panels by using the same IDs.
-            ImGui.BeginChild(ConfigWindow.ID_PANEL_LEFT, new Vector2(0,0), true);
+            ImGui.BeginChild(ConfigWindow.ID_PANEL_LEFT, new Vector2(0, 0), true);
 
+            //plugin on/off
             bool enabled = Plugin.Config.Enabled;
             if (ImGui.Checkbox("Plugin On/Off", ref enabled))
             {
                 Plugin.Config.Enabled = enabled;
                 Plugin.Config.Save();
             }
+
+            //plugin autoscroll
             bool autoscroll = Plugin.Config.AutoscrollOnOpen;
             if (ImGui.Checkbox("Autoscroll to bottom when opening log (may or may not be functional)", ref autoscroll))
             {
@@ -53,9 +57,12 @@ public class ConfigWindow : Window, IDisposable
                 Plugin.Config.Save();
             }
             ImGui.Separator();
+
+            //plugin set config colors
             ImGui.TextWrapped("This button will match WhoWhat's colors to Character Configuration > Log Window Settings.");
-            if (ImGui.Button("Set Colors to Character Log Text Colors")) {
-                ConfigurationUtils.GetConfigColors();
+            if (ImGui.Button("Set Colors to Character Log Text Colors"))
+            {
+                ConfigurationUtils.SetConfigColors();
                 Plugin.Config.Save();
             }
 
@@ -64,7 +71,8 @@ public class ConfigWindow : Window, IDisposable
 
         }
 
-        if (ImGui.BeginTabItem("Always Tracked Players"))
+        // ALWAYS TRACKED TAB
+        if (ImGui.BeginTabItem("Favorite Players"))
         {
             ImGui.BeginChild(ConfigWindow.ID_PANEL_LEFT, new Vector2(0, 0), true);
 
@@ -84,17 +92,25 @@ public class ConfigWindow : Window, IDisposable
 
                 List<Tuple<string, string>> templist = new List<Tuple<string, string>>(Plugin.Config.AlwaysTrackedPlayers);
                 //build table of existing data
-                foreach (var player in templist)
+                foreach (var playerName in templist)
                 {
+                    var player = Plugin.Players.Find(x => x.Name == playerName.Item1);
+                    if(player != null) {
+                        ImGui.PushStyleColor(ImGuiCol.Text, player.NameColor);
+                    }
                     ImGui.TableNextColumn();
                     ImGui.TableNextColumn();
-                    ImGui.Text(player.Item1);
+                    ImGui.Text(playerName.Item1);
                     ImGui.TableNextColumn();
-                    ImGui.Text(player.Item2);
+                    ImGui.Text(playerName.Item2);
                     ImGui.TableNextColumn();
-                    if (ImGui.Button("Remove##" + player.Item1))
+                    if (player != null)
                     {
-                        PlayerUtils.RemoveTrackedPlayer(player);
+                        ImGui.PopStyleColor();
+                    }
+                    if (ImGui.Button("Remove##" + playerName.Item1))
+                    {
+                        PlayerUtils.RemoveTrackedPlayer(playerName);
                         PlayerUtils.CheckTrackedPlayers();
                     }
                     ImGui.TableNextColumn();
@@ -115,7 +131,7 @@ public class ConfigWindow : Window, IDisposable
             {
                 if (newName.IsValidCharacterName() && !newServer.Equals(""))
                 {
-                    PlayerUtils.AddTrackedPlayer(new Tuple<string,string>(newName, worldNames[newServer]));
+                    PlayerUtils.AddTrackedPlayer(new Tuple<string, string>(newName, worldNames[newServer]));
                     newName = string.Empty;
                     newServer = 0;
                 }
@@ -126,21 +142,27 @@ public class ConfigWindow : Window, IDisposable
             ImGui.EndTabItem();
         }
 
+        //ENABLED CHANNELS TAB
         if (ImGui.BeginTabItem("Channels"))
         {
             ImGui.BeginChild(ConfigWindow.ID_PANEL_LEFT, new Vector2(0, 0), true);
 
-            foreach (var chan in Plugin.Config.ChannelToggles)
+            //generate checkbox for each chat channel
+                foreach (var chan in Plugin.Config.ChannelToggles)
                 {
                     bool val = chan.Value;
+                    ImGui.PushStyleColor(ImGuiCol.Text, Plugin.Config.ChatColors[chan.Key]);
                     if (ImGui.Checkbox(chan.Key.ToString(), ref val))
                     {
+
                         Plugin.Config.ChannelToggles[chan.Key] = val;
+
                         Plugin.Config.Save();
+
                     }
+                    ImGui.PopStyleColor();
                 }
-            
-            
+
             ImGui.EndChild();
             ImGui.EndTabItem();
         }

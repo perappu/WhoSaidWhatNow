@@ -22,25 +22,9 @@ namespace WhoSaidWhatNow.Objects
         public string Server { get; init; }
         public bool RemoveDisabled { get; set; }
         public DateTime TimeAdded { get; set; }
-
         public Vector4 NameColor { get; set; }
 
-        private void SetNameColor(string name)
-        {
-            int nameHash = name.GetHashCode();
-            float val1 = (float)(((nameHash >> (nameHash.ToString()[1] * 8)) & 0xFF) / 255.0) + 0.4f;
-            float val2 = (float)(((nameHash >> (nameHash.ToString()[2] * 8)) & 0xFF) / 255.0) + 0.4f;
-            float val3 = (float)(((nameHash >> (nameHash.ToString()[3] * 8)) & 0xFF) / 255.0) + 0.4f;
-
-            //Random rand = new Random(nameHash);
-            //float val1 = (float)rand.NextDouble() + 0.2f;
-            //float val2 = (float)rand.NextDouble() + 0.2f;
-            //float val3 = (float)rand.NextDouble() + 0.2f;
-
-            Vector4 newColor = new Vector4(val1, val2, val3, 1f);
-            NameColor = newColor;
-        }
-
+        // constructors
         public Player(uint id, string name, string server, bool removeDisabled = false)
         {
             ID = id;
@@ -96,6 +80,16 @@ namespace WhoSaidWhatNow.Objects
                 Server = "ServerNotFound";
             }
             SetNameColor(Name);
+        }
+
+        //setters and getters i guess
+        private void SetNameColor(string name)
+        {
+            Vector4 nameColor = ConfigurationUtils.GenerateRgba((uint)name.GetHashCode());
+            nameColor.X += 0.2f;
+            nameColor.Y += 0.2f;
+            nameColor.Z += 0.2f;
+            NameColor = nameColor;
         }
 
         public string GetNameTag()

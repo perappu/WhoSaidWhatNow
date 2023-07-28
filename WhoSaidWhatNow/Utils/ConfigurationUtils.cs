@@ -30,7 +30,7 @@ namespace WhoSaidWhatNow.Utils
             PlayerUtils.CheckTrackedPlayers();
         }
 
-        public static void GetConfigColors()
+        public static void SetConfigColors()
         {
             foreach (KeyValuePair<XivChatType,Vector4> chatColor in Plugin.Config.ChatColors)
             {
@@ -39,13 +39,13 @@ namespace WhoSaidWhatNow.Utils
             }
         }
 
-        private static Vector4 GenerateRgba(uint color)
+        public static Vector4 GenerateRgba(uint color)
         {
             Color c = Color.FromArgb(0xFF, Color.FromArgb((int)color));
             return new Vector4(c.R / 255f, c.G / 255f, c.B / 255f, 1f);
         }
 
-        private static UiConfigOption ChatTypeToConfigColor(XivChatType chatType)
+        public static UiConfigOption ChatTypeToConfigColor(XivChatType chatType)
         {
             switch (chatType)
             {
