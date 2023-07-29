@@ -4,7 +4,7 @@
     "Punchline": "Per character chat history plugin.",
     "Description": "Per character chat history plugin, evolution of Maia-Everett/dalamud-snooper.\n Main command /whowhat",
     "InternalName": "WhoSaidWhatNow",
-    "AssemblyVersion": "0.3.2",
+    "AssemblyVersion": "0.4.0",
     "TestingAssemblyVersion": "0.4.0",
     "ApplicableVersion": "any",
     "RepoUrl": "https://github.com/perappu/WhoSaidWhatNow",
@@ -13,5 +13,6 @@
         "utility",
         "chat"
     ],
-    "IconUrl": "https://raw.githubusercontent.com/perappu/WhoSaidWhatNow/master/WhoSaidWhatNow/images/icon.png"
+    "IconUrl": "https://raw.githubusercontent.com/perappu/WhoSaidWhatNow/master/WhoSaidWhatNow/images/icon.png",
+    "Changelog": "* v0.4.0\n * Chat colors, favorite players, and more.\n * Breaking config change, delete your config file if plugin won't load.'\n"
 }
