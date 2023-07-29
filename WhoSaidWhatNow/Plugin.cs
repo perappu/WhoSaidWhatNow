@@ -3,16 +3,19 @@ using Dalamud.DrunkenToad;
 using Dalamud.Game.ClientState;
 using Dalamud.Game.ClientState.Objects;
 using Dalamud.Game.Command;
+using Dalamud.Game.Config;
 using Dalamud.Game.Gui;
 using Dalamud.Interface.ImGuiFileDialog;
 using Dalamud.Interface.Windowing;
 using Dalamud.IoC;
+using Dalamud.Logging;
 using Dalamud.Plugin;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using WhoSaidWhatNow.Objects;
 using WhoSaidWhatNow.Services;
+using WhoSaidWhatNow.Utils;
 using WhoSaidWhatNow.Windows;
 
 namespace WhoSaidWhatNow
@@ -23,7 +26,7 @@ namespace WhoSaidWhatNow
         public string Name => "Who Said What Now";
         private const string COMMAND = "/whowhat";
         public static Configuration Config = null!;
-        public static ConfigurationService ConfigHelper = null!;
+        public static ConfigurationUtils ConfigHelper = null!;
 
         public static Player? SelectedPlayer = null;
         public static List<Player> Players = new List<Player>();
@@ -62,20 +65,33 @@ namespace WhoSaidWhatNow
         [RequiredVersion("1.0")]
         public static ObjectTable ObjectTable { get; private set; } = null!;
 
+        [PluginService]
+        [RequiredVersion("1.0")]
+        public static GameConfig GameConfig { get; private set; } = null!;
+
         public FileDialogManager FileDialogManager { get; set; } = null!;
 
-        internal ChatListener ChatListener { get; private set; } = null!;
+        internal ChatService ChatListener { get; private set; } = null!;
 
-        public PlayerService PlayerService { get; set; } = null!;
+        public PlayerUtils PlayerService { get; set; } = null!;
 
         public Plugin()
         {
 
             // initiatize our configuration
-            Config = PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
-            Config.Initialize(PluginInterface);
+            try { 
+                Config = PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
+            } 
+            catch (Exception e)
+            {
+                Config = new Configuration();
+                PluginLog.LogDebug(e.Message + " occured. Generating new config file.");
+            } finally
+            {
+                Config.Initialize(PluginInterface);
+            }
 
-            ConfigHelper = new ConfigurationService();
+            ConfigHelper = new ConfigurationUtils();
 
             // setup UI
             this.MainWindow = new MainWindow(this);
@@ -93,8 +109,8 @@ namespace WhoSaidWhatNow
             // add events/listeners
             Plugin.ClientState.Login += OnLogin;
             Plugin.ClientState.Logout += OnLogout;
-            this.ChatListener = new ChatListener(ChatGui);
-            this.PlayerService = new PlayerService();
+            this.ChatListener = new ChatService(ChatGui);
+            this.PlayerService = new PlayerUtils();
 
             // commands
             CommandManager.AddHandler(COMMAND, new CommandInfo(OnCommand)
@@ -133,7 +149,7 @@ namespace WhoSaidWhatNow
             else if (args.Equals("refresh"))
             {
                 this.MainWindow.IsOpen = false;
-                ConfigurationService.refresh();
+                ConfigurationUtils.refresh();
                 this.MainWindow.IsOpen = true;
                 ChatGuiExtensions.PluginPrint(Plugin.ChatGui, "WhoWhat refreshed. All temporary tracked players removed.");
             }
@@ -141,7 +157,7 @@ namespace WhoSaidWhatNow
             {
                 this.MainWindow.IsOpen = false;
                 this.ConfigWindow.IsOpen = false;
-                ConfigurationService.reset();
+                ConfigurationUtils.reset();
                 this.MainWindow.IsOpen = true;
                 this.ConfigWindow.IsOpen = true;
                 ChatGuiExtensions.PluginPrint(Plugin.ChatGui, "WhoWhat refreshed. Most settings reset.");
@@ -162,8 +178,8 @@ namespace WhoSaidWhatNow
         {
             Plugin.Players.Clear();
             Plugin.Config.CurrentPlayer = string.Empty;
-            PlayerService.SetCurrentPlayer();
-            PlayerService.CheckTrackedPlayers();
+            PlayerUtils.SetCurrentPlayer();
+            PlayerUtils.CheckTrackedPlayers();
         }
 
         //close all windows when logging out so that the windows refresh

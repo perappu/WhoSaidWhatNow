@@ -1,13 +1,11 @@
 using Dalamud.Interface;
 using ImGuiNET;
 using System;
-using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 using WhoSaidWhatNow;
+using WhoSaidWhatNow.Utils;
 using WhoSaidWhatNow.Windows;
-using System.Linq;
-using System.Text.RegularExpressions;
-using WhoSaidWhatNow.Services;
 
 public class TabGroups
 {
@@ -64,7 +62,7 @@ public class TabGroups
                         ImGui.PushFont(UiBuilder.IconFont);
                         if (ImGui.MenuItem(FontAwesomeIcon.Save.ToIconString()))
                         {
-                            FileService.OpenFileDialog(plugin, g);
+                            FileUtils.OpenFileDialog(plugin, g);
                         }
                         ImGui.PopFont();
                         if (ImGui.IsItemHovered())
@@ -91,7 +89,7 @@ public class TabGroups
                                 var p = Plugin.Players.Find(p => c.Value.Sender.Name.Contains(p.Name));
                                 if (players[p!])
                                 {
-                                    MainWindow.ShowMessage(c);
+                                    ChatUtils.ShowMessage(c);
                                 }
                             }
                         }

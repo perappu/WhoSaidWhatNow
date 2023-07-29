@@ -2,17 +2,18 @@ using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Logging;
+using Lumina.Excel.GeneratedSheets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using WhoSaidWhatNow.Objects;
 
-namespace WhoSaidWhatNow.Services
+namespace WhoSaidWhatNow.Utils
 {
-    public class PlayerService
+    public class PlayerUtils
     {
-
-        public PlayerService() { }
+        public PlayerUtils() { }
 
         /// <summary>
         /// Attempts to add given GameObject to tracked players
@@ -38,7 +39,10 @@ namespace WhoSaidWhatNow.Services
             }
         }
 
-        //Remove player by player object
+        /// <summary>
+        /// Remove player by player object
+        /// </summary>
+        /// <param name="player">Player object to remove</param>
         public static void RemovePlayer(Player player)
         {
             if (player is not null)
@@ -47,7 +51,10 @@ namespace WhoSaidWhatNow.Services
             }
         }
 
-        //Remove player by string player name
+        /// <summary>
+        /// Remove player by string player name
+        /// </summary>
+        /// <param name="playerName">Player name to remove</param>
         public static void RemovePlayer(string playerName)
         {
             var player = Plugin.Players.Find(x => x.Name == playerName);
@@ -62,25 +69,23 @@ namespace WhoSaidWhatNow.Services
         /// </summary>
         public static void SetCurrentPlayer()
         {
-            if (Plugin.Config.CurrentPlayer == null)
-            {
-                Plugin.Config.CurrentPlayer = Plugin.ClientState.LocalPlayer!.Name.ToString();
-                AddPlayer(Plugin.ClientState.LocalPlayer!, true);
-                PluginLog.LogDebug("Currently Logged In Player was null. Set: " + Plugin.Config.CurrentPlayer);
-            }
             //if switched characters, remove old character and replace with new one
             //adds to top of list with insert
-            else if (!Plugin.Config.CurrentPlayer.ToString().Equals(Plugin.ClientState.LocalPlayer!.Name.ToString()))
+            if (!Plugin.Config.CurrentPlayer.ToString().Equals(Plugin.ClientState.LocalPlayer!.Name.ToString()))
             {
-                PluginLog.LogDebug("Currently Logged In Player was changed. Old: " + Plugin.Config.CurrentPlayer);
                 RemovePlayer(Plugin.Config.CurrentPlayer);
-                Plugin.Config.CurrentPlayer = Plugin.ClientState.LocalPlayer!.Name.ToString();
-                AddPlayer(Plugin.ClientState.LocalPlayer!, true);
-                PluginLog.LogDebug("Currently Logged In Player was changed. New: " + Plugin.Config.CurrentPlayer);
             }
+            Plugin.Config.CurrentPlayer = Plugin.ClientState.LocalPlayer!.Name.ToString();
+            AddPlayer(Plugin.ClientState.LocalPlayer!, true);
+            PluginLog.LogDebug($"Currently Logged In Player was changed or null. New: {Plugin.Config.CurrentPlayer}");
         }
 
-        public static void AddTrackedPlayer(Tuple<string, string> player)
+        // TRACKED PLAYER METHODS //
+        /// <summary>
+        /// Add tracked player to config. Calls CheckTrackedPlayers() and SortPlayers().
+        /// </summary>
+        /// <param name="player">TrackedPlayer to add</param>
+        public static void AddTrackedPlayer(TrackedPlayer player)
         {
             Plugin.Config.AlwaysTrackedPlayers.Add(player);
             CheckTrackedPlayers();
@@ -88,17 +93,35 @@ namespace WhoSaidWhatNow.Services
             SortPlayers();
         }
 
-        public static void RemoveTrackedPlayer(Tuple<string, string> player)
+        /// <summary>
+        /// Removes tracked player from config. Keeps them in Config.Player list, but enables remove.
+        /// </summary>
+        /// <param name="player">TrackedPlayer to remove</param>
+        public static void RemoveTrackedPlayer(TrackedPlayer player)
         {
             Plugin.Config.AlwaysTrackedPlayers.Remove(player);
-            var findPlayer = Plugin.Players.Find(x => x.Name.Equals(player.Item1));
+            var findPlayer = Plugin.Players.Find(x => x.GetNameTag().Equals(player.GetNameTag()));
             if (findPlayer is not null)
             {
                 findPlayer.RemoveDisabled = false;
-                PluginLog.LogDebug("Removed whitelisted player: " + player.Item1 + " " + player.Item2);
+                PluginLog.LogDebug($"Removed whitelisted player: {player.Name} {player.Server}");
             }
             Plugin.Config.Save();
             SortPlayers();
+        }
+
+        
+        /// <summary>
+        /// Change tracked player to given color. Also finds them in Player list and changes their value.
+        /// </summary>
+        /// <param name="player">TrackedPlayer object</param>
+        /// <param name="color">Vector4 color</param>
+        public static void ColorTrackedPlayer(TrackedPlayer player, Vector4 color)
+        {
+            var findPlayer = Plugin.Players.Find(x => x.Name == player.Name);
+            if (findPlayer is not null) findPlayer.NameColor = color;
+            player.Color = color;
+            Plugin.Config.Save();
         }
 
         /// <summary>
@@ -109,14 +132,16 @@ namespace WhoSaidWhatNow.Services
         {
             foreach (var player in Plugin.Config.AlwaysTrackedPlayers)
             {
-                var findPlayer = Plugin.Players.Find(x => x.Name.Equals(player.Item1));
+                var findPlayer = Plugin.Players.Find(x => x.Name.Equals(player.Name));
                 if (findPlayer is null)
                 {
                     //create new tracked player w/o an ID
-                    Plugin.Players.Add(new Player(player.Item1, player.Item2, true));
-                    PluginLog.LogDebug("Added new whitelisted player: " + player.Item1 + " " + player.Item2);
-                } else
+                    Plugin.Players.Add(new Player(player.Name, player.Server, player.Color, true));
+                    PluginLog.LogDebug($"Added new whitelisted player: {player.Name} {player.Server}");
+                }
+                else
                 {
+                    findPlayer.NameColor = player.Color;
                     findPlayer.RemoveDisabled = true;
                 }
             }
@@ -134,7 +159,7 @@ namespace WhoSaidWhatNow.Services
             if (!topPlayers[0].Name.Equals(Plugin.Config.CurrentPlayer))
             {
                 int i = topPlayers.FindIndex(x => x.Name == Plugin.Config.CurrentPlayer);
-                Player currentPlayer = topPlayers[i];
+                Player currentPlayer = topPlayers[i-1];
                 topPlayers.RemoveAt(i);
                 topPlayers.Insert(0, currentPlayer);
             }
@@ -142,7 +167,11 @@ namespace WhoSaidWhatNow.Services
             Plugin.Players = topPlayers.Concat(otherPlayers).ToList();
         }
 
-        //cast a generic gameobject as a PlayerCharacter
+        /// <summary>
+        /// cast a generic gameobject as a PlayerCharacter
+        /// </summary>
+        /// <param name="obj">Generic GameObject</param>
+        /// <returns></returns>
         public static PlayerCharacter? CastPlayer(GameObject obj)
         {
             try
@@ -153,8 +182,22 @@ namespace WhoSaidWhatNow.Services
             catch
             {
                 PluginLog.LogDebug("Could not cast object as player");
-                return null; 
+                return null;
             }
+        }
+
+        /// <summary>
+        /// Create color based off of hash of a name
+        /// </summary>
+        /// <param name="name">name string</param>
+        /// <returns></returns>
+        public static Vector4 SetNameColor(string name)
+        {
+            Vector4 nameColor = ConfigurationUtils.GenerateRgba((uint)name.GetHashCode());
+            nameColor.X += 0.2f;
+            nameColor.Y += 0.2f;
+            nameColor.Z += 0.2f;
+            return nameColor;
         }
     }
 }

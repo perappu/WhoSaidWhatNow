@@ -1,10 +1,11 @@
 using Dalamud.Game.Text;
+using ImGuiNET;
 using System;
+using WhoSaidWhatNow.Windows;
 
 namespace WhoSaidWhatNow.Objects
 {
     //ChatEntry object
-    //this is pretty much lifted straight from Snooper
     public class ChatEntry
     {
         public uint SenderID { get; set; }
@@ -25,7 +26,7 @@ namespace WhoSaidWhatNow.Objects
         public string CreateMessage(string tag)
         {
             string time = this.Time.ToShortTimeString();
-            string sender = this.Sender.Name + "" + this.Sender.Server;
+            string sender = this.Sender.GetNameTag();
             string msg = this.Message.Trim();
 
             return $"[{time}]" + String.Format(tag, sender, msg);

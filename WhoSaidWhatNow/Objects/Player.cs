@@ -1,7 +1,10 @@
 using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Game.ClientState.Objects.Types;
+using Dalamud.Logging;
+using FFXIVClientStructs.FFXIV.Common.Math;
 using System;
 using WhoSaidWhatNow.Services;
+using WhoSaidWhatNow.Utils;
 
 namespace WhoSaidWhatNow.Objects
 {
@@ -19,7 +22,9 @@ namespace WhoSaidWhatNow.Objects
         public string Server { get; init; }
         public bool RemoveDisabled { get; set; }
         public DateTime TimeAdded { get; set; }
+        public Vector4 NameColor { get; set; }
 
+        // constructors
         public Player(uint id, string name, string server, bool removeDisabled = false)
         {
             ID = id;
@@ -27,22 +32,24 @@ namespace WhoSaidWhatNow.Objects
             Server = server;
             RemoveDisabled = removeDisabled;
             TimeAdded = DateTime.UtcNow;
+            NameColor = PlayerUtils.SetNameColor(Name);
         }
 
-        public Player(string name, string server, bool removeDisabled = false)
+        public Player(string name, string server, Vector4 nameColor, bool removeDisabled = false)
         {
             ID = null;
             Name = name;
             Server = server;
             RemoveDisabled = removeDisabled;
             TimeAdded = DateTime.UtcNow;
+            NameColor = nameColor;
         }
-        
+
         public Player(GameObject gameObject, bool removeDisabled = false)
         {
             ID = gameObject.ObjectId;
             Name = gameObject.Name.ToString();
-            PlayerCharacter? player = PlayerService.CastPlayer(gameObject);
+            PlayerCharacter? player = PlayerUtils.CastPlayer(gameObject);
             RemoveDisabled = removeDisabled;
             TimeAdded = DateTime.UtcNow;
 
@@ -54,6 +61,7 @@ namespace WhoSaidWhatNow.Objects
             {
                 Server = "ServerNotFound";
             }
+            NameColor = PlayerUtils.SetNameColor(Name);
         }
 
         public Player(PlayerCharacter playerCharacter, bool removeDisabled = false)
@@ -71,7 +79,12 @@ namespace WhoSaidWhatNow.Objects
             {
                 Server = "ServerNotFound";
             }
+            NameColor = PlayerUtils.SetNameColor(Name);
         }
 
+        public string GetNameTag()
+        {
+            return Name + "" + Server;
+        }
     }
 }

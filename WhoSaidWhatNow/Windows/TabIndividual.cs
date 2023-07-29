@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using WhoSaidWhatNow.Objects;
-using WhoSaidWhatNow.Services;
+using WhoSaidWhatNow.Utils;
 
 namespace WhoSaidWhatNow.Windows;
 
@@ -39,7 +39,7 @@ public class TabIndividual
                 ImGui.PushFont(UiBuilder.IconFont);
                 if (ImGui.MenuItem(FontAwesomeIcon.UserPlus.ToIconString()))
                 {
-                    PlayerService.AddPlayer(Plugin.TargetManager.Target);
+                    PlayerUtils.AddPlayer(Plugin.TargetManager.Target);
                 }
                 ImGui.PopFont();
                 ImGui.EndDisabled();
@@ -55,7 +55,7 @@ public class TabIndividual
                 ImGui.PushFont(UiBuilder.IconFont);
                 if (ImGui.MenuItem(FontAwesomeIcon.UserMinus.ToIconString()))
                 {
-                    mainWindow.RemovePlayer();
+                    mainWindow.RemovePlayerGUI();
                 }
                 ImGui.PopFont();
                 ImGui.EndDisabled();
@@ -73,7 +73,7 @@ public class TabIndividual
                 ImGui.PushFont(UiBuilder.IconFont);
                 if (ImGui.MenuItem(FontAwesomeIcon.UserSlash.ToIconString()))
                 {
-                    ConfigurationService.refresh();
+                    ConfigurationUtils.refresh();
                 }
                 ImGui.PopFont();
                 ImGui.EndDisabled();
@@ -82,7 +82,6 @@ public class TabIndividual
                 {
                     ImGui.SetTooltip("Hold shift to clear all manually added players");
                 }
-
 
                 ImGui.EndMenuBar();
             }
@@ -99,14 +98,30 @@ public class TabIndividual
                 ImGui.PushFont(UiBuilder.IconFont);
                 if (ImGui.MenuItem(FontAwesomeIcon.Save.ToIconString()))
                 {
-                    FileService.OpenFileDialog(plugin, Plugin.SelectedPlayer.Name);
-
+                    FileUtils.OpenFileDialog(plugin, Plugin.SelectedPlayer.Name);
                 }
                 ImGui.PopFont();
 
                 if (ImGui.IsItemHovered())
                 {
                     ImGui.SetTooltip("Save log to .txt file");
+                }
+
+                //push font to make our menus with FA icons
+
+                ImGui.BeginGroup();
+                ImGui.BeginDisabled(Plugin.SelectedPlayer == null || Plugin.SelectedPlayer.RemoveDisabled);
+                ImGui.PushFont(UiBuilder.IconFont);
+                if (ImGui.MenuItem(FontAwesomeIcon.UserCheck.ToIconString()))
+                {
+                    PlayerUtils.AddTrackedPlayer(new TrackedPlayer(Plugin.SelectedPlayer.Name, Plugin.SelectedPlayer.Server, Plugin.SelectedPlayer.NameColor));
+                }
+                ImGui.PopFont();
+                ImGui.EndDisabled();
+                ImGui.EndGroup();
+                if (ImGui.IsItemHovered())
+                {
+                    ImGui.SetTooltip("Add player to favorites");
                 }
                 ImGui.EndMenuBar();
             }
@@ -126,14 +141,13 @@ public class TabIndividual
             ImGui.BeginChild(MainWindow.ID_PANEL_RIGHT);
 
             ImGui.BeginGroup();
-
             if (Plugin.SelectedPlayer is not null)
             {
                 foreach (var c in from KeyValuePair<DateTime, ChatEntry> c in Plugin.ChatEntries
                                   where Plugin.Config.ChannelToggles[c.Value.Type] == true && c.Value.Sender.Name.Contains(Plugin.SelectedPlayer.Name)
                                   select c)
                 {
-                    MainWindow.ShowMessage(c);
+                    ChatUtils.ShowMessage(c);
                 }
             }
             ImGui.EndGroup();

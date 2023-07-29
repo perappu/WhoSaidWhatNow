@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using WhoSaidWhatNow.Objects;
-using WhoSaidWhatNow.Services;
+using WhoSaidWhatNow.Utils;
 
 namespace WhoSaidWhatNow.Windows;
 
@@ -45,11 +45,11 @@ public class MainWindow : Window, IDisposable
     // TODO: make sure this is ok?
     public void Dispose() { }
 
-    public void RemovePlayer()
+    public void RemovePlayerGUI()
     {
         if (Plugin.SelectedPlayer is not null)
         {
-            PlayerService.RemovePlayer(Plugin.SelectedPlayer);
+            PlayerUtils.RemovePlayer(Plugin.SelectedPlayer);
             ChatOpen = false;
             Plugin.SelectedPlayer = null;
             //we have to manually close the window here
@@ -57,31 +57,30 @@ public class MainWindow : Window, IDisposable
         }
     }
 
+    /// <summary>
+    /// Add all players in range, as detected by the ObjectTable
+    /// </summary>
     public void AddAllInRange()
     {
         GameObject[]? playerArray = Plugin.ObjectTable.ToArray();
         List<PlayerCharacter?> nearbyPlayers = playerArray!.Where(x => x.IsValidPlayerCharacter() && x.ObjectId != Plugin.ClientState.LocalPlayer!.ObjectId).Select(x => x as PlayerCharacter).ToList();
 
+        int i = 0;
         foreach (PlayerCharacter? nearbyPlayer in nearbyPlayers)
         {
-            if (!Plugin.Players.Any(x => x.Name.Equals(nearbyPlayer.Name.ToString())))
+            if (nearbyPlayer is not null)
             {
-                PluginLog.LogDebug("nearby player found " + nearbyPlayer.Name.ToString());
-                PlayerService.AddPlayer(nearbyPlayer);
+                if (!Plugin.Players.Any(x => x.Name.Equals(nearbyPlayer.Name.ToString())))
+                {
+                    //PluginLog.LogDebug("nearby player found " + nearbyPlayer.Name.ToString());
+                    PlayerUtils.AddPlayer(nearbyPlayer);
+                    i++;
+                }
             }
         }
+        PluginLog.LogDebug($"Added {i} players in range");
     }
 
-    /// <summary>
-    /// Properly formats the passed data as a chat message and adds it to the log.
-    /// </summary>
-    public static void ShowMessage(KeyValuePair<DateTime, ChatEntry> c)
-    {
-        ImGui.PushStyleColor(ImGuiCol.Text, Plugin.Config.ChatColors[c.Value.Type]);
-        string tag = Plugin.Config.Formats[c.Value.Type];
-        ImGui.TextWrapped(c.Value.CreateMessage(tag));
-        ImGui.PopStyleColor();
-    }
 
     /// <summary>
     /// Toggles window being opened/closed based on current state of open variable
@@ -136,6 +135,7 @@ public class MainWindow : Window, IDisposable
     /// <param name="player">Player to add.</param>
     public void AddPlayerSelectable(Player player)
     {
+        ImGui.PushStyleColor(ImGuiCol.Text, player.NameColor);
         ImGui.BeginGroup();
 
         if (ImGui.Selectable("###WhoSaidWhatNow_Player_Selectable_" + player.Name, player.Name.Equals(Plugin.SelectedPlayer?.Name), ImGuiSelectableFlags.None))
@@ -147,17 +147,18 @@ public class MainWindow : Window, IDisposable
         ImGui.SameLine();
         if (player.Name == Plugin.Config.CurrentPlayer)
         {
-            ImGui.Text(" " + player.Name + " (YOU)");
+            ImGui.TextUnformatted(" " + player.Name + " (YOU)");
         }
         else if (player.RemoveDisabled == true)
         {
-            ImGui.Text(" " + player.Name);
+            ImGui.TextUnformatted(" " + player.Name);
         }
         else
         {
-            ImGui.Text(player.Name);
+            ImGui.TextUnformatted(player.Name);
         }
         ImGui.EndGroup();
+        ImGui.PopStyleColor();
     }
 
     //Draw() the main window

@@ -1,9 +1,11 @@
 using Dalamud.Configuration;
 using Dalamud.Game.Text;
 using Dalamud.Plugin;
+using FFXIVClientStructs.FFXIV.Component.GUI;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
+using WhoSaidWhatNow.Objects;
 
 namespace WhoSaidWhatNow
 {
@@ -25,7 +27,7 @@ namespace WhoSaidWhatNow
         /// <summary>
         /// Player IDs that should always be tracked.
         /// </summary>
-        public List<Tuple<string, string>> AlwaysTrackedPlayers = new List<Tuple<string, string>>();
+        public List<TrackedPlayer> AlwaysTrackedPlayers = new List<TrackedPlayer>();
 
         public string CurrentPlayer = String.Empty;
 
@@ -62,9 +64,8 @@ namespace WhoSaidWhatNow
             { XivChatType.CrossLinkShell8, true}
         };
 
-        //TODO: Custom chat color values, ideally using ingame colors
         //Default chat color values
-        public readonly IDictionary<XivChatType, Vector4> ChatColors = new Dictionary<XivChatType, Vector4>()
+        public IDictionary<XivChatType, Vector4> ChatColors = new Dictionary<XivChatType, Vector4>()
         {
             { XivChatType.Say, new Vector4(0.969f,0.969f,0.961f, 1f)},
             { XivChatType.TellIncoming, new Vector4(1f,0.784f,0.929f, 1f) },
@@ -94,8 +95,40 @@ namespace WhoSaidWhatNow
             { XivChatType.CrossLinkShell7, new Vector4(0.863f, 0.961f, 0.431f, 1f) },
             { XivChatType.CrossLinkShell8, new Vector4(0.863f, 0.961f, 0.431f, 1f) }
         };
-
+        
         //Channel format for when printing message
+        public readonly IDictionary<XivChatType, Tuple<string, string>> GUIFormats = new Dictionary<XivChatType, Tuple<string, string>>()
+        {
+            { XivChatType.Say, new Tuple<string, string>(" ",": {0}") },
+            { XivChatType.TellIncoming, new Tuple<string, string>(" "," >> {0}")},
+            { XivChatType.TellOutgoing, new Tuple<string, string>(">> ",": {0}") },
+            { XivChatType.StandardEmote, new Tuple<string, string>(String.Empty,"{0}") },
+            { XivChatType.CustomEmote, new Tuple<string, string>(" ","{0}") },
+            { XivChatType.Shout, new Tuple<string, string>(" "," shouts: {0}") },
+            { XivChatType.Yell, new Tuple<string, string>(" "," yells: {0}")},
+            { XivChatType.Party, new Tuple<string, string>("(",") {0}") },
+            { XivChatType.CrossParty, new Tuple<string, string>("(",") {0}") },
+            { XivChatType.Alliance, new Tuple<string, string>("((",")) {0}") },
+            { XivChatType.FreeCompany, new Tuple<string, string>("[FC]<","> {0}") },
+            { XivChatType.Ls1, new Tuple<string, string>("[LS1]<","> {0}")},
+            { XivChatType.Ls2, new Tuple<string, string>("[LS2]<","> {0}")},
+            { XivChatType.Ls3, new Tuple<string, string>("[LS3]<","> {0}")},
+            { XivChatType.Ls4, new Tuple<string, string>("[LS4]<","> {0}")},
+            { XivChatType.Ls5, new Tuple < string, string >("[LS5]<", "> {0}")},
+            { XivChatType.Ls6, new Tuple < string, string >("[LS6]<", "> {0}")},
+            { XivChatType.Ls7, new Tuple < string, string >("[LS7]<", "> {0}")},
+            { XivChatType.Ls8, new Tuple < string, string >("[LS8]<", "> {0}")},
+            { XivChatType.CrossLinkShell1, new Tuple < string, string >("[CWLS1]<","> {0}")},
+            { XivChatType.CrossLinkShell2, new Tuple < string, string >("[CWLS2]<","> {0}")},
+            { XivChatType.CrossLinkShell3, new Tuple < string, string >("[CWLS3]<","> {0}")},
+            { XivChatType.CrossLinkShell4, new Tuple < string, string >("[CWLS4]<","> {0}")},
+            { XivChatType.CrossLinkShell5, new Tuple < string, string >("[CWLS5]<","> {0}")},
+            { XivChatType.CrossLinkShell6, new Tuple < string, string >("[CWLS6]<","> {0}")},
+            { XivChatType.CrossLinkShell7, new Tuple < string, string >("[CWLS7]<","> {0}")},
+            { XivChatType.CrossLinkShell8, new Tuple < string, string >("[CWLS8]<","> {0}")}
+        };
+
+        //Formats for log export
         public readonly IDictionary<XivChatType, string> Formats = new Dictionary<XivChatType, string>()
         {
             { XivChatType.Say, "{0}: {1}" },
