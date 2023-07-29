@@ -79,14 +79,17 @@ namespace WhoSaidWhatNow
         {
 
             // initiatize our configuration
-            try { 
-                Config = PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
-            } 
-            catch (Exception e)
+            try
             {
+                Config = PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError("Failed to load config so creating new one.", ex);
                 Config = new Configuration();
-                PluginLog.LogDebug(e.Message + " occured. Generating new config file.");
-            } finally
+                Config.Save();
+            }
+            finally
             {
                 Config.Initialize(PluginInterface);
             }
