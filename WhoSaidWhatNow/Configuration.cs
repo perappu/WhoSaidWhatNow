@@ -141,7 +141,7 @@ namespace WhoSaidWhatNow
             { XivChatType.TellIncoming, "{0} >> {1}" },
             { XivChatType.TellOutgoing, ">> {0}: {1}" },
             { XivChatType.StandardEmote, "{1}" },
-            { XivChatType.CustomEmote, "{0}{1}" },
+            { XivChatType.CustomEmote, "{0} {1}" },
             { XivChatType.Shout, "{0} shouts: {1}" },
             { XivChatType.Yell, "{0} yells: {1}" },
             { XivChatType.Party, "({0}) {1}" },
