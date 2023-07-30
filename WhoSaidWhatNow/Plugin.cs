@@ -82,11 +82,13 @@ namespace WhoSaidWhatNow
             try
             {
                 Config = PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
+                Logger.LogDebug("Config file loaded successfully.");
                 Config.Initialize(PluginInterface);
             }
             catch (Exception ex)
             {
                 Logger.LogError("Failed to load config so creating new one.", ex);
+                ChatGuiExtensions.PluginPrint(Plugin.ChatGui, "Error loading config file. New one made.");
                 Config = new Configuration();
                 Config.Save();
                 Config.Initialize(PluginInterface);
