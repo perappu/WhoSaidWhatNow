@@ -84,7 +84,7 @@ namespace WhoSaidWhatNow.Objects
 
         public string GetNameTag()
         {
-            return Name + "" + Server;
+            return Name + (Plugin.Config.ShowServer ? "" + Server : String.Empty);
         }
     }
 }

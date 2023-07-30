@@ -24,7 +24,10 @@ namespace WhoSaidWhatNow.Utils
                 Dictionary<string, Vector4> chunks = new Dictionary<string, Vector4>();
 
                 //timestamp. no intellisense i am not simplifying this, it looks like ass
-                chunks.Add($"[{c.Value.Time.ToShortTimeString()}] ", Plugin.Config.ChatColors[c.Value.Type]);
+                if (Plugin.Config.ShowTimestamp)
+                {
+                    chunks.Add($"[{c.Value.Time.ToShortTimeString()}] ", Plugin.Config.ChatColors[c.Value.Type]);
+                }
 
                 //if there isn't anything before the player name, ignore item1
                 if (tag.Item1 != String.Empty)

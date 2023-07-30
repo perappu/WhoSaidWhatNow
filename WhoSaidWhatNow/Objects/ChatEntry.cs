@@ -29,7 +29,7 @@ namespace WhoSaidWhatNow.Objects
             string sender = this.Sender.GetNameTag();
             string msg = this.Message.Trim();
 
-            return $"[{time}]" + String.Format(tag, sender, msg);
+            return (Plugin.Config.ShowTimestamp ? $"[{time}]" : String.Empty) + String.Format(tag, sender, msg);
         }
 
     }

@@ -48,6 +48,24 @@ public class ConfigWindow : Window, IDisposable
                 Plugin.Config.Save();
             }
 
+            ImGui.Separator();
+
+            //show timestamps
+            bool showTimestamp = Plugin.Config.ShowTimestamp;
+            if (ImGui.Checkbox("Show timestamps", ref showTimestamp))
+            {
+                Plugin.Config.ShowTimestamp = showTimestamp;
+                Plugin.Config.Save();
+            }
+
+            //show server in names
+            bool showServer = Plugin.Config.ShowServer;
+            if (ImGui.Checkbox("Show servers", ref showServer))
+            {
+                Plugin.Config.ShowServer = showServer;
+                Plugin.Config.Save();
+            }
+
             //plugin autoscroll
             bool autoscroll = Plugin.Config.AutoscrollOnOpen;
             if (ImGui.Checkbox("Autoscroll to bottom when opening log (may or may not be functional)", ref autoscroll))

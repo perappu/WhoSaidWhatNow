@@ -1,6 +1,7 @@
 using Dalamud.Configuration;
 using Dalamud.Game.Text;
 using Dalamud.Plugin;
+using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using System;
 using System.Collections.Generic;
@@ -23,6 +24,16 @@ namespace WhoSaidWhatNow
         /// Whether the chat log window should autoscroll when opening log.
         /// </summary>
         public bool AutoscrollOnOpen { get; set; } = false;
+
+        /// <summary>
+        /// Show user's server in messages.
+        /// </summary>
+        public bool ShowServer { get; set; } = true;
+
+        /// <summary>
+        /// Show timestamp in messages.
+        /// </summary>
+        public bool ShowTimestamp { get; set; } = true;
 
         /// <summary>
         /// Player IDs that should always be tracked.
