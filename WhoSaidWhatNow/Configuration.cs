@@ -61,7 +61,9 @@ namespace WhoSaidWhatNow
             { XivChatType.CrossLinkShell5, true},
             { XivChatType.CrossLinkShell6, true},
             { XivChatType.CrossLinkShell7, true},
-            { XivChatType.CrossLinkShell8, true}
+            { XivChatType.CrossLinkShell8, true},
+            { XivChatType.NoviceNetwork, true},
+            { XivChatType.PvPTeam, true}
         };
 
         //Default chat color values
@@ -93,9 +95,11 @@ namespace WhoSaidWhatNow
             { XivChatType.CrossLinkShell5, new Vector4(0.863f, 0.961f, 0.431f, 1f) },
             { XivChatType.CrossLinkShell6, new Vector4(0.863f, 0.961f, 0.431f, 1f) },
             { XivChatType.CrossLinkShell7, new Vector4(0.863f, 0.961f, 0.431f, 1f) },
-            { XivChatType.CrossLinkShell8, new Vector4(0.863f, 0.961f, 0.431f, 1f) }
+            { XivChatType.CrossLinkShell8, new Vector4(0.863f, 0.961f, 0.431f, 1f) },
+            { XivChatType.NoviceNetwork, new Vector4(0.863f, 0.961f, 0.431f, 1f) },
+            { XivChatType.PvPTeam, new Vector4(0.624f, 0.816f, 0.839f, 1f) }
         };
-        
+
         //Channel format for when printing message
         public readonly IDictionary<XivChatType, Tuple<string, string>> GUIFormats = new Dictionary<XivChatType, Tuple<string, string>>()
         {
@@ -125,7 +129,9 @@ namespace WhoSaidWhatNow
             { XivChatType.CrossLinkShell5, new Tuple < string, string >("[CWLS5]<","> {0}")},
             { XivChatType.CrossLinkShell6, new Tuple < string, string >("[CWLS6]<","> {0}")},
             { XivChatType.CrossLinkShell7, new Tuple < string, string >("[CWLS7]<","> {0}")},
-            { XivChatType.CrossLinkShell8, new Tuple < string, string >("[CWLS8]<","> {0}")}
+            { XivChatType.CrossLinkShell8, new Tuple < string, string >("[CWLS8]<","> {0}")},
+            { XivChatType.NoviceNetwork, new Tuple < string, string >("[NOVICE] ",": {0}")},
+            { XivChatType.PvPTeam, new Tuple < string, string >("[PvP] ",": {0}")}
         };
 
         //Formats for log export
@@ -157,7 +163,9 @@ namespace WhoSaidWhatNow
             { XivChatType.CrossLinkShell5, "[CWLS5]<{0}> {1}"},
             { XivChatType.CrossLinkShell6, "[CWLS6]<{0}> {1}"},
             { XivChatType.CrossLinkShell7, "[CWLS7]<{0}> {1}"},
-            { XivChatType.CrossLinkShell8, "[CWLS8]<{0}> {1}"}
+            { XivChatType.CrossLinkShell8, "[CWLS8]<{0}> {1}"},
+            { XivChatType.NoviceNetwork, "[NOVICE]{0}: {1}"},
+            { XivChatType.PvPTeam, "[PvP]{0}: {1}"}
         };
 
         // the below exist just to make saving less cumbersome

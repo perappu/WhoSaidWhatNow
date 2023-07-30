@@ -76,6 +76,8 @@ namespace WhoSaidWhatNow.Utils
                 case XivChatType.CrossLinkShell6: return UiConfigOption.ColorCWLS6;
                 case XivChatType.CrossLinkShell7: return UiConfigOption.ColorCWLS7;
                 case XivChatType.CrossLinkShell8: return UiConfigOption.ColorCWLS8;
+                case XivChatType.NoviceNetwork: return UiConfigOption.ColorBeginner;
+                case XivChatType.PvPTeam: return UiConfigOption.ColorPvPGroup;
             }
             return UiConfigOption.ColorSay;
         }

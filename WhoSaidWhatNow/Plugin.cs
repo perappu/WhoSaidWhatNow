@@ -82,15 +82,13 @@ namespace WhoSaidWhatNow
             try
             {
                 Config = PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
+                Config.Initialize(PluginInterface);
             }
             catch (Exception ex)
             {
                 Logger.LogError("Failed to load config so creating new one.", ex);
                 Config = new Configuration();
                 Config.Save();
-            }
-            finally
-            {
                 Config.Initialize(PluginInterface);
             }
 
@@ -120,6 +118,21 @@ namespace WhoSaidWhatNow
             {
                 HelpMessage = "Open main window"
             });
+
+            try
+            {
+                if (ClientState.IsLoggedIn)
+                {
+                    Plugin.Players.Clear();
+                    Plugin.Config.CurrentPlayer = string.Empty;
+                    PlayerUtils.SetCurrentPlayer();
+                    PlayerUtils.CheckTrackedPlayers();
+                }
+            }
+            catch
+            {
+                PluginLog.LogError("Plugin loaded and thought there was a character logged in, but there wasn't.");
+            }
 
         }
 

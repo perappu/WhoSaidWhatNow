@@ -1,3 +1,4 @@
+using Dalamud.Logging;
 using ImGuiNET;
 using System;
 using System.Collections.Generic;
@@ -14,27 +15,34 @@ namespace WhoSaidWhatNow.Utils
         /// </summary>
         public static void ShowMessage(KeyValuePair<DateTime, ChatEntry> c)
         {
-            //tuple representing text that goes before/after player name
-            Tuple<string, string> tag = Plugin.Config.GUIFormats[c.Value.Type];
+            try
+            {
+                //tuple representing text that goes before/after player name
+                Tuple<string, string> tag = Plugin.Config.GUIFormats[c.Value.Type];
 
-            //dictionary for each chunk of text
-            Dictionary<string, Vector4> chunks = new Dictionary<string, Vector4>();
+                //dictionary for each chunk of text
+                Dictionary<string, Vector4> chunks = new Dictionary<string, Vector4>();
 
-            //timestamp. no intellisense i am not simplifying this, it looks like ass
-            chunks.Add($"[{c.Value.Time.ToShortTimeString()}] ", Plugin.Config.ChatColors[c.Value.Type]);
+                //timestamp. no intellisense i am not simplifying this, it looks like ass
+                chunks.Add($"[{c.Value.Time.ToShortTimeString()}] ", Plugin.Config.ChatColors[c.Value.Type]);
 
-            //if there isn't anything before the player name, ignore item1
-            if (tag.Item1 != String.Empty)
-                chunks.Add(tag.Item1, Plugin.Config.ChatColors[c.Value.Type]);
+                //if there isn't anything before the player name, ignore item1
+                if (tag.Item1 != String.Empty)
+                    chunks.Add(tag.Item1, Plugin.Config.ChatColors[c.Value.Type]);
 
-            //leave out sender name if it's a standard emote
-            if (c.Value.Type != Dalamud.Game.Text.XivChatType.StandardEmote)
-                chunks.Add(c.Value.Sender.GetNameTag(), c.Value.Sender.NameColor);
+                //leave out sender name if it's a standard emote
+                if (c.Value.Type != Dalamud.Game.Text.XivChatType.StandardEmote)
+                    chunks.Add(c.Value.Sender.GetNameTag(), c.Value.Sender.NameColor);
 
-            //add message
-            chunks.Add(String.Format(tag.Item2, c.Value.Message), Plugin.Config.ChatColors[c.Value.Type]);
+                //add message
+                chunks.Add(String.Format(tag.Item2, c.Value.Message), Plugin.Config.ChatColors[c.Value.Type]);
 
-            ChatUtils.WrappedColoredText(chunks);
+                ChatUtils.WrappedColoredText(chunks);
+            }
+            catch (Exception e)
+            {
+                PluginLog.LogError($"{e.Message} Unable to display message.");
+            }
 
         }
 
@@ -46,7 +54,7 @@ namespace WhoSaidWhatNow.Utils
         /// <param name="chunks">Dictionary<string, Vector4> of color chunks of text to put on same wrapped line</param>
         public static unsafe void WrappedColoredText(Dictionary<string, Vector4> chunks)
         {
-            float wrapWidth = ImGui.GetWindowContentRegionMax().X- ImGui.GetWindowContentRegionMin().X;
+            float wrapWidth = ImGui.GetWindowContentRegionMax().X - ImGui.GetWindowContentRegionMin().X;
 
             foreach (var chunk in chunks)
             {
@@ -76,7 +84,7 @@ namespace WhoSaidWhatNow.Utils
                         //non-native SameLine will add spaces
                         if (textStart == drawEnd || drawEnd == textEnd)
                         {
-                            ImGuiNative.igSameLine(0,0);
+                            ImGuiNative.igSameLine(0, 0);
                             break;
                         }
 
@@ -85,10 +93,14 @@ namespace WhoSaidWhatNow.Utils
                         while (textStart < textEnd)
                         {
                             char c = (char)*textStart;
-                            if (c == ' ') {
-                                textStart++; }
-                            else {
-                                break; }
+                            if (c == ' ')
+                            {
+                                textStart++;
+                            }
+                            else
+                            {
+                                break;
+                            }
                         }
                     } while (true);
                 }
@@ -96,7 +108,7 @@ namespace WhoSaidWhatNow.Utils
             //we printed the entire chat chunk, so put a manual newline
             ImGui.NewLine();
         }
-        
+
         /// <summary>
         /// shorthand function for colored text
         /// </summary>

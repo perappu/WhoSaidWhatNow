@@ -14,5 +14,5 @@
         "chat"
     ],
     "IconUrl": "https://raw.githubusercontent.com/perappu/WhoSaidWhatNow/master/WhoSaidWhatNow/images/icon.png",
-    "Changelog": "* v0.4.0\n * Chat colors, favorite players, and more.\n * Breaking config change, delete your config file if plugin won't load.'\n"
+    "Changelog": "* v0.4.1\n * Fixed plugin error on trying to load Novice Network and PvP Team messages.\n * Fixed blank window when enabling/disabled/reloading plugin\n * (hopefully) Fixed old configs stopping plugin from loading"
 }
