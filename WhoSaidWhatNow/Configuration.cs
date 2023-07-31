@@ -1,8 +1,6 @@
 using Dalamud.Configuration;
 using Dalamud.Game.Text;
 using Dalamud.Plugin;
-using FFXIVClientStructs.FFXIV.Client.UI;
-using FFXIVClientStructs.FFXIV.Component.GUI;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
@@ -117,7 +115,7 @@ namespace WhoSaidWhatNow
             { XivChatType.Say, new Tuple<string, string>(" ",": {0}") },
             { XivChatType.TellIncoming, new Tuple<string, string>(" "," >> {0}")},
             { XivChatType.TellOutgoing, new Tuple<string, string>(">> ",": {0}") },
-            { XivChatType.StandardEmote, new Tuple<string, string>(String.Empty,"{0}") },
+            { XivChatType.StandardEmote, new Tuple<string, string>(" ","{0}") },
             { XivChatType.CustomEmote, new Tuple<string, string>(" ","{0}") },
             { XivChatType.Shout, new Tuple<string, string>(" "," shouts: {0}") },
             { XivChatType.Yell, new Tuple<string, string>(" "," yells: {0}")},
@@ -143,40 +141,6 @@ namespace WhoSaidWhatNow
             { XivChatType.CrossLinkShell8, new Tuple < string, string >("[CWLS8]<","> {0}")},
             { XivChatType.NoviceNetwork, new Tuple < string, string >("[NOVICE] ",": {0}")},
             { XivChatType.PvPTeam, new Tuple < string, string >("[PvP] ",": {0}")}
-        };
-
-        //Formats for log export
-        public readonly IDictionary<XivChatType, string> Formats = new Dictionary<XivChatType, string>()
-        {
-            { XivChatType.Say, "{0}: {1}" },
-            { XivChatType.TellIncoming, "{0} >> {1}" },
-            { XivChatType.TellOutgoing, ">> {0}: {1}" },
-            { XivChatType.StandardEmote, "{1}" },
-            { XivChatType.CustomEmote, "{0} {1}" },
-            { XivChatType.Shout, "{0} shouts: {1}" },
-            { XivChatType.Yell, "{0} yells: {1}" },
-            { XivChatType.Party, "({0}) {1}" },
-            { XivChatType.CrossParty, "({0}) {1}" },
-            { XivChatType.Alliance, "(({0})) {1}" },
-            { XivChatType.FreeCompany, "[FC]<{0}> {1}" },
-            { XivChatType.Ls1, "[LS1]<{0}> {1}"},
-            { XivChatType.Ls2, "[LS2]<{0}> {1}"},
-            { XivChatType.Ls3, "[LS3]<{0}> {1}"},
-            { XivChatType.Ls4, "[LS4]<{0}> {1}"},
-            { XivChatType.Ls5, "[LS5]<{0}> {1}"},
-            { XivChatType.Ls6, "[LS6]<{0}> {1}"},
-            { XivChatType.Ls7, "[LS7]<{0}> {1}"},
-            { XivChatType.Ls8, "[LS8]<{0}> {1}"},
-            { XivChatType.CrossLinkShell1, "[CWLS1]<{0}> {1}"},
-            { XivChatType.CrossLinkShell2, "[CWLS2]<{0}> {1}"},
-            { XivChatType.CrossLinkShell3, "[CWLS3]<{0}> {1}"},
-            { XivChatType.CrossLinkShell4, "[CWLS4]<{0}> {1}"},
-            { XivChatType.CrossLinkShell5, "[CWLS5]<{0}> {1}"},
-            { XivChatType.CrossLinkShell6, "[CWLS6]<{0}> {1}"},
-            { XivChatType.CrossLinkShell7, "[CWLS7]<{0}> {1}"},
-            { XivChatType.CrossLinkShell8, "[CWLS8]<{0}> {1}"},
-            { XivChatType.NoviceNetwork, "[NOVICE]{0}: {1}"},
-            { XivChatType.PvPTeam, "[PvP]{0}: {1}"}
         };
 
         // the below exist just to make saving less cumbersome
