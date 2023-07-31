@@ -35,7 +35,7 @@ namespace WhoSaidWhatNow.Utils
         public static void OpenFileDialog(Plugin plugin, KeyValuePair<string, (string NAME, Dictionary<Player, bool> PLAYERS)> group)
         {
             plugin.FileDialogManager.SaveFileDialog("Save log...", "Text File{.txt}",
-                Regex.Replace(group.Key, "[^a-zA-Z0-9]", string.Empty) + "-" + DateTime.Now.ToString("yyyy-MM-dd") + ".txt",
+                Regex.Replace(group.Value.NAME, "[^a-zA-Z0-9]", string.Empty) + "-" + DateTime.Now.ToString("yyyy-MM-dd") + ".txt",
                 ".txt", (isOk, selectedFile) =>
                 {
                     if (isOk)
