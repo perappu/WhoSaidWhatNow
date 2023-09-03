@@ -34,7 +34,7 @@ namespace WhoSaidWhatNow.Utils
         public static void DialogSaveGroup(string name, Dictionary<Player, bool> group)
         {
             Plugin.FileDialogManager.SaveFileDialog("Save log...", "Text File{.txt}",
-                Regex.Replace(name, "[^a-zA-Z0-9]", string.Empty) + DateTime.Now.ToString("yyyy-MM-dd") + ".txt",
+                Regex.Replace(name, "[^a-zA-Z0-9]", string.Empty) + "-" + DateTime.Now.ToString("yyyy-MM-dd") + ".txt",
                 ".txt", (isOk, selectedFile) =>
                 {
                     if (isOk)
