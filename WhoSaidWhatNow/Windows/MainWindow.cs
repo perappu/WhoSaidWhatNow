@@ -191,6 +191,9 @@ public class MainWindow : Window, IDisposable
         //GROUP TAB
         var groups = new TabGroups(this, plugin);
 
+        // chatlog search tab.
+        new TabSearch(this);
+
         ImGui.EndTabBar();
 
     }
