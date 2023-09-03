@@ -102,7 +102,7 @@ public class TabIndividual
                 ImGui.PushFont(UiBuilder.IconFont);
                 if (ImGui.MenuItem(FontAwesomeIcon.Save.ToIconString()))
                 {
-                    FileUtils.OpenFileDialog(plugin, Plugin.SelectedPlayer.Name);
+                    FileUtils.OpenFileDialog(Plugin.SelectedPlayer.Name);
                 }
                 ImGui.PopFont();
 

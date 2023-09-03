@@ -9,7 +9,7 @@ using WhoSaidWhatNow.Windows;
 
 public class TabGroups
 {
-    private static int counter = 1;
+    private static int Counter = 1;
 
     public TabGroups(MainWindow main, Plugin plugin)
     {
@@ -44,8 +44,7 @@ public class TabGroups
                     ImGui.BeginChild(MainWindow.ID_PANEL_LEFT, new Vector2(205 * ImGuiHelpers.GlobalScale, 0), true);
                     foreach (var p in Plugin.Players)
                     {
-                        bool isActive;
-                        players.TryGetValue(p, out isActive);
+                        players.TryGetValue(p, out var isActive);
                         ImGui.Checkbox(p.Name, ref isActive);
                         players[p] = isActive;
                     }
@@ -62,7 +61,7 @@ public class TabGroups
                         ImGui.PushFont(UiBuilder.IconFont);
                         if (ImGui.MenuItem(FontAwesomeIcon.Save.ToIconString()))
                         {
-                            FileUtils.OpenFileDialog(plugin, group.NAME);
+                            FileUtils.DialogSaveGroup(group.PLAYERS);
                         }
                         ImGui.PopFont();
                         if (ImGui.IsItemHovered())
@@ -109,8 +108,8 @@ public class TabGroups
 
             if (ImGui.TabItemButton("+", ImGuiTabItemFlags.Trailing | ImGuiTabItemFlags.NoTooltip))
             {
-                TabGroups.counter++;
-                Plugin.Groups.Add($"{TabGroups.counter}", ($"Group {TabGroups.counter}", Plugin.Players.ToDictionary(p => p, p => false)));
+                TabGroups.Counter++;
+                Plugin.Groups.Add($"{TabGroups.Counter}", ($"Group {TabGroups.Counter}", Plugin.Players.ToDictionary(p => p, p => false)));
                 ImGui.EndTabItem();
             }
 
