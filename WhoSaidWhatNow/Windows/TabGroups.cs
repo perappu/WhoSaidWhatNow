@@ -4,12 +4,14 @@ using System;
 using System.Linq;
 using System.Numerics;
 using WhoSaidWhatNow;
+using WhoSaidWhatNow.Objects;
 using WhoSaidWhatNow.Utils;
 using WhoSaidWhatNow.Windows;
 
+
 public class TabGroups
 {
-    private static int counter = 1;
+    private static int Counter = 1;
 
     public TabGroups(MainWindow main, Plugin plugin)
     {
@@ -28,6 +30,8 @@ public class TabGroups
                 var players = group.PLAYERS;
                 if (ImGui.BeginTabItem($"{name}###Tab_{index}"))
                 {
+                    var filtered = new Player[Plugin.Players.Count];
+
                     if (ImGui.BeginPopupContextItem())
                     {
                         var input = String.Empty;
@@ -42,12 +46,17 @@ public class TabGroups
                         ImGui.EndPopup();
                     }
                     ImGui.BeginChild(MainWindow.ID_PANEL_LEFT, new Vector2(205 * ImGuiHelpers.GlobalScale, 0), true);
-                    foreach (var p in Plugin.Players)
+                    ImGui.InputTextWithHint("", "Filter by name...", ref Plugin.FilterPlayers, 40, ImGuiInputTextFlags.EnterReturnsTrue);
+                    Plugin.Players.Where(p => p.Name.ToLower().Contains(Plugin.FilterPlayers.ToLower())).ToList().CopyTo(filtered);
+                    foreach (var p in filtered)
                     {
-                        bool isActive;
-                        players.TryGetValue(p, out isActive);
-                        ImGui.Checkbox(p.Name, ref isActive);
-                        players[p] = isActive;
+                        try
+                        {
+                            players.TryGetValue(p, out var isActive);
+                            ImGui.Checkbox(p.Name, ref isActive);
+                            players[p] = isActive;
+                        }
+                        catch { }
                     }
                     ImGui.EndChild();
                     ImGui.SameLine();
@@ -62,7 +71,7 @@ public class TabGroups
                         ImGui.PushFont(UiBuilder.IconFont);
                         if (ImGui.MenuItem(FontAwesomeIcon.Save.ToIconString()))
                         {
-                            FileUtils.OpenFileDialog(plugin, g);
+                          FileUtils.DialogSaveGroup(name, players);
                         }
                         ImGui.PopFont();
                         if (ImGui.IsItemHovered())
@@ -109,8 +118,8 @@ public class TabGroups
 
             if (ImGui.TabItemButton("+", ImGuiTabItemFlags.Trailing | ImGuiTabItemFlags.NoTooltip))
             {
-                TabGroups.counter++;
-                Plugin.Groups.Add($"{TabGroups.counter}", ($"Group {TabGroups.counter}", Plugin.Players.ToDictionary(p => p, p => false)));
+                TabGroups.Counter++;
+                Plugin.Groups.Add($"{TabGroups.Counter}", ($"Group {TabGroups.Counter}", Plugin.Players.ToDictionary(p => p, p => false)));
                 ImGui.EndTabItem();
             }
 

@@ -17,6 +17,7 @@ public class TabIndividual
 
         if (ImGui.BeginTabItem("Individual"))
         {
+            var players = new Player[Plugin.Players.Count];
 
             //janky handling for if we're coming back to this tab from the groups tab
             if (Plugin.SelectedPlayer is null)
@@ -27,6 +28,9 @@ public class TabIndividual
             // Creating left and right panels
             // you can redeclare BeginChild() with the same ID to add things to them, which we do for chatlog
             ImGui.BeginChild(MainWindow.ID_PANEL_LEFT, new Vector2(230 * ImGuiHelpers.GlobalScale, 0), true, ImGuiWindowFlags.MenuBar);
+
+            ImGui.InputTextWithHint("", "Filter by name...", ref Plugin.FilterPlayers, 40, ImGuiInputTextFlags.EnterReturnsTrue);
+            Plugin.Players.Where(p => p.Name.ToLower().Contains(Plugin.FilterPlayers.ToLower())).ToList().CopyTo(players);
 
             if (ImGui.BeginMenuBar())
             {
@@ -98,7 +102,7 @@ public class TabIndividual
                 ImGui.PushFont(UiBuilder.IconFont);
                 if (ImGui.MenuItem(FontAwesomeIcon.Save.ToIconString()))
                 {
-                    FileUtils.OpenFileDialog(plugin, Plugin.SelectedPlayer.Name);
+                    FileUtils.OpenFileDialog(Plugin.SelectedPlayer.Name);
                 }
                 ImGui.PopFont();
 
@@ -129,10 +133,18 @@ public class TabIndividual
 
 
             //Reopen left window, populate selectable list
-            foreach (var p in Plugin.Players)
+            foreach (var p in players)
             {
                 ImGui.BeginChild(MainWindow.ID_PANEL_LEFT);
-                mainWindow.AddPlayerSelectable(p);
+                // catch NPEs silently
+                try
+                {
+                    mainWindow.AddPlayerSelectable(p);
+                }
+                catch
+                {
+
+                }
                 ImGui.EndChild();
             }
 
