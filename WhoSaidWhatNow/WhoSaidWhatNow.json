@@ -14,5 +14,5 @@
         "chat"
     ],
     "IconUrl": "https://raw.githubusercontent.com/perappu/WhoSaidWhatNow/master/WhoSaidWhatNow/images/icon.png",
-    "Changelog": "* v0.4.1\n * Fixed plugin error on trying to load Novice Network and PvP Team messages.\n * Fixed blank window when enabling/disabled/reloading plugin\n * (hopefully) Fixed old configs stopping plugin from loading"
+    "Changelog": "* v0.4.2\n * Fixed groups exporting with blank file \n * Fixed custom emotes displaying names incorrectly"
 }

@@ -71,7 +71,7 @@ public class TabGroups
                         ImGui.PushFont(UiBuilder.IconFont);
                         if (ImGui.MenuItem(FontAwesomeIcon.Save.ToIconString()))
                         {
-                            FileUtils.DialogSaveGroup(name, players);
+                          FileUtils.DialogSaveGroup(name, players);
                         }
                         ImGui.PopFont();
                         if (ImGui.IsItemHovered())

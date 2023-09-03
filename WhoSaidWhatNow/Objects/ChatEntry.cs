@@ -1,7 +1,6 @@
 using Dalamud.Game.Text;
-using ImGuiNET;
 using System;
-using WhoSaidWhatNow.Windows;
+using System.Linq;
 
 namespace WhoSaidWhatNow.Objects
 {
@@ -18,9 +17,9 @@ namespace WhoSaidWhatNow.Objects
         {
             SenderID = senderId;
             Sender = sender;
-            Message = message;
             Type = type;
             Time = time;
+            Message = message;
         }
 
         public string CreateMessage(string tag)
@@ -29,7 +28,17 @@ namespace WhoSaidWhatNow.Objects
             string sender = this.Sender.GetNameTag();
             string msg = this.Message.Trim();
 
-            return (Plugin.Config.ShowTimestamp ? $"[{time}]" : String.Empty) + String.Format(tag, sender, msg);
+            //handling for standard emotes
+            if (Type == XivChatType.StandardEmote && Sender.Name.Equals(Plugin.Config.CurrentPlayer))
+            {
+                sender = String.Empty;
+                msg = this.Message.Trim();
+            } else if (Type == XivChatType.StandardEmote)
+            {
+                msg = String.Join(' ',this.Message.Split(' ').Skip(2).ToArray());
+            }
+
+            return (Plugin.Config.ShowTimestamp ? $"[{time}]" : String.Empty) + String.Format(tag, sender, msg).Trim();
         }
 
     }

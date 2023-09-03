@@ -81,5 +81,42 @@ namespace WhoSaidWhatNow.Utils
             }
             return UiConfigOption.ColorSay;
         }
+
+        public static string ChatTypeToFormat(XivChatType chatType)
+        {
+            switch (chatType)
+            {
+                case XivChatType.Say: return "{0}: {1}";
+                case XivChatType.TellIncoming: return "{0} >> {1}";
+                case XivChatType.TellOutgoing: return ">> {0}: {1}";
+                case XivChatType.StandardEmote: return "{0} {1}";
+                case XivChatType.CustomEmote: return "{0} shouts: {1}";
+                case XivChatType.Shout: return "{0} shouts: {1}";
+                case XivChatType.Yell: return "{0} yells: {1}";
+                case XivChatType.Party: return "({0}) {1}";
+                case XivChatType.CrossParty: return "({0}) {1}";
+                case XivChatType.Alliance: return "(({0})) {1}";
+                case XivChatType.FreeCompany: return "[FC]<{0}> {1}";
+                case XivChatType.Ls1: return "[LS1]<{0}> {1}";
+                case XivChatType.Ls2: return "[LS2]<{0}> {1}";
+                case XivChatType.Ls3: return "[LS3]<{0}> {1}";
+                case XivChatType.Ls4: return "[LS4]<{0}> {1}";
+                case XivChatType.Ls5: return "[LS5]<{0}> {1}";
+                case XivChatType.Ls6: return "[LS6]<{0}> {1}";
+                case XivChatType.Ls7: return "[LS7]<{0}> {1}";
+                case XivChatType.Ls8: return "[LS8]<{0}> {1}";
+                case XivChatType.CrossLinkShell1: return "[CWLS1]<{0}> {1}";
+                case XivChatType.CrossLinkShell2: return "[CWLS2]<{0}> {1}";
+                case XivChatType.CrossLinkShell3: return "[CWLS3]<{0}> {1}";
+                case XivChatType.CrossLinkShell4: return "[CWLS4]<{0}> {1}";
+                case XivChatType.CrossLinkShell5: return "[CWLS5]<{0}> {1}";
+                case XivChatType.CrossLinkShell6: return "[CWLS6]<{0}> {1}";
+                case XivChatType.CrossLinkShell7: return "[CWLS7]<{0}> {1}";
+                case XivChatType.CrossLinkShell8: return "[CWLS8]<{0}> {1}";
+                case XivChatType.NoviceNetwork: return "[NOVICE]{0}: {1}";
+                case XivChatType.PvPTeam: return "[PvP]{0}: {1}";
+            }
+            return "{0}: {1}";
+        }
     }
 }

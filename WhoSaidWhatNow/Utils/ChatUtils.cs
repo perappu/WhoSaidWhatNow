@@ -2,6 +2,7 @@ using Dalamud.Logging;
 using ImGuiNET;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 using System.Text;
 using WhoSaidWhatNow.Objects;
@@ -33,12 +34,26 @@ namespace WhoSaidWhatNow.Utils
                 if (tag.Item1 != String.Empty)
                     chunks.Add(tag.Item1, Plugin.Config.ChatColors[c.Value.Type]);
 
-                //leave out sender name if it's a standard emote
-                if (c.Value.Type != Dalamud.Game.Text.XivChatType.StandardEmote)
+                //string splitting garbage handling for standard emotes
+                //for if we're the sender
+                if (c.Value.Type == Dalamud.Game.Text.XivChatType.StandardEmote && c.Value.Sender.Name.Equals(Plugin.Config.CurrentPlayer))
+                {
+                    chunks.Add(c.Value.Message.Split(' ')[0], c.Value.Sender.NameColor);
+                    //add message
+                    chunks.Add(String.Format(tag.Item2, " " + String.Join(' ', c.Value.Message.Split(' ').Skip(1).ToArray())), Plugin.Config.ChatColors[c.Value.Type]);
+                }
+                //if someone else is the sender
+                else if (c.Value.Type == Dalamud.Game.Text.XivChatType.StandardEmote)
+                {
                     chunks.Add(c.Value.Sender.GetNameTag(), c.Value.Sender.NameColor);
-
-                //add message
-                chunks.Add(String.Format(tag.Item2, c.Value.Message), Plugin.Config.ChatColors[c.Value.Type]);
+                    //add message
+                    chunks.Add(String.Format(tag.Item2, " " + String.Join(' ', c.Value.Message.Split(' ').Skip(2).ToArray())), Plugin.Config.ChatColors[c.Value.Type]);
+                //normal messages
+                } else {
+                    chunks.Add(c.Value.Sender.GetNameTag(), c.Value.Sender.NameColor);
+                    //add message
+                    chunks.Add(String.Format(tag.Item2, c.Value.Message), Plugin.Config.ChatColors[c.Value.Type]);
+                }
 
                 ChatUtils.WrappedColoredText(chunks);
             }
