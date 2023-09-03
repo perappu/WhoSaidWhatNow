@@ -4,8 +4,10 @@ using System;
 using System.Linq;
 using System.Numerics;
 using WhoSaidWhatNow;
+using WhoSaidWhatNow.Objects;
 using WhoSaidWhatNow.Utils;
 using WhoSaidWhatNow.Windows;
+
 
 public class TabGroups
 {
@@ -28,6 +30,8 @@ public class TabGroups
                 var players = group.PLAYERS;
                 if (ImGui.BeginTabItem($"{name}###Tab_{index}"))
                 {
+                    var filtered = new Player[Plugin.Players.Count];
+
                     if (ImGui.BeginPopupContextItem())
                     {
                         var input = String.Empty;
@@ -42,11 +46,17 @@ public class TabGroups
                         ImGui.EndPopup();
                     }
                     ImGui.BeginChild(MainWindow.ID_PANEL_LEFT, new Vector2(205 * ImGuiHelpers.GlobalScale, 0), true);
-                    foreach (var p in Plugin.Players)
+                    ImGui.InputTextWithHint("", "Filter by name...", ref Plugin.FilterPlayers, 40, ImGuiInputTextFlags.EnterReturnsTrue);
+                    Plugin.Players.Where(p => p.Name.ToLower().Contains(Plugin.FilterPlayers.ToLower())).ToList().CopyTo(filtered);
+                    foreach (var p in filtered)
                     {
-                        players.TryGetValue(p, out var isActive);
-                        ImGui.Checkbox(p.Name, ref isActive);
-                        players[p] = isActive;
+                        try
+                        {
+                            players.TryGetValue(p, out var isActive);
+                            ImGui.Checkbox(p.Name, ref isActive);
+                            players[p] = isActive;
+                        }
+                        catch { }
                     }
                     ImGui.EndChild();
                     ImGui.SameLine();
