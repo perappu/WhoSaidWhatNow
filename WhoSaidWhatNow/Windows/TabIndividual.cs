@@ -29,9 +29,8 @@ public class TabIndividual
             // you can redeclare BeginChild() with the same ID to add things to them, which we do for chatlog
             ImGui.BeginChild(MainWindow.ID_PANEL_LEFT, new Vector2(230 * ImGuiHelpers.GlobalScale, 0), true, ImGuiWindowFlags.MenuBar);
 
-            var input = "";
-            ImGui.InputTextWithHint("", "Filter by name...", ref input, 40, ImGuiInputTextFlags.EnterReturnsTrue);
-            Plugin.Players.Where(p => p.Name.ToLower().Contains(input.ToLower())).ToList().CopyTo(players);
+            ImGui.InputTextWithHint("", "Filter by name...", ref Plugin.FilterPlayers, 40, ImGuiInputTextFlags.EnterReturnsTrue);
+            Plugin.Players.Where(p => p.Name.ToLower().Contains(Plugin.FilterPlayers.ToLower())).ToList().CopyTo(players);
 
             if (ImGui.BeginMenuBar())
             {

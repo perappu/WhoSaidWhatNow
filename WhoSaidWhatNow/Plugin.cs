@@ -29,9 +29,11 @@ namespace WhoSaidWhatNow
         public static ConfigurationUtils ConfigHelper = null!;
 
         public static Player? SelectedPlayer = null;
-        public static List<Player> Players = new List<Player>();
-        public static Dictionary<String, (String NAME, Dictionary<Player, Boolean> PLAYERS)> Groups = new Dictionary<String, (String, Dictionary<Player, Boolean>)> { { "1", ("Group 1", Players.ToDictionary(p => p, p => false)) } };
-        public static SortedList<DateTime, ChatEntry> ChatEntries = new SortedList<DateTime, ChatEntry>();
+        public static List<Player> Players = new();
+        public static string FilterPlayers = "";
+        public static string FilterSearch = "";
+        public static Dictionary<String, (String NAME, Dictionary<Player, Boolean> PLAYERS)> Groups = new() { { "1", ("Group 1", Players.ToDictionary(p => p, p => false)) } };
+        public static SortedList<DateTime, ChatEntry> ChatEntries = new();
 
         private WindowSystem WindowSystem { get; set; }
         public MainWindow MainWindow { get; }
