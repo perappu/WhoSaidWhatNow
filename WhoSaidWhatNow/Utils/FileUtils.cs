@@ -31,10 +31,10 @@ namespace WhoSaidWhatNow.Utils
         /// OpenFileDialog for groups
         /// </summary>
         /// <param name="group">KeyValuePair string for group name, Dictionary<Player, Boolean> for contents of group</param>
-        public static void DialogSaveGroup(Dictionary<Player, bool> group)
+        public static void DialogSaveGroup(string name, Dictionary<Player, bool> group)
         {
             Plugin.FileDialogManager.SaveFileDialog("Save log...", "Text File{.txt}",
-                "group-" + DateTime.Now.ToString("yyyy-MM-dd") + ".txt",
+                Regex.Replace(name, "[^a-zA-Z0-9]", string.Empty) + DateTime.Now.ToString("yyyy-MM-dd") + ".txt",
                 ".txt", (isOk, selectedFile) =>
                 {
                     if (isOk)
