@@ -4,8 +4,8 @@
     "Punchline": "Per character chat history plugin.",
     "Description": "Per character chat history plugin, evolution of Maia-Everett/dalamud-snooper.\n Main command /whowhat",
     "InternalName": "WhoSaidWhatNow",
-    "AssemblyVersion": "0.4.0",
-    "TestingAssemblyVersion": "0.4.0",
+    "AssemblyVersion": "0.4.4",
+    "TestingAssemblyVersion": "0.4.4",
     "ApplicableVersion": "any",
     "RepoUrl": "https://github.com/perappu/WhoSaidWhatNow",
     "DalamudApiLevel": 8,
@@ -14,5 +14,6 @@
         "chat"
     ],
     "IconUrl": "https://raw.githubusercontent.com/perappu/WhoSaidWhatNow/master/WhoSaidWhatNow/images/icon.png",
-    "Changelog": "* v0.4.2\n * Fixed groups exporting with blank file \n * Fixed custom emotes displaying names incorrectly"
+    "Changelog": "* v0.4.4\n * added search functionality to trackable players & all tracked chat messages. \n * extended exporting chats to Group tabs."
 }
+

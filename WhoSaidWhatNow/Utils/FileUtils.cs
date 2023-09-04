@@ -90,7 +90,7 @@ namespace WhoSaidWhatNow.Utils
                         var p = Plugin.Players.Find(p => c.Value.Sender.Name.Contains(p.Name));
                         if (players[p!])
                         {
-                            var tag = Plugin.Config.Formats[c.Value.Type];
+                            var tag = ConfigurationUtils.ChatTypeToFormat(c.Value.Type);
                             file.WriteLine(c.Value.CreateMessage(tag));
                         }
                     }
