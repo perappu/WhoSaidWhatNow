@@ -1,0 +1,23 @@
+name: build and release
+on:
+    push:
+        tags:
+            - "*"
+env:
+    DOTNET_VERSION: "7.0.x"
+jobs:
+    build-and-release:
+        runs-on: "ubuntu-latest"
+        steps:
+            - uses: actions/checkout@v2
+            # TODO step to update WhoSaidWhatNow.json with latest changelog
+            - name: Setup .NET
+              uses: actions/setup-dotnet@v1
+              with:
+                  dotnet-version: ${{ env.DOTNET_VERSION }}
+            - name: Install dependencies
+              run: dotnet restore
+            - name: Build
+              run: dotnet build
+            # TODO get .zip, upload as asset with proper tag, create release
+            # TODO update ./repo.json with DL link & new assembly version
