@@ -1,14 +1,13 @@
-using Dalamud.DrunkenToad;
 using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Interface.Windowing;
 using Dalamud.Logging;
 using ImGuiNET;
-using LiteDB;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using Dalamud.DrunkenToad.Extensions;
 using WhoSaidWhatNow.Objects;
 using WhoSaidWhatNow.Utils;
 

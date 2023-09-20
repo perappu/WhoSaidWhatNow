@@ -3,6 +3,8 @@ using Dalamud.Interface.Windowing;
 using ImGuiNET;
 using System;
 using System.Numerics;
+using Dalamud.DrunkenToad.Extensions;
+using Dalamud.Utility;
 using WhoSaidWhatNow.Objects;
 using WhoSaidWhatNow.Utils;
 
@@ -15,7 +17,7 @@ public class ConfigWindow : Window, IDisposable
     private Vector4 newColor = Vector4.One;
     internal const String ID_PANEL_LEFT = "###WhoSaidWhatNowConfig_LeftPanel_Child";
     private readonly Plugin plugin;
-    private readonly string[] worldNames = DataManagerExtensions.WorldNames(Plugin.DataManager);
+    private readonly string[] worldNames = Plugin.DataManager.WorldNames();
 
     public ConfigWindow(Plugin plugin) : base(
         "Who Said What Now - Settings", ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse)
@@ -172,8 +174,7 @@ public class ConfigWindow : Window, IDisposable
         {
             ImGui.BeginChild(ConfigWindow.ID_PANEL_LEFT, new Vector2(0, 0), true);
 
-
-            var parts = IEnumerableExtensions.Split(Plugin.Config.ChannelToggles, (Plugin.Config.ChannelToggles.Count / 2) - 2);
+            var parts = Plugin.Config.ChannelToggles.Split(Plugin.Config.ChannelToggles.Count / 2 - 2);
             //generate checkbox for each chat channel
 
             if (ImGui.BeginTable("channelsEnabled", 3, ImGuiTableFlags.SizingFixedSame))

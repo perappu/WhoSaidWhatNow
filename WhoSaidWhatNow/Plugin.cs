@@ -13,6 +13,7 @@ using Dalamud.Plugin;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Dalamud.DrunkenToad.Extensions;
 using WhoSaidWhatNow.Objects;
 using WhoSaidWhatNow.Services;
 using WhoSaidWhatNow.Utils;
@@ -84,13 +85,13 @@ namespace WhoSaidWhatNow
             try
             {
                 Config = PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
-                Logger.LogDebug("Config file loaded successfully.");
+                PluginLog.LogDebug("Config file loaded successfully.");
                 Config.Initialize(PluginInterface);
             }
             catch (Exception ex)
             {
-                Logger.LogError("Failed to load config so creating new one.", ex);
-                ChatGuiExtensions.PluginPrint(Plugin.ChatGui, "Error loading config file. New one made.");
+                PluginLog.LogError("Failed to load config so creating new one.", ex);
+                ChatGui.PluginPrint("Error loading config file. New one made.");
                 Config = new Configuration();
                 Config.Save();
                 Config.Initialize(PluginInterface);
