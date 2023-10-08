@@ -3,6 +3,7 @@ using Dalamud.Game.Text;
 using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Game.Text.SeStringHandling.Payloads;
 using Dalamud.Logging;
+using Dalamud.Plugin.Services;
 using System;
 using WhoSaidWhatNow.Objects;
 
@@ -14,9 +15,9 @@ namespace WhoSaidWhatNow.Services
     /// </summary>
     internal class ChatService : IDisposable
     {
-        internal ChatGui? gui;
+        internal IChatGui? gui;
 
-        public ChatService(ChatGui gui)
+        public ChatService(IChatGui gui)
 
         {
             this.gui = gui;

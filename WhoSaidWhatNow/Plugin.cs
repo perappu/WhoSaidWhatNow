@@ -10,6 +10,7 @@ using Dalamud.Interface.Windowing;
 using Dalamud.IoC;
 using Dalamud.Logging;
 using Dalamud.Plugin;
+using Dalamud.Plugin.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -45,31 +46,31 @@ namespace WhoSaidWhatNow
 
         [PluginService]
         [RequiredVersion("1.0")]
-        public static CommandManager CommandManager { get; private set; } = null!;
+        public static ICommandManager CommandManager { get; private set; } = null!;
 
         [PluginService]
         [RequiredVersion("1.0")]
-        public static DataManager DataManager { get; private set; } = null!;
+        public static IDataManager DataManager { get; private set; } = null!;
 
         [PluginService]
         [RequiredVersion("1.0")]
-        public static TargetManager TargetManager { get; private set; } = null!;
+        public static ITargetManager TargetManager { get; private set; } = null!;
 
         [PluginService]
         [RequiredVersion("1.0")]
-        public static ClientState ClientState { get; private set; } = null!;
+        public static IClientState ClientState { get; private set; } = null!;
 
         [PluginService]
         [RequiredVersion("1.0")]
-        public static ChatGui ChatGui { get; private set; } = null!;
+        public static IChatGui ChatGui { get; private set; } = null!;
 
         [PluginService]
         [RequiredVersion("1.0")]
-        public static ObjectTable ObjectTable { get; private set; } = null!;
+        public static IObjectTable ObjectTable { get; private set; } = null!;
 
         [PluginService]
         [RequiredVersion("1.0")]
-        public static GameConfig GameConfig { get; private set; } = null!;
+        public static IGameConfig GameConfig { get; private set; } = null!;
 
         public static FileDialogManager FileDialogManager { get; set; } = new FileDialogManager();
 
@@ -111,8 +112,8 @@ namespace WhoSaidWhatNow
             PluginInterface.UiBuilder.Draw += FileDialogManager.Draw;
 
             // add events/listeners
-            Plugin.ClientState.Login += OnLogin;
-            Plugin.ClientState.Logout += OnLogout;
+            ClientState.Login += OnLogin;
+            ClientState.Logout += OnLogout;
             this.ChatListener = new ChatService(ChatGui);
             this.PlayerService = new PlayerUtils();
 
@@ -134,7 +135,7 @@ namespace WhoSaidWhatNow
             }
             catch
             {
-                PluginLog.LogError("Plugin loaded and thought there was a character logged in, but there wasn't.");
+                IPluginLog.LogError("Plugin loaded and thought there was a character logged in, but there wasn't.");
             }
 
         }
@@ -193,7 +194,7 @@ namespace WhoSaidWhatNow
         }
 
         //set the current player when logging in
-        void OnLogin(object? sender, EventArgs e)
+        private void OnLogin(object? sender, EventArgs e)
         {
             Plugin.Players.Clear();
             Plugin.Config.CurrentPlayer = string.Empty;
