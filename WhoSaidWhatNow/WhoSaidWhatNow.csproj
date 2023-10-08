@@ -14,7 +14,7 @@
     <RootNamespace>WhoSaidWhatNow</RootNamespace>
     <AssemblyName>WhoSaidWhatNow</AssemblyName>
     <Nullable>enable</Nullable>
-    <LangVersion>latest</LangVersion>
+    <LangVersion>preview</LangVersion>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
@@ -34,7 +34,7 @@
 
   <ItemGroup>
     <PackageReference Include="Dalamud.ContextMenu" Version="1.2.3" />
-    <PackageReference Include="Dalamud.DrunkenToad" Version="1.5.6" />
+    <PackageReference Include="Dalamud.DrunkenToad" Version="1.8.1" />
     <PackageReference Include="DalamudPackager" Version="2.1.12" />
     <PackageReference Include="System.Runtime" Version="4.3.1" />
     <Reference Include="FFXIVClientStructs">

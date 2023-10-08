@@ -3,6 +3,7 @@ using ImGuiNET;
 using System;
 using System.Linq;
 using System.Numerics;
+using Dalamud.Interface.Utility;
 using WhoSaidWhatNow;
 using WhoSaidWhatNow.Objects;
 using WhoSaidWhatNow.Utils;
@@ -118,8 +119,8 @@ public class TabGroups
 
             if (ImGui.TabItemButton("+", ImGuiTabItemFlags.Trailing | ImGuiTabItemFlags.NoTooltip))
             {
-                TabGroups.Counter++;
-                Plugin.Groups.Add($"{TabGroups.Counter}", ($"Group {TabGroups.Counter}", Plugin.Players.ToDictionary(p => p, p => false)));
+                Counter++;
+                Plugin.Groups.Add($"{Counter}", ($"Group {Counter}", Plugin.Players.ToDictionary(p => p, p => false)));
                 ImGui.EndTabItem();
             }
 

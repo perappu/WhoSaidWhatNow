@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Dalamud.DrunkenToad.Extensions;
 using WhoSaidWhatNow.Objects;
 
 namespace WhoSaidWhatNow.Utils

@@ -49,7 +49,7 @@ namespace WhoSaidWhatNow.Objects
         {
             ID = gameObject.ObjectId;
             Name = gameObject.Name.ToString();
-            PlayerCharacter? player = PlayerUtils.CastPlayer(gameObject);
+            var player = PlayerUtils.CastPlayer(gameObject);
             RemoveDisabled = removeDisabled;
             TimeAdded = DateTime.UtcNow;
 

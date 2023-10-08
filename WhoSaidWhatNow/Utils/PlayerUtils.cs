@@ -5,6 +5,7 @@ using Dalamud.Logging;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using Dalamud.DrunkenToad.Core;
 using WhoSaidWhatNow.Objects;
 
 namespace WhoSaidWhatNow.Utils
@@ -75,7 +76,7 @@ namespace WhoSaidWhatNow.Utils
             }
             Plugin.Config.CurrentPlayer = Plugin.ClientState.LocalPlayer!.Name.ToString();
             AddPlayer(Plugin.ClientState.LocalPlayer!, true);
-            PluginLog.LogDebug($"Currently Logged In Player was changed or null. New: {Plugin.Config.CurrentPlayer}");
+            DalamudContext.PluginLog.Debug($"Currently Logged In Player was changed or null. New: {Plugin.Config.CurrentPlayer}");
         }
 
         // TRACKED PLAYER METHODS //
@@ -102,7 +103,7 @@ namespace WhoSaidWhatNow.Utils
             if (findPlayer is not null)
             {
                 findPlayer.RemoveDisabled = false;
-                PluginLog.LogDebug($"Removed whitelisted player: {player.Name} {player.Server}");
+                DalamudContext.PluginLog.Debug($"Removed whitelisted player: {player.Name} {player.Server}");
             }
             Plugin.Config.Save();
             SortPlayers();
@@ -150,14 +151,14 @@ namespace WhoSaidWhatNow.Utils
         /// </summary>
         public static void SortPlayers()
         {
-            List<Player> topPlayers = Plugin.Players.Where(x => x.RemoveDisabled == true).ToList();
-            List<Player> otherPlayers = Plugin.Players.Where(x => x.RemoveDisabled != true).ToList();
+            var topPlayers = Plugin.Players.Where(x => x.RemoveDisabled == true).ToList();
+            var otherPlayers = Plugin.Players.Where(x => x.RemoveDisabled != true).ToList();
 
             //we only need to do remove and return stuff if the player isn't already at the top
             if (!topPlayers[0].Name.Equals(Plugin.Config.CurrentPlayer))
             {
-                int i = topPlayers.FindIndex(x => x.Name == Plugin.Config.CurrentPlayer);
-                Player currentPlayer = topPlayers[i-1];
+                var i = topPlayers.FindIndex(x => x.Name == Plugin.Config.CurrentPlayer);
+                var currentPlayer = topPlayers[i-1];
                 topPlayers.RemoveAt(i);
                 topPlayers.Insert(0, currentPlayer);
             }
@@ -191,7 +192,7 @@ namespace WhoSaidWhatNow.Utils
         /// <returns></returns>
         public static Vector4 SetNameColor(string name)
         {
-            Vector4 nameColor = ConfigurationUtils.GenerateRgba((uint)name.GetHashCode());
+            var nameColor = ConfigurationUtils.GenerateRgba((uint)name.GetHashCode());
             nameColor.X += 0.2f;
             nameColor.Y += 0.2f;
             nameColor.Z += 0.2f;

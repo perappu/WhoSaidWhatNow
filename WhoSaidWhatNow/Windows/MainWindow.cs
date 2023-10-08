@@ -1,14 +1,13 @@
-using Dalamud.DrunkenToad;
 using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Interface.Windowing;
 using Dalamud.Logging;
 using ImGuiNET;
-using LiteDB;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using Dalamud.DrunkenToad.Extensions;
 using WhoSaidWhatNow.Objects;
 using WhoSaidWhatNow.Utils;
 
@@ -62,11 +61,11 @@ public class MainWindow : Window, IDisposable
     /// </summary>
     public void AddAllInRange()
     {
-        GameObject[]? playerArray = Plugin.ObjectTable.ToArray();
-        List<PlayerCharacter?> nearbyPlayers = playerArray!.Where(x => x.IsValidPlayerCharacter() && x.ObjectId != Plugin.ClientState.LocalPlayer!.ObjectId).Select(x => x as PlayerCharacter).ToList();
+        var playerArray = Plugin.ObjectTable.ToArray();
+        var nearbyPlayers = playerArray!.Where(x => x.IsValidPlayerCharacter() && x.ObjectId != Plugin.ClientState.LocalPlayer!.ObjectId).Select(x => x as PlayerCharacter).ToList();
 
-        int i = 0;
-        foreach (PlayerCharacter? nearbyPlayer in nearbyPlayers)
+        var i = 0;
+        foreach (var nearbyPlayer in nearbyPlayers)
         {
             if (nearbyPlayer is not null)
             {
@@ -125,7 +124,7 @@ public class MainWindow : Window, IDisposable
     // </summary
     public void toggleWindow(bool open)
     {
-        MainWindow.ChatOpen = open;
+        ChatOpen = open;
         SizeConstraints = open ? openConstraints : closedConstraints;
     }
 

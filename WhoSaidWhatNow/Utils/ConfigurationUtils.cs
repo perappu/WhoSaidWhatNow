@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Numerics;
 using WhoSaidWhatNow.Objects;
+using Dalamud.DrunkenToad.Core;
+
 
 namespace WhoSaidWhatNow.Utils
 {
@@ -13,7 +15,7 @@ namespace WhoSaidWhatNow.Utils
 
         public static void refresh()
         {
-            PluginLog.LogDebug("refresh called");
+            DalamudContext.PluginLog.Debug("refresh called");
             Plugin.Players.Clear();
             Plugin.Config.CurrentPlayer = string.Empty;
             PlayerUtils.SetCurrentPlayer();
@@ -32,7 +34,7 @@ namespace WhoSaidWhatNow.Utils
 
         public static void SetConfigColors()
         {
-            foreach (KeyValuePair<XivChatType,Vector4> chatColor in Plugin.Config.ChatColors)
+            foreach (var chatColor in Plugin.Config.ChatColors)
             {
                 Plugin.GameConfig.TryGet(ChatTypeToConfigColor(chatColor.Key), out uint color);
                 Plugin.Config.ChatColors[chatColor.Key] = GenerateRgba(color);
@@ -41,7 +43,7 @@ namespace WhoSaidWhatNow.Utils
 
         public static Vector4 GenerateRgba(uint color)
         {
-            Color c = Color.FromArgb(0xFF, Color.FromArgb((int)color));
+            var c = Color.FromArgb(0xFF, Color.FromArgb((int)color));
             return new Vector4(c.R / 255f, c.G / 255f, c.B / 255f, 1f);
         }
 

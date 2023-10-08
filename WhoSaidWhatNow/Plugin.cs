@@ -1,19 +1,14 @@
-using Dalamud.Data;
-using Dalamud.DrunkenToad;
-using Dalamud.Game.ClientState;
 using Dalamud.Game.ClientState.Objects;
 using Dalamud.Game.Command;
-using Dalamud.Game.Config;
-using Dalamud.Game.Gui;
 using Dalamud.Interface.ImGuiFileDialog;
 using Dalamud.Interface.Windowing;
 using Dalamud.IoC;
-using Dalamud.Logging;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Dalamud.DrunkenToad.Extensions;
 using WhoSaidWhatNow.Objects;
 using WhoSaidWhatNow.Services;
 using WhoSaidWhatNow.Utils;
@@ -96,7 +91,7 @@ namespace WhoSaidWhatNow
             catch (Exception ex)
             {
                 Logger.Error("Failed to load config so creating new one.", ex);
-                ChatGuiExtensions.PluginPrint(Plugin.ChatGui, "Error loading config file. New one made.");
+                ChatGuiExtensions.PluginPrint(ChatGui, "Error loading config file. New one made.");
                 Config = new Configuration();
                 Config.Save();
                 Config.Initialize(PluginInterface);
@@ -132,8 +127,8 @@ namespace WhoSaidWhatNow
             {
                 if (ClientState.IsLoggedIn)
                 {
-                    Plugin.Players.Clear();
-                    Plugin.Config.CurrentPlayer = string.Empty;
+                    Players.Clear();
+                    Config.CurrentPlayer = string.Empty;
                     PlayerUtils.SetCurrentPlayer();
                     PlayerUtils.CheckTrackedPlayers();
                 }
@@ -154,8 +149,8 @@ namespace WhoSaidWhatNow
             PluginInterface.UiBuilder.Draw -= FileDialogManager.Draw;
             WindowSystem.RemoveAllWindows();
             CommandManager.RemoveHandler(COMMAND);
-            Plugin.ClientState.Login -= OnLogin;
-            Plugin.ClientState.Logout -= OnLogout;
+            ClientState.Login -= OnLogin;
+            ClientState.Logout -= OnLogout;
         }
 
         private void OnCommand(string command, string args)
@@ -163,12 +158,12 @@ namespace WhoSaidWhatNow
 
             if (args.Equals("on"))
             {
-                ChatGuiExtensions.PluginPrint(Plugin.ChatGui, "WhoWhat is ON.");
+                ChatGuiExtensions.PluginPrint(ChatGui, "WhoWhat is ON.");
                 Config.Enabled = true;
             }
             else if (args.Equals("off"))
             {
-                ChatGuiExtensions.PluginPrint(Plugin.ChatGui, "WhoWhat is OFF.");
+                ChatGuiExtensions.PluginPrint(ChatGui, "WhoWhat is OFF.");
                 Config.Enabled = false;
             }
             else if (args.Equals("refresh"))
@@ -176,7 +171,7 @@ namespace WhoSaidWhatNow
                 MainWindow.IsOpen = false;
                 ConfigurationUtils.refresh();
                 MainWindow.IsOpen = true;
-                ChatGuiExtensions.PluginPrint(Plugin.ChatGui, "WhoWhat refreshed. All temporary tracked players removed.");
+                ChatGuiExtensions.PluginPrint(ChatGui, "WhoWhat refreshed. All temporary tracked players removed.");
             }
             else if (args.Equals("reset"))
             {
@@ -185,7 +180,7 @@ namespace WhoSaidWhatNow
                 ConfigurationUtils.reset();
                 MainWindow.IsOpen = true;
                 ConfigWindow.IsOpen = true;
-                ChatGuiExtensions.PluginPrint(Plugin.ChatGui, "WhoWhat refreshed. Most settings reset.");
+                ChatGuiExtensions.PluginPrint(ChatGui, "WhoWhat refreshed. Most settings reset.");
             }
 
             else if (args.Equals("config"))
@@ -199,20 +194,20 @@ namespace WhoSaidWhatNow
         }
 
         //set the current player when logging in
-        private void OnLogin(object? sender, EventArgs e)
+        private void OnLogin()
         {
-            Plugin.Players.Clear();
-            Plugin.Config.CurrentPlayer = string.Empty;
+            Players.Clear();
+            Config.CurrentPlayer = string.Empty;
             PlayerUtils.SetCurrentPlayer();
             PlayerUtils.CheckTrackedPlayers();
         }
 
         //close all windows when logging out so that the windows refresh
-        private void OnLogout(object? sender, EventArgs e)
+        private void OnLogout()
         {
             MainWindow.IsOpen = false;
             SelectedPlayer = null;
-            Plugin.Players.Clear();
+            Players.Clear();
         }
 
         private void DrawUI()
