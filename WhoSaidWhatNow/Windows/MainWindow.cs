@@ -37,7 +37,7 @@ public class MainWindow : Window, IDisposable
 
     public MainWindow(Plugin plugin) : base("Who Said What Now", ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse | ImGuiWindowFlags.MenuBar)
     {
-        this.SizeConstraints = closedConstraints;
+        SizeConstraints = closedConstraints;
         this.plugin = plugin;
     }
 
@@ -53,7 +53,7 @@ public class MainWindow : Window, IDisposable
             ChatOpen = false;
             Plugin.SelectedPlayer = null;
             //we have to manually close the window here
-            this.SizeConstraints = closedConstraints;
+            SizeConstraints = closedConstraints;
         }
     }
 
@@ -110,13 +110,13 @@ public class MainWindow : Window, IDisposable
         if (ChatOpen)
         {
 
-            this.SizeConstraints = openConstraints;
+            SizeConstraints = openConstraints;
             justOpened = true;
 
         }
         else
         {
-            this.SizeConstraints = closedConstraints;
+            SizeConstraints = closedConstraints;
         }
     }
 

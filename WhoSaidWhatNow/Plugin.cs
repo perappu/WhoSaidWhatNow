@@ -72,6 +72,11 @@ namespace WhoSaidWhatNow
         [RequiredVersion("1.0")]
         public static IGameConfig GameConfig { get; private set; } = null!;
 
+        [PluginService]
+        [RequiredVersion("1.0")]
+
+        public static IPluginLog Logger { get; private set; } = null!;
+
         public static FileDialogManager FileDialogManager { get; set; } = new FileDialogManager();
 
         internal ChatService ChatListener { get; private set; } = null!;
@@ -85,12 +90,12 @@ namespace WhoSaidWhatNow
             try
             {
                 Config = PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
-                Logger.LogDebug("Config file loaded successfully.");
+                Logger.Debug("Config file loaded successfully.");
                 Config.Initialize(PluginInterface);
             }
             catch (Exception ex)
             {
-                Logger.LogError("Failed to load config so creating new one.", ex);
+                Logger.Error("Failed to load config so creating new one.", ex);
                 ChatGuiExtensions.PluginPrint(Plugin.ChatGui, "Error loading config file. New one made.");
                 Config = new Configuration();
                 Config.Save();
@@ -100,12 +105,12 @@ namespace WhoSaidWhatNow
             ConfigHelper = new ConfigurationUtils();
 
             // setup UI
-            this.MainWindow = new MainWindow(this);
-            this.ConfigWindow = new ConfigWindow(this);
+            MainWindow = new MainWindow(this);
+            ConfigWindow = new ConfigWindow(this);
 
-            this.WindowSystem = new WindowSystem("WhoSaidWhatNow");
-            this.WindowSystem.AddWindow(this.ConfigWindow);
-            this.WindowSystem.AddWindow(this.MainWindow);
+            WindowSystem = new WindowSystem("WhoSaidWhatNow");
+            WindowSystem.AddWindow(ConfigWindow);
+            WindowSystem.AddWindow(MainWindow);
 
             PluginInterface.UiBuilder.Draw += DrawUI;
             PluginInterface.UiBuilder.OpenConfigUi += DrawConfigUI;
@@ -114,8 +119,8 @@ namespace WhoSaidWhatNow
             // add events/listeners
             ClientState.Login += OnLogin;
             ClientState.Logout += OnLogout;
-            this.ChatListener = new ChatService(ChatGui);
-            this.PlayerService = new PlayerUtils();
+            ChatListener = new ChatService(ChatGui);
+            PlayerService = new PlayerUtils();
 
             // commands
             CommandManager.AddHandler(COMMAND, new CommandInfo(OnCommand)
@@ -135,7 +140,7 @@ namespace WhoSaidWhatNow
             }
             catch
             {
-                IPluginLog.LogError("Plugin loaded and thought there was a character logged in, but there wasn't.");
+                Logger.Error("Plugin loaded and thought there was a character logged in, but there wasn't.");
             }
 
         }
@@ -168,28 +173,28 @@ namespace WhoSaidWhatNow
             }
             else if (args.Equals("refresh"))
             {
-                this.MainWindow.IsOpen = false;
+                MainWindow.IsOpen = false;
                 ConfigurationUtils.refresh();
-                this.MainWindow.IsOpen = true;
+                MainWindow.IsOpen = true;
                 ChatGuiExtensions.PluginPrint(Plugin.ChatGui, "WhoWhat refreshed. All temporary tracked players removed.");
             }
             else if (args.Equals("reset"))
             {
-                this.MainWindow.IsOpen = false;
-                this.ConfigWindow.IsOpen = false;
+                MainWindow.IsOpen = false;
+                ConfigWindow.IsOpen = false;
                 ConfigurationUtils.reset();
-                this.MainWindow.IsOpen = true;
-                this.ConfigWindow.IsOpen = true;
+                MainWindow.IsOpen = true;
+                ConfigWindow.IsOpen = true;
                 ChatGuiExtensions.PluginPrint(Plugin.ChatGui, "WhoWhat refreshed. Most settings reset.");
             }
 
             else if (args.Equals("config"))
             {
-                this.ConfigWindow.IsOpen = !this.ConfigWindow.IsOpen;
+                ConfigWindow.IsOpen = !ConfigWindow.IsOpen;
             }
             else
             {
-                this.MainWindow.IsOpen = !this.MainWindow.IsOpen;
+                MainWindow.IsOpen = !MainWindow.IsOpen;
             }
         }
 
@@ -203,9 +208,9 @@ namespace WhoSaidWhatNow
         }
 
         //close all windows when logging out so that the windows refresh
-        void OnLogout(object? sender, EventArgs e)
+        private void OnLogout(object? sender, EventArgs e)
         {
-            this.MainWindow.IsOpen = false;
+            MainWindow.IsOpen = false;
             SelectedPlayer = null;
             Plugin.Players.Clear();
         }
@@ -217,12 +222,12 @@ namespace WhoSaidWhatNow
 
         public void DrawConfigUI()
         {
-            this.ConfigWindow.IsOpen = true;
+            ConfigWindow.IsOpen = true;
         }
 
         public void ToggleConfigUI()
         {
-            this.ConfigWindow.IsOpen = !this.ConfigWindow.IsOpen;
+            ConfigWindow.IsOpen = !ConfigWindow.IsOpen;
         }
 
     }

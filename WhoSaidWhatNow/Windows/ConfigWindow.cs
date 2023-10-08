@@ -21,8 +21,8 @@ public class ConfigWindow : Window, IDisposable
         "Who Said What Now - Settings", ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse)
     {
         this.plugin = plugin;
-        this.Size = new Vector2(600, 500);
-        this.SizeCondition = ImGuiCond.Appearing;
+        Size = new Vector2(600, 500);
+        SizeCondition = ImGuiCond.Appearing;
     }
 
     public void Dispose() { }
