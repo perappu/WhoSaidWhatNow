@@ -1,3 +1,4 @@
+using Dalamud.DrunkenToad.Extensions;
 using Dalamud.Game.ClientState.Objects;
 using Dalamud.Game.Command;
 using Dalamud.Interface.ImGuiFileDialog;
@@ -8,7 +9,6 @@ using Dalamud.Plugin.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Dalamud.DrunkenToad.Extensions;
 using WhoSaidWhatNow.Objects;
 using WhoSaidWhatNow.Services;
 using WhoSaidWhatNow.Utils;

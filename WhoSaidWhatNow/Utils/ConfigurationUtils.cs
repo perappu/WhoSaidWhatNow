@@ -1,11 +1,9 @@
 using Dalamud.Game.Config;
 using Dalamud.Game.Text;
-using Dalamud.Logging;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Numerics;
 using WhoSaidWhatNow.Objects;
-using Dalamud.DrunkenToad.Core;
 
 
 namespace WhoSaidWhatNow.Utils

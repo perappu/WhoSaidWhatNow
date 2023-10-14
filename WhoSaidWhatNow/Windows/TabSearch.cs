@@ -1,10 +1,9 @@
 using ImGuiNET;
-using WhoSaidWhatNow;
 using System.Linq;
 using System.Numerics;
-using Dalamud.Interface;
-using WhoSaidWhatNow.Windows;
+using WhoSaidWhatNow;
 using WhoSaidWhatNow.Utils;
+using WhoSaidWhatNow.Windows;
 
 
 
