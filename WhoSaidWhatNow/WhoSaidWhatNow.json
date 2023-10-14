@@ -1,7 +1,7 @@
 {
     "Author": "perappu",
     "Name": "Who Said What Now",
-    "Punchline": "Chat history plugin.",
+    "Punchline": "Chat history plugin, view history per character, per group, or search.",
     "Description": "Chat history plugin, view history per character, per group, or search.\n Main command /whowhat",
     "InternalName": "WhoSaidWhatNow",
     "AssemblyVersion": "0.4.5",

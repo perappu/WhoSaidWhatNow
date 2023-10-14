@@ -157,12 +157,12 @@ namespace WhoSaidWhatNow
 
             if (args.Equals("on"))
             {
-                // ChatGuiExtensions.PluginPrint(ChatGui, "WhoWhat is ON.");
+                ChatGui.Print("WhoWhat is ON.", "WhoWhat");
                 Config.Enabled = true;
             }
             else if (args.Equals("off"))
             {
-                // ChatGuiExtensions.PluginPrint(ChatGui, "WhoWhat is OFF.");
+                ChatGui.Print("WhoWhat is OFF.", "WhoWhat");
                 Config.Enabled = false;
             }
             else if (args.Equals("refresh"))
@@ -170,7 +170,7 @@ namespace WhoSaidWhatNow
                 MainWindow.IsOpen = false;
                 ConfigurationUtils.refresh();
                 MainWindow.IsOpen = true;
-                // ChatGuiExtensions.PluginPrint(ChatGui, "WhoWhat refreshed. All temporary tracked players removed.");
+                ChatGui.Print("WhoWhat refreshed. All temporary tracked players removed.", "WhoWhat");
             }
             else if (args.Equals("reset"))
             {
@@ -179,7 +179,7 @@ namespace WhoSaidWhatNow
                 ConfigurationUtils.reset();
                 MainWindow.IsOpen = true;
                 ConfigWindow.IsOpen = true;
-                // ChatGuiExtensions.PluginPrint(ChatGui, "WhoWhat refreshed. Most settings reset.");
+                ChatGui.Print("WhoWhat refreshed. Most settings reset.", "WhoWhat");
             }
 
             else if (args.Equals("config"))
