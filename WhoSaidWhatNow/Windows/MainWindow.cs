@@ -1,16 +1,13 @@
-using Dalamud.DrunkenToad;
 using Dalamud.Game.ClientState.Objects.SubKinds;
-using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Interface.Windowing;
-using Dalamud.Logging;
 using ImGuiNET;
-using LiteDB;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+// using Dalamud.DrunkenToad.Extensions;
 using WhoSaidWhatNow.Objects;
 using WhoSaidWhatNow.Utils;
+// using Dalamud.DrunkenToad.Core;
 
 namespace WhoSaidWhatNow.Windows;
 
@@ -37,7 +34,7 @@ public class MainWindow : Window, IDisposable
 
     public MainWindow(Plugin plugin) : base("Who Said What Now", ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse | ImGuiWindowFlags.MenuBar)
     {
-        this.SizeConstraints = closedConstraints;
+        SizeConstraints = closedConstraints;
         this.plugin = plugin;
     }
 
@@ -53,20 +50,21 @@ public class MainWindow : Window, IDisposable
             ChatOpen = false;
             Plugin.SelectedPlayer = null;
             //we have to manually close the window here
-            this.SizeConstraints = closedConstraints;
+            SizeConstraints = closedConstraints;
         }
     }
 
     /// <summary>
     /// Add all players in range, as detected by the ObjectTable
     /// </summary>
-    public void AddAllInRange()
+    public static void AddAllInRange()
     {
-        GameObject[]? playerArray = Plugin.ObjectTable.ToArray();
-        List<PlayerCharacter?> nearbyPlayers = playerArray!.Where(x => x.IsValidPlayerCharacter() && x.ObjectId != Plugin.ClientState.LocalPlayer!.ObjectId).Select(x => x as PlayerCharacter).ToList();
+        var playerArray = Plugin.ObjectTable.ToArray();
+        Plugin.Logger.Debug($"Length of players is {playerArray.Length}");
+        var nearbyPlayers = playerArray.Where(x => x is PlayerCharacter && x.ObjectId != Plugin.ClientState.LocalPlayer!.ObjectId).Select(x => x as PlayerCharacter).ToList();
 
-        int i = 0;
-        foreach (PlayerCharacter? nearbyPlayer in nearbyPlayers)
+        var i = 0;
+        foreach (var nearbyPlayer in nearbyPlayers)
         {
             if (nearbyPlayer is not null)
             {
@@ -78,7 +76,7 @@ public class MainWindow : Window, IDisposable
                 }
             }
         }
-        PluginLog.LogDebug($"Added {i} players in range");
+        Plugin.Logger.Debug($"Added {i} players in range");
     }
 
 
@@ -110,13 +108,13 @@ public class MainWindow : Window, IDisposable
         if (ChatOpen)
         {
 
-            this.SizeConstraints = openConstraints;
+            SizeConstraints = openConstraints;
             justOpened = true;
 
         }
         else
         {
-            this.SizeConstraints = closedConstraints;
+            SizeConstraints = closedConstraints;
         }
     }
 
@@ -125,7 +123,7 @@ public class MainWindow : Window, IDisposable
     // </summary
     public void toggleWindow(bool open)
     {
-        MainWindow.ChatOpen = open;
+        ChatOpen = open;
         SizeConstraints = open ? openConstraints : closedConstraints;
     }
 

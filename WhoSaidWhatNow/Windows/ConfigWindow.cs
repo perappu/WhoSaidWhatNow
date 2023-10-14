@@ -3,6 +3,8 @@ using Dalamud.Interface.Windowing;
 using ImGuiNET;
 using System;
 using System.Numerics;
+using Dalamud.DrunkenToad.Extensions;
+using Dalamud.Utility;
 using WhoSaidWhatNow.Objects;
 using WhoSaidWhatNow.Utils;
 
@@ -15,14 +17,14 @@ public class ConfigWindow : Window, IDisposable
     private Vector4 newColor = Vector4.One;
     internal const String ID_PANEL_LEFT = "###WhoSaidWhatNowConfig_LeftPanel_Child";
     private readonly Plugin plugin;
-    private readonly string[] worldNames = DataManagerExtensions.WorldNames(Plugin.DataManager);
+    private readonly string[] worldNames = Plugin.DataManager.WorldNames();
 
     public ConfigWindow(Plugin plugin) : base(
         "Who Said What Now - Settings", ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse)
     {
         this.plugin = plugin;
-        this.Size = new Vector2(600, 500);
-        this.SizeCondition = ImGuiCond.Appearing;
+        Size = new Vector2(600, 500);
+        SizeCondition = ImGuiCond.Appearing;
     }
 
     public void Dispose() { }
@@ -38,10 +40,10 @@ public class ConfigWindow : Window, IDisposable
         if (ImGui.BeginTabItem("General"))
         {
             // replace the existing panels by using the same IDs.
-            ImGui.BeginChild(ConfigWindow.ID_PANEL_LEFT, new Vector2(0, 0), true);
+            ImGui.BeginChild(ID_PANEL_LEFT, new Vector2(0, 0), true);
 
             //plugin on/off
-            bool enabled = Plugin.Config.Enabled;
+            var enabled = Plugin.Config.Enabled;
             if (ImGui.Checkbox("Plugin On/Off", ref enabled))
             {
                 Plugin.Config.Enabled = enabled;
@@ -51,7 +53,7 @@ public class ConfigWindow : Window, IDisposable
             ImGui.Separator();
 
             //show timestamps
-            bool showTimestamp = Plugin.Config.ShowTimestamp;
+            var showTimestamp = Plugin.Config.ShowTimestamp;
             if (ImGui.Checkbox("Show timestamps", ref showTimestamp))
             {
                 Plugin.Config.ShowTimestamp = showTimestamp;
@@ -59,7 +61,7 @@ public class ConfigWindow : Window, IDisposable
             }
 
             //show server in names
-            bool showServer = Plugin.Config.ShowServer;
+            var showServer = Plugin.Config.ShowServer;
             if (ImGui.Checkbox("Show servers", ref showServer))
             {
                 Plugin.Config.ShowServer = showServer;
@@ -67,7 +69,7 @@ public class ConfigWindow : Window, IDisposable
             }
 
             //plugin autoscroll
-            bool autoscroll = Plugin.Config.AutoscrollOnOpen;
+            var autoscroll = Plugin.Config.AutoscrollOnOpen;
             if (ImGui.Checkbox("Autoscroll to bottom when opening log (may or may not be functional)", ref autoscroll))
             {
                 Plugin.Config.AutoscrollOnOpen = autoscroll;
@@ -91,7 +93,7 @@ public class ConfigWindow : Window, IDisposable
         // ALWAYS TRACKED TAB
         if (ImGui.BeginTabItem("Favorite Players"))
         {
-            ImGui.BeginChild(ConfigWindow.ID_PANEL_LEFT, new Vector2(0, 0), true);
+            ImGui.BeginChild(ID_PANEL_LEFT, new Vector2(0, 0), true);
 
             ImGui.Text("Any players added here will always be tracked and marked with .");
             ImGui.Text("They can only be removed via this page.");
@@ -170,10 +172,9 @@ public class ConfigWindow : Window, IDisposable
         //ENABLED CHANNELS TAB
         if (ImGui.BeginTabItem("Channels"))
         {
-            ImGui.BeginChild(ConfigWindow.ID_PANEL_LEFT, new Vector2(0, 0), true);
+            ImGui.BeginChild(ID_PANEL_LEFT, new Vector2(0, 0), true);
 
-
-            var parts = IEnumerableExtensions.Split(Plugin.Config.ChannelToggles, (Plugin.Config.ChannelToggles.Count / 2) - 2);
+            var parts = Plugin.Config.ChannelToggles.Split(Plugin.Config.ChannelToggles.Count / 2 - 2);
             //generate checkbox for each chat channel
 
             if (ImGui.BeginTable("channelsEnabled", 3, ImGuiTableFlags.SizingFixedSame))
@@ -190,7 +191,7 @@ public class ConfigWindow : Window, IDisposable
                     foreach (var chan in part)
                     {
                         ImGui.TableNextColumn();
-                        bool val = chan.Value;
+                        var val = chan.Value;
                         ImGui.PushStyleColor(ImGuiCol.Text, Plugin.Config.ChatColors[chan.Key]);
                         if (ImGui.Checkbox(chan.Key.ToString(), ref val))
                         {

@@ -1,10 +1,10 @@
 using Dalamud.Game.Config;
 using Dalamud.Game.Text;
-using Dalamud.Logging;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Numerics;
 using WhoSaidWhatNow.Objects;
+
 
 namespace WhoSaidWhatNow.Utils
 {
@@ -13,7 +13,7 @@ namespace WhoSaidWhatNow.Utils
 
         public static void refresh()
         {
-            PluginLog.LogDebug("refresh called");
+            Plugin.Logger.Debug("refresh called");
             Plugin.Players.Clear();
             Plugin.Config.CurrentPlayer = string.Empty;
             PlayerUtils.SetCurrentPlayer();
@@ -32,7 +32,7 @@ namespace WhoSaidWhatNow.Utils
 
         public static void SetConfigColors()
         {
-            foreach (KeyValuePair<XivChatType,Vector4> chatColor in Plugin.Config.ChatColors)
+            foreach (var chatColor in Plugin.Config.ChatColors)
             {
                 Plugin.GameConfig.TryGet(ChatTypeToConfigColor(chatColor.Key), out uint color);
                 Plugin.Config.ChatColors[chatColor.Key] = GenerateRgba(color);
@@ -41,7 +41,7 @@ namespace WhoSaidWhatNow.Utils
 
         public static Vector4 GenerateRgba(uint color)
         {
-            Color c = Color.FromArgb(0xFF, Color.FromArgb((int)color));
+            var c = Color.FromArgb(0xFF, Color.FromArgb((int)color));
             return new Vector4(c.R / 255f, c.G / 255f, c.B / 255f, 1f);
         }
 
@@ -90,7 +90,7 @@ namespace WhoSaidWhatNow.Utils
                 case XivChatType.TellIncoming: return "{0} >> {1}";
                 case XivChatType.TellOutgoing: return ">> {0}: {1}";
                 case XivChatType.StandardEmote: return "{0} {1}";
-                case XivChatType.CustomEmote: return "{0} shouts: {1}";
+                case XivChatType.CustomEmote: return "{0} {1}";
                 case XivChatType.Shout: return "{0} shouts: {1}";
                 case XivChatType.Yell: return "{0} yells: {1}";
                 case XivChatType.Party: return "({0}) {1}";

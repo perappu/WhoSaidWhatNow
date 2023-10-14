@@ -19,10 +19,10 @@ namespace WhoSaidWhatNow.Utils
             try
             {
                 //tuple representing text that goes before/after player name
-                Tuple<string, string> tag = Plugin.Config.GUIFormats[c.Value.Type];
+                var tag = Plugin.Config.GUIFormats[c.Value.Type];
 
                 //dictionary for each chunk of text
-                Dictionary<string, Vector4> chunks = new Dictionary<string, Vector4>();
+                var chunks = new Dictionary<string, Vector4>();
 
                 //timestamp. no intellisense i am not simplifying this, it looks like ass
                 if (Plugin.Config.ShowTimestamp)
@@ -55,7 +55,7 @@ namespace WhoSaidWhatNow.Utils
                     chunks.Add(String.Format(tag.Item2, c.Value.Message), Plugin.Config.ChatColors[c.Value.Type]);
                 }
 
-                ChatUtils.WrappedColoredText(chunks);
+                WrappedColoredText(chunks);
             }
             catch (Exception e)
             {
@@ -72,22 +72,22 @@ namespace WhoSaidWhatNow.Utils
         /// <param name="chunks">Dictionary<string, Vector4> of color chunks of text to put on same wrapped line</param>
         public static unsafe void WrappedColoredText(Dictionary<string, Vector4> chunks)
         {
-            float wrapWidth = ImGui.GetWindowContentRegionMax().X - ImGui.GetWindowContentRegionMin().X;
+            var wrapWidth = ImGui.GetWindowContentRegionMax().X - ImGui.GetWindowContentRegionMin().X;
 
             foreach (var chunk in chunks)
             {
                 var bytes = Encoding.UTF8.GetBytes(chunk.Key);
                 fixed (byte* text = bytes)
                 {
-                    byte* textStart = text;
-                    byte* textEnd = text + bytes.Length;
+                    var textStart = text;
+                    var textEnd = text + bytes.Length;
 
-                    ImFont* Font = ImGui.GetFont().NativePtr;
+                    var Font = ImGui.GetFont().NativePtr;
 
                     do
                     {
-                        float widthRemaining = ImGui.GetContentRegionAvail().X;
-                        byte* drawEnd = ImGuiNative.ImFont_CalcWordWrapPositionA(Font, 1.0f, textStart, textEnd, widthRemaining);
+                        var widthRemaining = ImGui.GetContentRegionAvail().X;
+                        var drawEnd = ImGuiNative.ImFont_CalcWordWrapPositionA(Font, 1.0f, textStart, textEnd, widthRemaining);
 
                         if (textStart == drawEnd)
                         {
@@ -110,7 +110,7 @@ namespace WhoSaidWhatNow.Utils
 
                         while (textStart < textEnd)
                         {
-                            char c = (char)*textStart;
+                            var c = (char)*textStart;
                             if (c == ' ')
                             {
                                 textStart++;

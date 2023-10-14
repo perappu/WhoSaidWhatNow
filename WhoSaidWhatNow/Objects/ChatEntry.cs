@@ -33,9 +33,10 @@ namespace WhoSaidWhatNow.Objects
             {
                 sender = String.Empty;
                 msg = this.Message.Trim();
-            } else if (Type == XivChatType.StandardEmote)
+            }
+            else if (Type == XivChatType.StandardEmote)
             {
-                msg = String.Join(' ',this.Message.Split(' ').Skip(2).ToArray());
+                msg = String.Join(' ', this.Message.Split(' ').Skip(2).ToArray());
             }
 
             return (Plugin.Config.ShowTimestamp ? $"[{time}]" : String.Empty) + String.Format(tag, sender, msg).Trim();

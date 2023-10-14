@@ -1,4 +1,4 @@
-using Dalamud.DrunkenToad;
+using Dalamud.DrunkenToad.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -61,12 +61,12 @@ namespace WhoSaidWhatNow.Utils
                         var tag = ConfigurationUtils.ChatTypeToFormat(c.Value.Type);
                         file.WriteLine(c.Value.CreateMessage(tag));
                     }
-                    Plugin.ChatGui.PluginPrint($"Successfully saved log: {path}");
+                    Plugin.ChatGui.Print($"Successfully saved log: {path}", "WhoWhat");
                 }
             }
             catch
             {
-                Plugin.ChatGui.PluginPrint("Failed to save log.");
+                Plugin.ChatGui.Print("Failed to save log.", "WhoWhat");
             }
         }
 
@@ -96,11 +96,11 @@ namespace WhoSaidWhatNow.Utils
                     }
                 }
 
-                Plugin.ChatGui.PluginPrint($"Successfully saved log: {path}");
+                Plugin.ChatGui.Print($"Successfully saved log: {path}", "WhoWhat");
             }
             catch
             {
-                Plugin.ChatGui.PluginPrint("Failed to save log.");
+                Plugin.ChatGui.Print("Failed to save log.", "WhoWhat");
             }
         }
 
