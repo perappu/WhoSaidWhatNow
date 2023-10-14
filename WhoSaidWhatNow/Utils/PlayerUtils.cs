@@ -103,7 +103,7 @@ namespace WhoSaidWhatNow.Utils
             if (findPlayer is not null)
             {
                 findPlayer.RemoveDisabled = false;
-                DalamudContext.PluginLog.Debug($"Removed whitelisted player: {player.Name} {player.Server}");
+                Plugin.Logger.Debug($"Removed whitelisted player: {player.Name} {player.Server}");
             }
             Plugin.Config.Save();
             SortPlayers();

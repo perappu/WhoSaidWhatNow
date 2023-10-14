@@ -79,7 +79,7 @@ public class MainWindow : Window, IDisposable
                 }
             }
         }
-        DalamudContext.PluginLog.Debug($"Added {i} players in range");
+        Plugin.Logger.Debug($"Added {i} players in range");
     }
 
 
