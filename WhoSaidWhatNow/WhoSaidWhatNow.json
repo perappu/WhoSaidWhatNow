@@ -1,8 +1,8 @@
 {
     "Author": "perappu",
     "Name": "Who Said What Now",
-    "Punchline": "Per character chat history plugin.",
-    "Description": "Per character chat history plugin, evolution of Maia-Everett/dalamud-snooper.\n Main command /whowhat",
+    "Punchline": "Chat history plugin.",
+    "Description": "Chat history plugin, view history per character, per group, or search.\n Main command /whowhat",
     "InternalName": "WhoSaidWhatNow",
     "AssemblyVersion": "0.4.5",
     "TestingAssemblyVersion": "0.4.5",

@@ -90,7 +90,7 @@ namespace WhoSaidWhatNow.Utils
                 case XivChatType.TellIncoming: return "{0} >> {1}";
                 case XivChatType.TellOutgoing: return ">> {0}: {1}";
                 case XivChatType.StandardEmote: return "{0} {1}";
-                case XivChatType.CustomEmote: return "{0} shouts: {1}";
+                case XivChatType.CustomEmote: return "{0} {1}";
                 case XivChatType.Shout: return "{0} shouts: {1}";
                 case XivChatType.Yell: return "{0} yells: {1}";
                 case XivChatType.Party: return "({0}) {1}";
