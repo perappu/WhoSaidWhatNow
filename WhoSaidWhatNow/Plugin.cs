@@ -69,7 +69,6 @@ namespace WhoSaidWhatNow
 
         [PluginService]
         [RequiredVersion("1.0")]
-
         public static IPluginLog Logger { get; private set; } = null!;
 
         public static FileDialogManager FileDialogManager { get; set; } = new FileDialogManager();
@@ -158,12 +157,12 @@ namespace WhoSaidWhatNow
 
             if (args.Equals("on"))
             {
-                ChatGuiExtensions.PluginPrint(ChatGui, "WhoWhat is ON.");
+                // ChatGuiExtensions.PluginPrint(ChatGui, "WhoWhat is ON.");
                 Config.Enabled = true;
             }
             else if (args.Equals("off"))
             {
-                ChatGuiExtensions.PluginPrint(ChatGui, "WhoWhat is OFF.");
+                // ChatGuiExtensions.PluginPrint(ChatGui, "WhoWhat is OFF.");
                 Config.Enabled = false;
             }
             else if (args.Equals("refresh"))
@@ -171,7 +170,7 @@ namespace WhoSaidWhatNow
                 MainWindow.IsOpen = false;
                 ConfigurationUtils.refresh();
                 MainWindow.IsOpen = true;
-                ChatGuiExtensions.PluginPrint(ChatGui, "WhoWhat refreshed. All temporary tracked players removed.");
+                // ChatGuiExtensions.PluginPrint(ChatGui, "WhoWhat refreshed. All temporary tracked players removed.");
             }
             else if (args.Equals("reset"))
             {
@@ -180,7 +179,7 @@ namespace WhoSaidWhatNow
                 ConfigurationUtils.reset();
                 MainWindow.IsOpen = true;
                 ConfigWindow.IsOpen = true;
-                ChatGuiExtensions.PluginPrint(ChatGui, "WhoWhat refreshed. Most settings reset.");
+                // ChatGuiExtensions.PluginPrint(ChatGui, "WhoWhat refreshed. Most settings reset.");
             }
 
             else if (args.Equals("config"))

@@ -15,7 +15,7 @@ namespace WhoSaidWhatNow.Utils
 
         public static void refresh()
         {
-            DalamudContext.PluginLog.Debug("refresh called");
+            Plugin.Logger.Debug("refresh called");
             Plugin.Players.Clear();
             Plugin.Config.CurrentPlayer = string.Empty;
             PlayerUtils.SetCurrentPlayer();
