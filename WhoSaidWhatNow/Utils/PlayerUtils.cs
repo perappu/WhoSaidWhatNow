@@ -76,7 +76,7 @@ namespace WhoSaidWhatNow.Utils
             }
             Plugin.Config.CurrentPlayer = Plugin.ClientState.LocalPlayer!.Name.ToString();
             AddPlayer(Plugin.ClientState.LocalPlayer!, true);
-            DalamudContext.PluginLog.Debug($"Currently Logged In Player was changed or null. New: {Plugin.Config.CurrentPlayer}");
+            Plugin.Logger.Debug($"Currently Logged In Player was changed or null. New: {Plugin.Config.CurrentPlayer}");
         }
 
         // TRACKED PLAYER METHODS //

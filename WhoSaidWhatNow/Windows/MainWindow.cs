@@ -10,6 +10,7 @@ using System.Numerics;
 using Dalamud.DrunkenToad.Extensions;
 using WhoSaidWhatNow.Objects;
 using WhoSaidWhatNow.Utils;
+using Dalamud.DrunkenToad.Core;
 
 namespace WhoSaidWhatNow.Windows;
 
@@ -59,10 +60,11 @@ public class MainWindow : Window, IDisposable
     /// <summary>
     /// Add all players in range, as detected by the ObjectTable
     /// </summary>
-    public void AddAllInRange()
+    public static void AddAllInRange()
     {
         var playerArray = Plugin.ObjectTable.ToArray();
-        var nearbyPlayers = playerArray!.Where(x => x.IsValidPlayerCharacter() && x.ObjectId != Plugin.ClientState.LocalPlayer!.ObjectId).Select(x => x as PlayerCharacter).ToList();
+        Plugin.Logger.Debug($"Length of players is {playerArray.Length}");
+        var nearbyPlayers = playerArray.Where(x => x.IsValidPlayerCharacter() && x.ObjectId != Plugin.ClientState.LocalPlayer!.ObjectId).Select(x => x as PlayerCharacter).ToList();
 
         var i = 0;
         foreach (var nearbyPlayer in nearbyPlayers)
@@ -77,7 +79,7 @@ public class MainWindow : Window, IDisposable
                 }
             }
         }
-        PluginLog.LogDebug($"Added {i} players in range");
+        DalamudContext.PluginLog.Debug($"Added {i} players in range");
     }
 
 
