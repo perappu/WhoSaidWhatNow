@@ -18,5 +18,5 @@ https://raw.githubusercontent.com/perappu/WhoSaidWhatNow/master/repo.json
 * Filter logs by specific chat channels (i.e. /say, /em, /cwls2, etc)
 * Tracking can be turned on/off to save memory
 
-![image](https://github.com/perappu/WhoSaidWhatNow/assets/13854524/11db0da8-814f-43ec-9e5a-86e2278502f0)
-![image](https://github.com/perappu/WhoSaidWhatNow/assets/13854524/58fa5146-eac9-4750-96c1-e315411cb0d9)
+![image](https://github.com/perappu/WhoSaidWhatNow/assets/13854524/3eb4e1ca-f2db-439e-858b-7dd0fd7a3016)
+
