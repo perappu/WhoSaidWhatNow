@@ -168,7 +168,7 @@ public class TabIndividual
             if (Plugin.Config.AutoscrollOnOpen && MainWindow.justOpened)
             {
                 //i don't understand math, make this actually work better
-                ImGui.SetScrollHereY(0.999f);
+                ImGui.SetScrollHereY(1);
                 MainWindow.justOpened = false;
             }
 

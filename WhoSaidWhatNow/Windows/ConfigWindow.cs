@@ -7,6 +7,7 @@ using Dalamud.DrunkenToad.Extensions;
 using Dalamud.Utility;
 using WhoSaidWhatNow.Objects;
 using WhoSaidWhatNow.Utils;
+using static Lumina.Data.Parsing.Layer.LayerCommon;
 
 namespace WhoSaidWhatNow.Windows;
 
@@ -70,7 +71,7 @@ public class ConfigWindow : Window, IDisposable
 
             //plugin autoscroll
             var autoscroll = Plugin.Config.AutoscrollOnOpen;
-            if (ImGui.Checkbox("Autoscroll to bottom when opening log (may or may not be functional)", ref autoscroll))
+            if (ImGui.Checkbox("Autoscroll to bottom when re-opening a log", ref autoscroll))
             {
                 Plugin.Config.AutoscrollOnOpen = autoscroll;
                 Plugin.Config.Save();
@@ -192,13 +193,23 @@ public class ConfigWindow : Window, IDisposable
                     {
                         ImGui.TableNextColumn();
                         var val = chan.Value;
-                        ImGui.PushStyleColor(ImGuiCol.Text, Plugin.Config.ChatColors[chan.Key]);
-                        if (ImGui.Checkbox(chan.Key.ToString(), ref val))
+                        if (ImGui.Checkbox($"##chk{chan.Key.ToString()}", ref val))
                         {
                             Plugin.Config.ChannelToggles[chan.Key] = val;
                             Plugin.Config.Save();
                         }
+                        ImGui.SameLine();
+                        var color = Plugin.Config.ChatColors[chan.Key];
+                        if (ImGui.ColorEdit4($"##picker{chan.Key.ToString()}", ref color, ImGuiColorEditFlags.NoAlpha | ImGuiColorEditFlags.NoInputs))
+                        {
+                            Plugin.Config.ChatColors[chan.Key] = color;
+                            Plugin.Config.Save();
+                        }
+                        ImGui.SameLine();
+                        ImGui.PushStyleColor(ImGuiCol.Text, Plugin.Config.ChatColors[chan.Key]);
+                        ImGui.TextUnformatted(chan.Key.ToString());
                         ImGui.PopStyleColor();
+
                     }
                     ImGui.TableNextRow();
                 }
