@@ -1,7 +1,7 @@
 {
   "version": 1,
   "dependencies": {
-    "net7.0-windows7.0": {
+    "net8.0-windows7.0": {
       "Dalamud.ContextMenu": {
         "type": "Direct",
         "requested": "[1.3.1, )",
@@ -10,9 +10,9 @@
       },
       "Dalamud.DrunkenToad": {
         "type": "Direct",
-        "requested": "[1.8.4, )",
-        "resolved": "1.8.4",
-        "contentHash": "3ktHbxrcZyBYjJ4XFihQ8H9Y9sEKUBZN/zmiQywXwhKM9Zsjoo3N8Wyz+KpvsUIEaJTowRMl8vBRonCZIAYb7A==",
+        "requested": "[1.9.1, )",
+        "resolved": "1.9.1",
+        "contentHash": "5zdxW6elHRCP2G+4osdBrWe+8AyQrr6lFP/AlYYi1apuLSZAE9CK9/qCTm0NcFhAThfjNhYSRi4n9icOjDdu4w==",
         "dependencies": {
           "Dalamud.Loc": "1.1.2",
           "Microsoft.Extensions.DependencyInjection": "7.0.0"
@@ -20,9 +20,9 @@
       },
       "DalamudPackager": {
         "type": "Direct",
-        "requested": "[2.1.12, )",
-        "resolved": "2.1.12",
-        "contentHash": "Sc0PVxvgg4NQjcI8n10/VfUQBAS4O+Fw2pZrAqBdRMbthYGeogzu5+xmIGCGmsEZ/ukMOBuAqiNiB5qA3MRalg=="
+        "requested": "[2.1.13, )",
+        "resolved": "2.1.13",
+        "contentHash": "rMN1omGe8536f4xLMvx9NwfvpAc9YFFfeXJ1t4P4PE6Gu8WCIoFliR1sh07hM+bfODmesk/dvMbji7vNI+B/pQ=="
       },
       "System.Runtime": {
         "type": "Direct",
