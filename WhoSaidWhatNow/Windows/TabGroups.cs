@@ -16,12 +16,14 @@ public class TabGroups
 
     public TabGroups(MainWindow main, Plugin plugin)
     {
+        var playerList = PlayerUtils.GetCurrentAndPlayers();
 
         if (ImGui.BeginTabItem("Groups"))
         {
             main.toggleWindow(true);
 
             ImGui.BeginTabBar("###groups");
+            
             // populate the list of selectable groups.
             foreach (var g in Plugin.Groups)
             {
@@ -31,7 +33,7 @@ public class TabGroups
                 var players = group.PLAYERS;
                 if (ImGui.BeginTabItem($"{name}###Tab_{index}"))
                 {
-                    var filtered = new Player[Plugin.Players.Count];
+                    var filtered = new Player[playerList.Count];
 
                     if (ImGui.BeginPopupContextItem())
                     {
@@ -48,7 +50,7 @@ public class TabGroups
                     }
                     ImGui.BeginChild(MainWindow.ID_PANEL_LEFT, new Vector2(205 * ImGuiHelpers.GlobalScale, 0), true);
                     ImGui.InputTextWithHint("", "Filter by name...", ref Plugin.FilterPlayers, 40, ImGuiInputTextFlags.EnterReturnsTrue);
-                    Plugin.Players.Where(p => p.Name.ToLower().Contains(Plugin.FilterPlayers.ToLower())).ToList().CopyTo(filtered);
+                    playerList.Where(p => p.Name.ToLower().Contains(Plugin.FilterPlayers.ToLower())).ToList().CopyTo(filtered);
                     foreach (var p in filtered)
                     {
                         try
@@ -96,7 +98,7 @@ public class TabGroups
                             if (Plugin.Config.ChannelToggles[c.Value.Type] == true)
                             {
                                 // and if the player is among the tracked;
-                                var p = Plugin.Players.Find(p => c.Value.Sender.Name.Contains(p.Name));
+                                var p = playerList.Find(p => c.Value.Sender.Name.Contains(p.Name));
                                 if (players[p!])
                                 {
                                     ChatUtils.ShowMessage(c);
@@ -120,7 +122,7 @@ public class TabGroups
             if (ImGui.TabItemButton("+", ImGuiTabItemFlags.Trailing | ImGuiTabItemFlags.NoTooltip))
             {
                 Counter++;
-                Plugin.Groups.Add($"{Counter}", ($"Group {Counter}", Plugin.Players.ToDictionary(p => p, p => false)));
+                Plugin.Groups.Add($"{Counter}", ($"Group {Counter}", playerList.ToDictionary(p => p, p => false)));
                 ImGui.EndTabItem();
             }
 

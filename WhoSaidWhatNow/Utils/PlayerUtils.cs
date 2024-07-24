@@ -1,6 +1,7 @@
 using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Game.ClientState.Objects.Types;
+using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using WhoSaidWhatNow.Objects;
@@ -135,23 +136,28 @@ namespace WhoSaidWhatNow.Utils
         }
 
         /// <summary>
-        /// Sort the players by user at top -> always tracked -> everyone else.
+        /// Sort the players by always tracked -> everyone else.
         /// </summary>
         public static void SortPlayers()
         {
             var topPlayers = Plugin.Players.Where(x => x.RemoveDisabled == true).ToList();
             var otherPlayers = Plugin.Players.Where(x => x.RemoveDisabled != true).ToList();
 
-            //we only need to do remove and return stuff if the player isn't already at the top
-            if (!topPlayers[0].Name.Equals(Plugin.Config.CurrentPlayer))
-            {
-                var i = topPlayers.FindIndex(x => x.Name == Plugin.Config.CurrentPlayer);
-                var currentPlayer = topPlayers[i - 1];
-                topPlayers.RemoveAt(i);
-                topPlayers.Insert(0, currentPlayer);
-            }
-
             Plugin.Players = topPlayers.Concat(otherPlayers).ToList();
+        }
+
+        /// <summary>
+        /// Get a list of current player + other players
+        /// </summary>
+        public static List<Player> GetCurrentAndPlayers()
+        {
+            if (Plugin.CurrentPlayer == null)
+            {
+                return Plugin.Players;
+            } else
+            {
+                return Plugin.Players.Prepend(Plugin.CurrentPlayer).ToList();
+            }
         }
 
         /// <summary>

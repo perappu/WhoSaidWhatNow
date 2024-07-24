@@ -24,6 +24,7 @@ namespace WhoSaidWhatNow
         public static ConfigurationUtils ConfigHelper = null!;
 
         public static Player? SelectedPlayer = null;
+        public static Player? CurrentPlayer = null;
         public static List<Player> Players = new();
         public static string FilterPlayers = "";
         public static string FilterSearch = "";
@@ -145,6 +146,7 @@ namespace WhoSaidWhatNow
             CommandManager.RemoveHandler(COMMAND);
             ClientState.Login -= OnLogin;
             ClientState.Logout -= OnLogout;
+            Framework.Update -= OnFrameworkUpdate;
         }
 
         private void OnCommand(string command, string args)
@@ -221,7 +223,9 @@ namespace WhoSaidWhatNow
         {
             Config.CurrentPlayer = await framework.RunOnTick(() => ClientState.LocalPlayer?.Name.ToString()) ??
                                    Config.CurrentPlayer;
-            PlayerUtils.AddPlayer(ClientState.LocalPlayer, true);
+            if (ClientState.LocalPlayer != null) {
+                CurrentPlayer = new Player(ClientState.LocalPlayer, true);
+            }
         }
     }
 }

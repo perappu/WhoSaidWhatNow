@@ -132,11 +132,19 @@ public class TabIndividual
             }
             ImGui.EndChild();
 
-
+            ImGui.BeginChild(MainWindow.ID_PANEL_LEFT);
             //Reopen left window, populate selectable list
+            try
+            {
+                mainWindow.AddPlayerSelectable(Plugin.CurrentPlayer!);
+            }
+            catch
+            {
+
+            }
             foreach (var p in players)
             {
-                ImGui.BeginChild(MainWindow.ID_PANEL_LEFT);
+                
                 // catch NPEs silently
                 try
                 {
@@ -146,8 +154,9 @@ public class TabIndividual
                 {
 
                 }
-                ImGui.EndChild();
+                
             }
+            ImGui.EndChild();
 
             // Reopen right window, build the chat log
             // it's worth noting all of this stuff stays in memory and is only hidden when it's "closed"
