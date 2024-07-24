@@ -4,8 +4,8 @@
     "Punchline": "Chat history plugin, view history per character, per group, or search.",
     "Description": "Chat history plugin, view history per character, per group, or search.\n Main command /whowhat",
     "InternalName": "WhoSaidWhatNow",
-    "AssemblyVersion": "0.4.6",
-    "TestingAssemblyVersion": "0.4.6",
+    "AssemblyVersion": "0.5.0",
+    "TestingAssemblyVersion": "0.5.0",
     "ApplicableVersion": "any",
     "RepoUrl": "https://github.com/perappu/WhoSaidWhatNow",
     "Tags": [
@@ -13,6 +13,6 @@
         "chat"
     ],
     "IconUrl": "https://raw.githubusercontent.com/perappu/WhoSaidWhatNow/master/WhoSaidWhatNow/images/icon.png",
-    "Changelog": "* v0.4.6\n * allow custom colors for chat channels"
+    "Changelog": "* v0.5.0\n * update to game version 7.0 and dalamud API 10"
 }
 
