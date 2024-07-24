@@ -59,7 +59,7 @@ namespace WhoSaidWhatNow.Utils
             }
             catch (Exception e)
             {
-                PluginLog.LogError($"{e.Message} Unable to display message.");
+                Plugin.Logger.Error($"{e.Message} Unable to display message.");
             }
 
         }

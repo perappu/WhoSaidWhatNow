@@ -18,17 +18,20 @@ namespace WhoSaidWhatNow
 {
     public sealed class Plugin : IDalamudPlugin
     {
-
         public string Name => "Who Said What Now";
         private const string COMMAND = "/whowhat";
         public static Configuration Config = null!;
         public static ConfigurationUtils ConfigHelper = null!;
 
         public static Player? SelectedPlayer = null;
+        public static Player? CurrentPlayer = null;
         public static List<Player> Players = new();
         public static string FilterPlayers = "";
         public static string FilterSearch = "";
-        public static Dictionary<String, (String NAME, Dictionary<Player, Boolean> PLAYERS)> Groups = new() { { "1", ("Group 1", Players.ToDictionary(p => p, p => false)) } };
+
+        public static Dictionary<String, (String NAME, Dictionary<Player, Boolean> PLAYERS)> Groups = new()
+            { { "1", ("Group 1", Players.ToDictionary(p => p, p => false)) } };
+
         public static SortedList<DateTime, ChatEntry> ChatEntries = new();
 
         private WindowSystem WindowSystem { get; set; }
@@ -36,39 +39,33 @@ namespace WhoSaidWhatNow
         public ConfigWindow ConfigWindow { get; }
 
         [PluginService]
-        [RequiredVersion("1.0")]
-        public static DalamudPluginInterface PluginInterface { get; private set; } = null!;
+        public static IDalamudPluginInterface PluginInterface { get; private set; } = null!;
 
         [PluginService]
-        [RequiredVersion("1.0")]
         public static ICommandManager CommandManager { get; private set; } = null!;
 
         [PluginService]
-        [RequiredVersion("1.0")]
         public static IDataManager DataManager { get; private set; } = null!;
 
         [PluginService]
-        [RequiredVersion("1.0")]
         public static ITargetManager TargetManager { get; private set; } = null!;
 
         [PluginService]
-        [RequiredVersion("1.0")]
         public static IClientState ClientState { get; private set; } = null!;
 
         [PluginService]
-        [RequiredVersion("1.0")]
         public static IChatGui ChatGui { get; private set; } = null!;
 
         [PluginService]
-        [RequiredVersion("1.0")]
         public static IObjectTable ObjectTable { get; private set; } = null!;
 
         [PluginService]
-        [RequiredVersion("1.0")]
+        internal static IFramework Framework { get; private set; } = null!;
+
+        [PluginService]
         public static IGameConfig GameConfig { get; private set; } = null!;
 
         [PluginService]
-        [RequiredVersion("1.0")]
         public static IPluginLog Logger { get; private set; } = null!;
 
         public static FileDialogManager FileDialogManager { get; set; } = new FileDialogManager();
@@ -79,7 +76,6 @@ namespace WhoSaidWhatNow
 
         public Plugin()
         {
-
             // initiatize our configuration
             try
             {
@@ -90,7 +86,7 @@ namespace WhoSaidWhatNow
             catch (Exception ex)
             {
                 Logger.Error("Failed to load config so creating new one.", ex);
-                ChatGuiExtensions.PluginPrint(ChatGui, "Error loading config file. New one made.");
+                ChatGui.PluginPrint("Error loading config file. New one made.");
                 Config = new Configuration();
                 Config.Save();
                 Config.Initialize(PluginInterface);
@@ -107,7 +103,8 @@ namespace WhoSaidWhatNow
             WindowSystem.AddWindow(MainWindow);
 
             PluginInterface.UiBuilder.Draw += DrawUI;
-            PluginInterface.UiBuilder.OpenConfigUi += DrawConfigUI;
+            PluginInterface.UiBuilder.OpenConfigUi += ToggleConfigUI;
+            PluginInterface.UiBuilder.OpenMainUi += ToggleMainUI;
             PluginInterface.UiBuilder.Draw += FileDialogManager.Draw;
 
             // add events/listeners
@@ -115,6 +112,7 @@ namespace WhoSaidWhatNow
             ClientState.Logout += OnLogout;
             ChatListener = new ChatService(ChatGui);
             PlayerService = new PlayerUtils();
+            Framework.Update += OnFrameworkUpdate;
 
             // commands
             CommandManager.AddHandler(COMMAND, new CommandInfo(OnCommand)
@@ -128,7 +126,7 @@ namespace WhoSaidWhatNow
                 {
                     Players.Clear();
                     Config.CurrentPlayer = string.Empty;
-                    PlayerUtils.SetCurrentPlayer();
+                    // PlayerUtils.SetCurrentPlayer();
                     PlayerUtils.CheckTrackedPlayers();
                 }
             }
@@ -136,25 +134,31 @@ namespace WhoSaidWhatNow
             {
                 Logger.Error("Plugin loaded and thought there was a character logged in, but there wasn't.");
             }
-
         }
 
         //TODO: make sure we're disposing of everything we need to appropriately
         public void Dispose()
         {
             ChatListener.Dispose();
+
             PluginInterface.UiBuilder.Draw -= DrawUI;
-            PluginInterface.UiBuilder.OpenConfigUi -= DrawConfigUI;
+            PluginInterface.UiBuilder.OpenConfigUi -= ToggleConfigUI;
+            PluginInterface.UiBuilder.OpenMainUi -= ToggleMainUI;
             PluginInterface.UiBuilder.Draw -= FileDialogManager.Draw;
+
             WindowSystem.RemoveAllWindows();
+            ConfigWindow.Dispose();
+            MainWindow.Dispose();
+
             CommandManager.RemoveHandler(COMMAND);
+
             ClientState.Login -= OnLogin;
             ClientState.Logout -= OnLogout;
+            Framework.Update -= OnFrameworkUpdate;
         }
 
         private void OnCommand(string command, string args)
         {
-
             if (args.Equals("on"))
             {
                 ChatGui.Print("WhoWhat is ON.", "WhoWhat");
@@ -181,14 +185,13 @@ namespace WhoSaidWhatNow
                 ConfigWindow.IsOpen = true;
                 ChatGui.Print("WhoWhat refreshed. Most settings reset.", "WhoWhat");
             }
-
             else if (args.Equals("config"))
             {
-                ConfigWindow.IsOpen = !ConfigWindow.IsOpen;
+                ConfigWindow.Toggle();
             }
             else
             {
-                MainWindow.IsOpen = !MainWindow.IsOpen;
+                MainWindow.Toggle();
             }
         }
 
@@ -197,7 +200,6 @@ namespace WhoSaidWhatNow
         {
             Players.Clear();
             Config.CurrentPlayer = string.Empty;
-            PlayerUtils.SetCurrentPlayer();
             PlayerUtils.CheckTrackedPlayers();
         }
 
@@ -209,20 +211,21 @@ namespace WhoSaidWhatNow
             Players.Clear();
         }
 
-        private void DrawUI()
-        {
-            WindowSystem.Draw();
-        }
+        private void DrawUI() => WindowSystem.Draw();
+        public void ToggleConfigUI() => ConfigWindow.Toggle();
+        public void ToggleMainUI() => MainWindow.Toggle();
 
-        public void DrawConfigUI()
+        private async void OnFrameworkUpdate(IFramework framework)
         {
-            ConfigWindow.IsOpen = true;
+            if (ClientState.LocalPlayer != null)
+            {
+                if (!ClientState.LocalPlayer.Name.ToString().Equals(Config.CurrentPlayer))
+                {
+                    Config.CurrentPlayer = await framework.RunOnTick(() => ClientState.LocalPlayer?.Name.ToString()) ??
+                                   Config.CurrentPlayer;
+                    CurrentPlayer = new Player(ClientState.LocalPlayer, true);
+                }
+            }
         }
-
-        public void ToggleConfigUI()
-        {
-            ConfigWindow.IsOpen = !ConfigWindow.IsOpen;
-        }
-
     }
 }

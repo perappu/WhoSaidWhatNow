@@ -1,7 +1,7 @@
 using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Game.ClientState.Objects.Types;
-using Dalamud.Logging;
+using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using WhoSaidWhatNow.Objects;
@@ -10,30 +10,22 @@ namespace WhoSaidWhatNow.Utils
 {
     public class PlayerUtils
     {
-        public PlayerUtils() { }
-
         /// <summary>
         /// Attempts to add given GameObject to tracked players
         /// </summary>
         /// <param name="target">GameObject resembling a Player Character to add</param>
         /// <param name="removeDisabled">Boolean value indicating where or not the player can be removed from the main UI</param>
         /// <returns>Returns bool indicating if add was successful</returns>
-        public static bool AddPlayer(GameObject? target, bool removeDisabled = false)
+        public static bool AddPlayer(IGameObject? target, bool removeDisabled = false)
         {
+            if (target is not { ObjectKind: ObjectKind.Player })
+                return false;
 
-            if (target == null || target.ObjectKind != ObjectKind.Player)
-            {
+            if (Plugin.Players.Any(x => x.Name.Equals(target.Name.ToString())))
                 return false;
-            }
-            else if (Plugin.Players.Any(x => x.Name.Equals(target.Name.ToString())))
-            {
-                return false;
-            }
-            else
-            {
-                Plugin.Players.Add(new Player(target, removeDisabled));
-                return true;
-            }
+
+            Plugin.Players.Add(new Player(target, removeDisabled));
+            return true;
         }
 
         /// <summary>
@@ -42,10 +34,7 @@ namespace WhoSaidWhatNow.Utils
         /// <param name="player">Player object to remove</param>
         public static void RemovePlayer(Player player)
         {
-            if (player is not null)
-            {
-                Plugin.Players.Remove(player);
-            }
+            Plugin.Players.Remove(player);
         }
 
         /// <summary>
@@ -64,18 +53,19 @@ namespace WhoSaidWhatNow.Utils
         /// <summary>
         /// Set the current player to the currently logged in character
         /// </summary>
-        public static void SetCurrentPlayer()
-        {
-            //if switched characters, remove old character and replace with new one
-            //adds to top of list with insert
-            if (!Plugin.Config.CurrentPlayer.ToString().Equals(Plugin.ClientState.LocalPlayer!.Name.ToString()))
-            {
-                RemovePlayer(Plugin.Config.CurrentPlayer);
-            }
-            Plugin.Config.CurrentPlayer = Plugin.ClientState.LocalPlayer!.Name.ToString();
-            AddPlayer(Plugin.ClientState.LocalPlayer!, true);
-            Plugin.Logger.Debug($"Currently Logged In Player was changed or null. New: {Plugin.Config.CurrentPlayer}");
-        }
+        // public static void SetCurrentPlayer()
+        // {
+        //     //if switched characters, remove old character and replace with new one
+        //     //adds to top of list with insert
+        //     if (!Plugin.Config.CurrentPlayer.ToString().Equals(Plugin.ClientState.LocalPlayer!.Name.ToString()))
+        //     {
+        //         RemovePlayer(Plugin.Config.CurrentPlayer);
+        //     }
+        //
+        //     Plugin.Config.CurrentPlayer = Plugin.ClientState.LocalPlayer!.Name.ToString();
+        //     AddPlayer(Plugin.ClientState.LocalPlayer!, true);
+        //     Plugin.Logger.Debug($"Currently Logged In Player was changed or null. New: {Plugin.Config.CurrentPlayer}");
+        // }
 
         // TRACKED PLAYER METHODS //
         /// <summary>
@@ -103,11 +93,12 @@ namespace WhoSaidWhatNow.Utils
                 findPlayer.RemoveDisabled = false;
                 Plugin.Logger.Debug($"Removed whitelisted player: {player.Name} {player.Server}");
             }
+
             Plugin.Config.Save();
             SortPlayers();
         }
 
-        
+
         /// <summary>
         /// Change tracked player to given color. Also finds them in Player list and changes their value.
         /// </summary>
@@ -122,7 +113,7 @@ namespace WhoSaidWhatNow.Utils
         }
 
         /// <summary>
-        /// cycle through tracked player list to make sure they're all being tracked. if not, add them
+        /// cycle through tracked player list to make sure they're all being tracked. if not,
         /// add them with RemoveDisabled = true. removal is handled elsewhere
         /// </summary>
         public static void CheckTrackedPlayers()
@@ -134,7 +125,7 @@ namespace WhoSaidWhatNow.Utils
                 {
                     //create new tracked player w/o an ID
                     Plugin.Players.Add(new Player(player.Name, player.Server, player.Color, true));
-                    PluginLog.LogDebug($"Added new whitelisted player: {player.Name} {player.Server}");
+                    Plugin.Logger.Debug($"Added new whitelisted player: {player.Name} {player.Server}");
                 }
                 else
                 {
@@ -145,23 +136,28 @@ namespace WhoSaidWhatNow.Utils
         }
 
         /// <summary>
-        /// Sort the players by user at top -> always tracked -> everyone else.
+        /// Sort the players by always tracked -> everyone else.
         /// </summary>
         public static void SortPlayers()
         {
             var topPlayers = Plugin.Players.Where(x => x.RemoveDisabled == true).ToList();
             var otherPlayers = Plugin.Players.Where(x => x.RemoveDisabled != true).ToList();
 
-            //we only need to do remove and return stuff if the player isn't already at the top
-            if (!topPlayers[0].Name.Equals(Plugin.Config.CurrentPlayer))
-            {
-                var i = topPlayers.FindIndex(x => x.Name == Plugin.Config.CurrentPlayer);
-                var currentPlayer = topPlayers[i-1];
-                topPlayers.RemoveAt(i);
-                topPlayers.Insert(0, currentPlayer);
-            }
-
             Plugin.Players = topPlayers.Concat(otherPlayers).ToList();
+        }
+
+        /// <summary>
+        /// Get a list of current player + other players
+        /// </summary>
+        public static List<Player> GetCurrentAndPlayers()
+        {
+            if (Plugin.CurrentPlayer == null)
+            {
+                return Plugin.Players;
+            } else
+            {
+                return Plugin.Players.Prepend(Plugin.CurrentPlayer).ToList();
+            }
         }
 
         /// <summary>
@@ -169,16 +165,16 @@ namespace WhoSaidWhatNow.Utils
         /// </summary>
         /// <param name="obj">Generic GameObject</param>
         /// <returns></returns>
-        public static PlayerCharacter? CastPlayer(GameObject obj)
+        public static IPlayerCharacter? CastPlayer(IGameObject obj)
         {
             try
             {
-                var character = (PlayerCharacter)obj;
+                var character = (IPlayerCharacter)obj;
                 return character;
             }
             catch
             {
-                PluginLog.LogDebug("Could not cast object as player");
+                Plugin.Logger.Debug("Could not cast object as player");
                 return null;
             }
         }
