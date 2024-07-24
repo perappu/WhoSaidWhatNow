@@ -52,19 +52,19 @@ namespace WhoSaidWhatNow.Utils
         /// <summary>
         /// Set the current player to the currently logged in character
         /// </summary>
-        public static void SetCurrentPlayer()
-        {
-            //if switched characters, remove old character and replace with new one
-            //adds to top of list with insert
-            if (!Plugin.Config.CurrentPlayer.ToString().Equals(Plugin.ClientState.LocalPlayer!.Name.ToString()))
-            {
-                RemovePlayer(Plugin.Config.CurrentPlayer);
-            }
-
-            Plugin.Config.CurrentPlayer = Plugin.ClientState.LocalPlayer!.Name.ToString();
-            AddPlayer(Plugin.ClientState.LocalPlayer!, true);
-            Plugin.Logger.Debug($"Currently Logged In Player was changed or null. New: {Plugin.Config.CurrentPlayer}");
-        }
+        // public static void SetCurrentPlayer()
+        // {
+        //     //if switched characters, remove old character and replace with new one
+        //     //adds to top of list with insert
+        //     if (!Plugin.Config.CurrentPlayer.ToString().Equals(Plugin.ClientState.LocalPlayer!.Name.ToString()))
+        //     {
+        //         RemovePlayer(Plugin.Config.CurrentPlayer);
+        //     }
+        //
+        //     Plugin.Config.CurrentPlayer = Plugin.ClientState.LocalPlayer!.Name.ToString();
+        //     AddPlayer(Plugin.ClientState.LocalPlayer!, true);
+        //     Plugin.Logger.Debug($"Currently Logged In Player was changed or null. New: {Plugin.Config.CurrentPlayer}");
+        // }
 
         // TRACKED PLAYER METHODS //
         /// <summary>
