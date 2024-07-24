@@ -221,10 +221,14 @@ namespace WhoSaidWhatNow
 
         private async void OnFrameworkUpdate(IFramework framework)
         {
-            Config.CurrentPlayer = await framework.RunOnTick(() => ClientState.LocalPlayer?.Name.ToString()) ??
+            if (ClientState.LocalPlayer != null)
+            {
+                if (!ClientState.LocalPlayer.Name.ToString().Equals(Config.CurrentPlayer))
+                {
+                    Config.CurrentPlayer = await framework.RunOnTick(() => ClientState.LocalPlayer?.Name.ToString()) ??
                                    Config.CurrentPlayer;
-            if (ClientState.LocalPlayer != null) {
-                CurrentPlayer = new Player(ClientState.LocalPlayer, true);
+                    CurrentPlayer = new Player(ClientState.LocalPlayer, true);
+                }
             }
         }
     }
