@@ -6,6 +6,8 @@
     <Description>Plugin for tracking chat logs.</Description>
     <Copyright></Copyright>
     <PackageProjectUrl>https://github.com/perappu/WhoSaidWhatNow</PackageProjectUrl>
+    <PackageVersion>$(Version)</PackageVersion>
+    <AssemblyVersion>$(Version)</AssemblyVersion>
   </PropertyGroup>
 
   <PropertyGroup>
