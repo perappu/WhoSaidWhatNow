@@ -103,7 +103,8 @@ namespace WhoSaidWhatNow
             WindowSystem.AddWindow(MainWindow);
 
             PluginInterface.UiBuilder.Draw += DrawUI;
-            PluginInterface.UiBuilder.OpenConfigUi += DrawConfigUI;
+            PluginInterface.UiBuilder.OpenConfigUi += ToggleConfigUI;
+            PluginInterface.UiBuilder.OpenMainUi += ToggleMainUI;
             PluginInterface.UiBuilder.Draw += FileDialogManager.Draw;
 
             // add events/listeners
@@ -139,11 +140,18 @@ namespace WhoSaidWhatNow
         public void Dispose()
         {
             ChatListener.Dispose();
+
             PluginInterface.UiBuilder.Draw -= DrawUI;
-            PluginInterface.UiBuilder.OpenConfigUi -= DrawConfigUI;
+            PluginInterface.UiBuilder.OpenConfigUi -= ToggleConfigUI;
+            PluginInterface.UiBuilder.OpenMainUi -= ToggleMainUI;
             PluginInterface.UiBuilder.Draw -= FileDialogManager.Draw;
+
             WindowSystem.RemoveAllWindows();
+            ConfigWindow.Dispose();
+            MainWindow.Dispose();
+
             CommandManager.RemoveHandler(COMMAND);
+
             ClientState.Login -= OnLogin;
             ClientState.Logout -= OnLogout;
             Framework.Update -= OnFrameworkUpdate;
@@ -177,14 +185,9 @@ namespace WhoSaidWhatNow
                 ConfigWindow.IsOpen = true;
                 ChatGui.Print("WhoWhat refreshed. Most settings reset.", "WhoWhat");
             }
-
             else if (args.Equals("config"))
             {
-                ConfigWindow.IsOpen = !ConfigWindow.IsOpen;
-            }
-            else
-            {
-                MainWindow.IsOpen = !MainWindow.IsOpen;
+                ConfigWindow.Toggle();
             }
         }
 
@@ -204,20 +207,9 @@ namespace WhoSaidWhatNow
             Players.Clear();
         }
 
-        private void DrawUI()
-        {
-            WindowSystem.Draw();
-        }
-
-        public void DrawConfigUI()
-        {
-            ConfigWindow.IsOpen = true;
-        }
-
-        public void ToggleConfigUI()
-        {
-            ConfigWindow.IsOpen = !ConfigWindow.IsOpen;
-        }
+        private void DrawUI() => WindowSystem.Draw();
+        public void ToggleConfigUI() => ConfigWindow.Toggle();
+        public void ToggleMainUI() => MainWindow.Toggle();
 
         private async void OnFrameworkUpdate(IFramework framework)
         {
