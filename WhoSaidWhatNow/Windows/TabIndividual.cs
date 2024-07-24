@@ -157,7 +157,7 @@ public class TabIndividual
             if (Plugin.SelectedPlayer is not null)
             {
                 foreach (var c in from KeyValuePair<DateTime, ChatEntry> c in Plugin.ChatEntries
-                                  where Plugin.Config.ChannelToggles[c.Value.Type] == true && c.Value.Sender.Name.Contains(Plugin.SelectedPlayer.Name)
+                                  where Plugin.Config.ChannelToggles[c.Value.Type] && c.Value.Sender.Name.Contains(Plugin.SelectedPlayer.Name)
                                   select c)
                 {
                     ChatUtils.ShowMessage(c);

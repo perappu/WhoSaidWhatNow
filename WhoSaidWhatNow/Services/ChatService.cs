@@ -1,8 +1,5 @@
-using Dalamud.Game.Gui;
 using Dalamud.Game.Text;
 using Dalamud.Game.Text.SeStringHandling;
-using Dalamud.Game.Text.SeStringHandling.Payloads;
-using Dalamud.Logging;
 using Dalamud.Plugin.Services;
 using System;
 using WhoSaidWhatNow.Objects;
@@ -32,7 +29,7 @@ namespace WhoSaidWhatNow.Services
             gui!.ChatMessage -= OnChatMessage;
         }
 
-        private void OnChatMessage(XivChatType type, uint senderId, ref SeString sender, ref SeString message, ref bool isHandled)
+        private void OnChatMessage(XivChatType type, int senderId, ref SeString sender, ref SeString message, ref bool isHandled)
         {
             if (Plugin.Config.Enabled == true)
             {

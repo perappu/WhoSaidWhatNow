@@ -16,7 +16,7 @@ namespace WhoSaidWhatNow.Utils
             Plugin.Logger.Debug("refresh called");
             Plugin.Players.Clear();
             Plugin.Config.CurrentPlayer = string.Empty;
-            PlayerUtils.SetCurrentPlayer();
+            // PlayerUtils.SetCurrentPlayer();
             PlayerUtils.CheckTrackedPlayers();
         }
 
@@ -26,7 +26,7 @@ namespace WhoSaidWhatNow.Utils
             Plugin.Players.Clear();
             Plugin.ChatEntries.Clear();
             Plugin.Config.CurrentPlayer = string.Empty;
-            PlayerUtils.SetCurrentPlayer();
+            // PlayerUtils.SetCurrentPlayer();
             PlayerUtils.CheckTrackedPlayers();
         }
 

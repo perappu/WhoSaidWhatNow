@@ -5,22 +5,13 @@ using System.Linq;
 namespace WhoSaidWhatNow.Objects
 {
     //ChatEntry object
-    public class ChatEntry
+    public class ChatEntry(int senderId, Player sender, string message, XivChatType type, DateTime time)
     {
-        public uint SenderID { get; set; }
-        public Player Sender { get; init; }
-        public string Message { get; init; }
-        public XivChatType Type { get; init; }
-        public DateTime Time { get; init; }
-
-        public ChatEntry(uint senderId, Player sender, string message, XivChatType type, DateTime time)
-        {
-            SenderID = senderId;
-            Sender = sender;
-            Type = type;
-            Time = time;
-            Message = message;
-        }
+        public int SenderID { get; set; } = senderId;
+        public Player Sender { get; init; } = sender;
+        public string Message { get; init; } = message;
+        public XivChatType Type { get; init; } = type;
+        public DateTime Time { get; init; } = time;
 
         public string CreateMessage(string tag)
         {
@@ -39,7 +30,7 @@ namespace WhoSaidWhatNow.Objects
                 msg = String.Join(' ', this.Message.Split(' ').Skip(2).ToArray());
             }
 
-            return (Plugin.Config.ShowTimestamp ? $"[{time}]" : String.Empty) + String.Format(tag, sender, msg).Trim();
+            return (Plugin.Config.ShowTimestamp ? $"[{time}]" : string.Empty) + string.Format(tag, sender, msg).Trim();
         }
 
     }

@@ -4,10 +4,8 @@ using ImGuiNET;
 using System;
 using System.Linq;
 using System.Numerics;
-// using Dalamud.DrunkenToad.Extensions;
 using WhoSaidWhatNow.Objects;
 using WhoSaidWhatNow.Utils;
-// using Dalamud.DrunkenToad.Core;
 
 namespace WhoSaidWhatNow.Windows;
 
@@ -61,7 +59,7 @@ public class MainWindow : Window, IDisposable
     {
         var playerArray = Plugin.ObjectTable.ToArray();
         Plugin.Logger.Debug($"Length of players is {playerArray.Length}");
-        var nearbyPlayers = playerArray.Where(x => x is PlayerCharacter && x.ObjectId != Plugin.ClientState.LocalPlayer!.ObjectId).Select(x => x as PlayerCharacter).ToList();
+        var nearbyPlayers = playerArray.Where(x => x is IPlayerCharacter && x.EntityId != Plugin.ClientState.LocalPlayer!.EntityId).Select(x => x as IPlayerCharacter).ToList();
 
         var i = 0;
         foreach (var nearbyPlayer in nearbyPlayers)
@@ -147,7 +145,7 @@ public class MainWindow : Window, IDisposable
         {
             ImGui.TextUnformatted(" " + player.Name + " (YOU)");
         }
-        else if (player.RemoveDisabled == true)
+        else if (player.RemoveDisabled)
         {
             ImGui.TextUnformatted(" " + player.Name);
         }

@@ -18,7 +18,6 @@ namespace WhoSaidWhatNow
 {
     public sealed class Plugin : IDalamudPlugin
     {
-
         public string Name => "Who Said What Now";
         private const string COMMAND = "/whowhat";
         public static Configuration Config = null!;
@@ -28,7 +27,10 @@ namespace WhoSaidWhatNow
         public static List<Player> Players = new();
         public static string FilterPlayers = "";
         public static string FilterSearch = "";
-        public static Dictionary<String, (String NAME, Dictionary<Player, Boolean> PLAYERS)> Groups = new() { { "1", ("Group 1", Players.ToDictionary(p => p, p => false)) } };
+
+        public static Dictionary<String, (String NAME, Dictionary<Player, Boolean> PLAYERS)> Groups = new()
+            { { "1", ("Group 1", Players.ToDictionary(p => p, p => false)) } };
+
         public static SortedList<DateTime, ChatEntry> ChatEntries = new();
 
         private WindowSystem WindowSystem { get; set; }
@@ -57,6 +59,9 @@ namespace WhoSaidWhatNow
         public static IObjectTable ObjectTable { get; private set; } = null!;
 
         [PluginService]
+        internal static IFramework Framework { get; private set; } = null!;
+
+        [PluginService]
         public static IGameConfig GameConfig { get; private set; } = null!;
 
         [PluginService]
@@ -70,7 +75,6 @@ namespace WhoSaidWhatNow
 
         public Plugin()
         {
-
             // initiatize our configuration
             try
             {
@@ -81,7 +85,7 @@ namespace WhoSaidWhatNow
             catch (Exception ex)
             {
                 Logger.Error("Failed to load config so creating new one.", ex);
-                ChatGuiExtensions.PluginPrint(ChatGui, "Error loading config file. New one made.");
+                ChatGui.PluginPrint("Error loading config file. New one made.");
                 Config = new Configuration();
                 Config.Save();
                 Config.Initialize(PluginInterface);
@@ -106,6 +110,7 @@ namespace WhoSaidWhatNow
             ClientState.Logout += OnLogout;
             ChatListener = new ChatService(ChatGui);
             PlayerService = new PlayerUtils();
+            Framework.Update += OnFrameworkUpdate;
 
             // commands
             CommandManager.AddHandler(COMMAND, new CommandInfo(OnCommand)
@@ -119,7 +124,7 @@ namespace WhoSaidWhatNow
                 {
                     Players.Clear();
                     Config.CurrentPlayer = string.Empty;
-                    PlayerUtils.SetCurrentPlayer();
+                    // PlayerUtils.SetCurrentPlayer();
                     PlayerUtils.CheckTrackedPlayers();
                 }
             }
@@ -127,7 +132,6 @@ namespace WhoSaidWhatNow
             {
                 Logger.Error("Plugin loaded and thought there was a character logged in, but there wasn't.");
             }
-
         }
 
         //TODO: make sure we're disposing of everything we need to appropriately
@@ -145,7 +149,6 @@ namespace WhoSaidWhatNow
 
         private void OnCommand(string command, string args)
         {
-
             if (args.Equals("on"))
             {
                 ChatGui.Print("WhoWhat is ON.", "WhoWhat");
@@ -188,7 +191,6 @@ namespace WhoSaidWhatNow
         {
             Players.Clear();
             Config.CurrentPlayer = string.Empty;
-            PlayerUtils.SetCurrentPlayer();
             PlayerUtils.CheckTrackedPlayers();
         }
 
@@ -215,5 +217,11 @@ namespace WhoSaidWhatNow
             ConfigWindow.IsOpen = !ConfigWindow.IsOpen;
         }
 
+        private async void OnFrameworkUpdate(IFramework framework)
+        {
+            Config.CurrentPlayer = await framework.RunOnTick(() => ClientState.LocalPlayer?.Name.ToString()) ??
+                                   Config.CurrentPlayer;
+            PlayerUtils.AddPlayer(ClientState.LocalPlayer, true);
+        }
     }
 }
