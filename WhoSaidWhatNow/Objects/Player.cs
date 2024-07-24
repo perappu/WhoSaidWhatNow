@@ -1,14 +1,11 @@
 using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Game.ClientState.Objects.Types;
-using Dalamud.Logging;
 using FFXIVClientStructs.FFXIV.Common.Math;
 using System;
-using WhoSaidWhatNow.Services;
 using WhoSaidWhatNow.Utils;
 
 namespace WhoSaidWhatNow.Objects
 {
-
     /// <summary>
     /// Player object
     /// ID is the ObjectID from Dalamud, which is an uint
@@ -45,46 +42,33 @@ namespace WhoSaidWhatNow.Objects
             NameColor = nameColor;
         }
 
-        public Player(GameObject gameObject, bool removeDisabled = false)
+        public Player(IGameObject gameObject, bool removeDisabled = false)
         {
-            ID = gameObject.ObjectId;
+            ID = gameObject.EntityId;
             Name = gameObject.Name.ToString();
             var player = PlayerUtils.CastPlayer(gameObject);
             RemoveDisabled = removeDisabled;
             TimeAdded = DateTime.UtcNow;
 
-            if (player != null)
-            {
-                Server = player.HomeWorld.GameData!.Name.ToString();
-            }
-            else
-            {
-                Server = "ServerNotFound";
-            }
+            Server = player != null ? player.HomeWorld.GameData!.Name.ToString() : "ServerNotFound";
+
             NameColor = PlayerUtils.SetNameColor(Name);
         }
 
-        public Player(PlayerCharacter playerCharacter, bool removeDisabled = false)
+        public Player(IPlayerCharacter playerCharacter, bool removeDisabled = false)
         {
-            ID = playerCharacter.ObjectId;
+            ID = playerCharacter.EntityId;
             Name = playerCharacter.Name.ToString();
             RemoveDisabled = removeDisabled;
             TimeAdded = DateTime.UtcNow;
 
-            if (playerCharacter != null)
-            {
-                Server = playerCharacter.HomeWorld.GameData!.Name.ToString();
-            }
-            else
-            {
-                Server = "ServerNotFound";
-            }
+            Server = playerCharacter.HomeWorld.GameData!.Name.ToString();
             NameColor = PlayerUtils.SetNameColor(Name);
         }
 
         public string GetNameTag()
         {
-            return Name + (Plugin.Config.ShowServer ? "" + Server : String.Empty);
+            return Name + (Plugin.Config.ShowServer ? "" + Server : string.Empty);
         }
     }
 }
