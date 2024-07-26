@@ -1,14 +1,13 @@
-using Dalamud.Interface;
-using ImGuiNET;
 using System;
 using System.Linq;
 using System.Numerics;
+using Dalamud.Interface;
 using Dalamud.Interface.Utility;
-using WhoSaidWhatNow;
+using ImGuiNET;
 using WhoSaidWhatNow.Objects;
 using WhoSaidWhatNow.Utils;
-using WhoSaidWhatNow.Windows;
 
+namespace WhoSaidWhatNow.Windows;
 
 public class TabGroups
 {
@@ -74,7 +73,7 @@ public class TabGroups
                         ImGui.PushFont(UiBuilder.IconFont);
                         if (ImGui.MenuItem(FontAwesomeIcon.Save.ToIconString()))
                         {
-                          FileUtils.DialogSaveGroup(name, players);
+                            FileUtils.DialogSaveGroup(name, players);
                         }
                         ImGui.PopFont();
                         if (ImGui.IsItemHovered())

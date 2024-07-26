@@ -151,13 +151,7 @@ namespace WhoSaidWhatNow.Utils
         /// </summary>
         public static List<Player> GetCurrentAndPlayers()
         {
-            if (Plugin.CurrentPlayer == null)
-            {
-                return Plugin.Players;
-            } else
-            {
-                return Plugin.Players.Prepend(Plugin.CurrentPlayer).ToList();
-            }
+            return Plugin.CurrentPlayer == null ? Plugin.Players : Plugin.Players.Prepend(Plugin.CurrentPlayer).ToList();
         }
 
         /// <summary>
