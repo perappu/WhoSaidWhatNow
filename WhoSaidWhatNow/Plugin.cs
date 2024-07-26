@@ -224,6 +224,7 @@ namespace WhoSaidWhatNow
                     Config.CurrentPlayer = await framework.RunOnTick(() => ClientState.LocalPlayer?.Name.ToString()) ??
                                    Config.CurrentPlayer;
                     CurrentPlayer = new Player(ClientState.LocalPlayer, true);
+                    CurrentPlayer.NameColor = Config.CurrentPlayerColor;
                 }
             }
         }

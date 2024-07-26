@@ -39,6 +39,7 @@ namespace WhoSaidWhatNow
         public List<TrackedPlayer> AlwaysTrackedPlayers = new List<TrackedPlayer>();
 
         public string CurrentPlayer = String.Empty;
+        public Vector4 CurrentPlayerColor = new Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 
         // CHANNEL CONFIGURATION //
         //Channel visibility toggle

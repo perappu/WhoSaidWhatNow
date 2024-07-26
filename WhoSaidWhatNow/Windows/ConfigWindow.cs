@@ -76,6 +76,7 @@ public class ConfigWindow : Window, IDisposable
                 Plugin.Config.AutoscrollOnOpen = autoscroll;
                 Plugin.Config.Save();
             }
+
             ImGui.Separator();
 
             //plugin set config colors
@@ -83,6 +84,17 @@ public class ConfigWindow : Window, IDisposable
             if (ImGui.Button("Set Colors to Character Log Text Colors"))
             {
                 ConfigurationUtils.SetConfigColors();
+                Plugin.Config.Save();
+            }
+
+            ImGui.Separator();
+            ImGui.TextWrapped("Your Name Color:");
+            var currentPlayerColor = Plugin.Config.CurrentPlayerColor;
+            ImGui.SameLine();
+            if (ImGui.ColorEdit4($"##pickerCurrentCharacter", ref currentPlayerColor, ImGuiColorEditFlags.NoAlpha | ImGuiColorEditFlags.NoInputs))
+            {
+                Plugin.Config.CurrentPlayerColor = currentPlayerColor;
+                Plugin.CurrentPlayer.NameColor = currentPlayerColor;
                 Plugin.Config.Save();
             }
 

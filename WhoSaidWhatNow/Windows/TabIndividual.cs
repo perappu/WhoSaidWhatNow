@@ -39,7 +39,7 @@ public class TabIndividual
 
                 //button to add targetmanager targeted player
                 ImGui.BeginGroup();
-                ImGui.BeginDisabled(!(Plugin.TargetManager.Target != null && Plugin.TargetManager.Target.ObjectKind == ObjectKind.Player));
+                ImGui.BeginDisabled(!(Plugin.TargetManager.Target != null && Plugin.TargetManager.Target.ObjectKind == ObjectKind.Player && !PlayerUtils.IsTrackedOrCurrent(Plugin.TargetManager.Target)));
                 //push font to make our menus with FA icons
                 ImGui.PushFont(UiBuilder.IconFont);
                 if (ImGui.MenuItem(FontAwesomeIcon.UserPlus.ToIconString()))

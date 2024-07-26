@@ -21,7 +21,7 @@ namespace WhoSaidWhatNow.Utils
             if (target is not { ObjectKind: ObjectKind.Player })
                 return false;
 
-            if (Plugin.Players.Any(x => x.Name.Equals(target.Name.ToString())))
+            if (PlayerUtils.GetCurrentAndPlayers().Any(x => x.Name.Equals(target.Name.ToString())))
                 return false;
 
             Plugin.Players.Add(new Player(target, removeDisabled));
@@ -152,6 +152,11 @@ namespace WhoSaidWhatNow.Utils
         public static List<Player> GetCurrentAndPlayers()
         {
             return Plugin.CurrentPlayer == null ? Plugin.Players : Plugin.Players.Prepend(Plugin.CurrentPlayer).ToList();
+        }
+
+        public static bool IsTrackedOrCurrent(IGameObject gameObject)
+        {
+            return GetCurrentAndPlayers().Any(x => gameObject.Name.ToString().Contains(x.Name));
         }
 
         /// <summary>
