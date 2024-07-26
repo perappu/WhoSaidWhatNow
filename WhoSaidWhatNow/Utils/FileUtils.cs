@@ -87,7 +87,7 @@ namespace WhoSaidWhatNow.Utils
                     if (Plugin.Config.ChannelToggles[c.Value.Type] == true)
                     {
                         // and if the player is among the tracked;
-                        var p = Plugin.Players.Find(p => c.Value.Sender.Name.Contains(p.Name));
+                        var p = PlayerUtils.GetCurrentAndPlayers().Find(p => c.Value.Sender.Name.Contains(p.Name));
                         if (players[p!])
                         {
                             var tag = ConfigurationUtils.ChatTypeToFormat(c.Value.Type);
