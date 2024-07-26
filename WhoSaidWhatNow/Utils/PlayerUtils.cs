@@ -154,6 +154,10 @@ namespace WhoSaidWhatNow.Utils
             return Plugin.CurrentPlayer == null ? Plugin.Players : Plugin.Players.Prepend(Plugin.CurrentPlayer).ToList();
         }
 
+
+        /// <summary>
+        /// Return whether or not an IGameObject is a currently tracked player
+        /// </summary>
         public static bool IsTrackedOrCurrent(IGameObject gameObject)
         {
             return GetCurrentAndPlayers().Any(x => gameObject.Name.ToString().Contains(x.Name));
