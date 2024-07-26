@@ -147,6 +147,17 @@ namespace WhoSaidWhatNow.Utils
         }
 
         /// <summary>
+        /// Sort the players by always tracked -> everyone else (alphabetically)
+        /// </summary>
+        public static void SortPlayersAlphabetical()
+        {
+            var topPlayers = Plugin.Players.Where(x => x.RemoveDisabled == true).ToList();
+            var otherPlayers = Plugin.Players.Where(x => x.RemoveDisabled != true).OrderBy(x => x.Name).ToList();
+
+            Plugin.Players = topPlayers.Concat(otherPlayers).ToList();
+        }
+
+        /// <summary>
         /// Get a list of current player + other players
         /// </summary>
         public static List<Player> GetCurrentAndPlayers()

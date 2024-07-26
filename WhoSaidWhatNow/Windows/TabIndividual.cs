@@ -70,7 +70,7 @@ public class TabIndividual
                     ImGui.SetTooltip("Remove currently opened player");
                 }
 
-                ImGui.SameLine(ImGui.GetWindowWidth() - 40);
+                ImGui.SameLine(ImGui.GetWindowWidth() - 70);
 
                 // button to remove all manually tracked players, does a refresh() behind the scenes so it's actually rebuilding the list entirely
                 ImGui.BeginGroup();
@@ -87,6 +87,20 @@ public class TabIndividual
                 {
                     ImGui.SetTooltip("Hold shift to clear all manually added players");
                 }
+
+                ImGui.BeginGroup();
+                ImGui.PushFont(UiBuilder.IconFont);
+                if (ImGui.MenuItem(FontAwesomeIcon.Sort.ToIconString()))
+                {
+                    PlayerUtils.SortPlayersAlphabetical();
+                }
+                ImGui.PopFont();
+                ImGui.EndGroup();
+                if (ImGui.IsItemHovered())
+                {
+                    ImGui.SetTooltip("Sort manually added players alphabetically");
+                }
+
 
                 ImGui.EndMenuBar();
             }
