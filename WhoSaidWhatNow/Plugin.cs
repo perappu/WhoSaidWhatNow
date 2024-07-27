@@ -159,39 +159,40 @@ namespace WhoSaidWhatNow
 
         private void OnCommand(string command, string args)
         {
-            if (args.Equals("on"))
+            switch (args)
             {
-                ChatGui.Print("WhoWhat is ON.", "WhoWhat");
-                Config.Enabled = true;
-            }
-            else if (args.Equals("off"))
-            {
-                ChatGui.Print("WhoWhat is OFF.", "WhoWhat");
-                Config.Enabled = false;
-            }
-            else if (args.Equals("refresh"))
-            {
-                MainWindow.IsOpen = false;
-                ConfigurationUtils.refresh();
-                MainWindow.IsOpen = true;
-                ChatGui.Print("WhoWhat refreshed. All temporary tracked players removed.", "WhoWhat");
-            }
-            else if (args.Equals("reset"))
-            {
-                MainWindow.IsOpen = false;
-                ConfigWindow.IsOpen = false;
-                ConfigurationUtils.reset();
-                MainWindow.IsOpen = true;
-                ConfigWindow.IsOpen = true;
-                ChatGui.Print("WhoWhat refreshed. Most settings reset.", "WhoWhat");
-            }
-            else if (args.Equals("config"))
-            {
-                ConfigWindow.Toggle();
-            }
-            else
-            {
-                MainWindow.Toggle();
+                case "on":
+                    ChatGui.Print("WhoWhat is ON.", "WhoWhat");
+                    Config.Enabled = true;
+                    break;
+                case "off":
+                    ChatGui.Print("WhoWhat is OFF.", "WhoWhat");
+                    Config.Enabled = false;
+                    break;
+                case "refresh":
+                    MainWindow.IsOpen = false;
+                    ConfigurationUtils.refresh();
+                    MainWindow.IsOpen = true;
+                    ChatGui.Print("WhoWhat refreshed. All temporary tracked players removed.", "WhoWhat");
+                    break;
+                case "reset":
+                    MainWindow.IsOpen = false;
+                    ConfigWindow.IsOpen = false;
+                    ConfigurationUtils.reset();
+                    MainWindow.IsOpen = true;
+                    ConfigWindow.IsOpen = true;
+                    ChatGui.Print("WhoWhat refreshed. Most settings reset.", "WhoWhat");
+                    break;
+                case "config":
+                    ConfigWindow.Toggle();
+                    break;
+                case "dolphin":
+                    Logger.Debug("Checked Players list for any null names. Result: " +
+                                 Players.Select(x => x.Name.Equals(null)));
+                    break;
+                default:
+                    MainWindow.Toggle();
+                    break;
             }
         }
 
@@ -222,7 +223,7 @@ namespace WhoSaidWhatNow
                 if (!ClientState.LocalPlayer.Name.ToString().Equals(Config.CurrentPlayer))
                 {
                     Config.CurrentPlayer = await framework.RunOnTick(() => ClientState.LocalPlayer?.Name.ToString()) ??
-                                   Config.CurrentPlayer;
+                                           Config.CurrentPlayer;
                     CurrentPlayer = new Player(ClientState.LocalPlayer, true);
                     CurrentPlayer.NameColor = Config.CurrentPlayerColor;
                 }
