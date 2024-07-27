@@ -188,7 +188,7 @@ namespace WhoSaidWhatNow
                     break;
                 case "dolphin":
                     Logger.Debug("Checked Players list for any null names. Result: " +
-                                 Players.Select(x => x.Name.Equals(null)));
+                                 string.Join(", ", Players.Where(x => x.Name.Equals(null))));
                     break;
                 default:
                     MainWindow.Toggle();
