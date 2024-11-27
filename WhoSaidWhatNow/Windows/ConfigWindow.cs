@@ -1,24 +1,31 @@
-using Dalamud.DrunkenToad;
 using Dalamud.Interface.Windowing;
 using ImGuiNET;
 using System;
+using System.Linq;
 using System.Numerics;
 using Dalamud.DrunkenToad.Extensions;
+using Dalamud.Plugin.Services;
 using Dalamud.Utility;
+using Lumina.Excel.Sheets;
 using WhoSaidWhatNow.Objects;
 using WhoSaidWhatNow.Utils;
-using static Lumina.Data.Parsing.Layer.LayerCommon;
 
 namespace WhoSaidWhatNow.Windows;
 
 public class ConfigWindow : Window, IDisposable
 {
-    private string newName = String.Empty;
+    private string newName = string.Empty;
     private int newServer = 0;
     private Vector4 newColor = Vector4.One;
     internal const String ID_PANEL_LEFT = "###WhoSaidWhatNowConfig_LeftPanel_Child";
     private readonly Plugin plugin;
-    private readonly string[] worldNames = Plugin.DataManager.WorldNames();
+    private readonly string[] worldNames = GetWorldNames(Plugin.DataManager);
+
+    private static string[] GetWorldNames(IDataManager dataManager)
+    {
+        return dataManager.GetExcelSheet<World>().Where(world => world.IsPublic).Select(world => world.Name.ToString())
+                          .OrderBy(worldName => worldName).ToArray();
+    }
 
     public ConfigWindow(Plugin plugin) : base(
         "Who Said What Now - Settings", ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse)
@@ -76,10 +83,12 @@ public class ConfigWindow : Window, IDisposable
                 Plugin.Config.AutoscrollOnOpen = autoscroll;
                 Plugin.Config.Save();
             }
+
             ImGui.Separator();
 
             //plugin set config colors
-            ImGui.TextWrapped("This button will match WhoWhat's colors to Character Configuration > Log Window Settings.");
+            ImGui.TextWrapped(
+                "This button will match WhoWhat's colors to Character Configuration > Log Window Settings.");
             if (ImGui.Button("Set Colors to Character Log Text Colors"))
             {
                 ConfigurationUtils.SetConfigColors();
@@ -88,7 +97,6 @@ public class ConfigWindow : Window, IDisposable
 
             ImGui.EndChild();
             ImGui.EndTabItem();
-
         }
 
         // ALWAYS TRACKED TAB
@@ -118,10 +126,12 @@ public class ConfigWindow : Window, IDisposable
                     ImGui.TableNextColumn();
                     ImGui.TableNextColumn();
                     var v = player.Color;
-                    if (ImGui.ColorEdit4($"##picker{player.Name}{player.Server}", ref v, ImGuiColorEditFlags.NoAlpha | ImGuiColorEditFlags.NoInputs))
+                    if (ImGui.ColorEdit4($"##picker{player.Name}{player.Server}", ref v,
+                                         ImGuiColorEditFlags.NoAlpha | ImGuiColorEditFlags.NoInputs))
                     {
                         PlayerUtils.ColorTrackedPlayer(player, v);
                     }
+
                     ImGui.PushStyleColor(ImGuiCol.Text, player.Color);
                     ImGui.TableNextColumn();
                     ImGui.Text(player.Name);
@@ -135,17 +145,21 @@ public class ConfigWindow : Window, IDisposable
                         PlayerUtils.RemoveTrackedPlayer(player);
                         PlayerUtils.CheckTrackedPlayers();
                     }
+
                     ImGui.TableNextColumn();
                     ImGui.TableNextRow();
                 }
+
                 //ui elements for adding new player
                 ImGui.TableNextColumn();
                 ImGui.TableNextColumn();
                 var newCol = newColor;
-                if (ImGui.ColorEdit4("##pickerNewName", ref newCol, ImGuiColorEditFlags.NoAlpha | ImGuiColorEditFlags.NoInputs))
+                if (ImGui.ColorEdit4("##pickerNewName", ref newCol,
+                                     ImGuiColorEditFlags.NoAlpha | ImGuiColorEditFlags.NoInputs))
                 {
                     newColor = newCol;
                 }
+
                 ImGui.TableNextColumn();
                 ImGui.SetNextItemWidth(-1);
                 ImGui.InputText("##inputNewName", ref newName, 100);
@@ -163,6 +177,7 @@ public class ConfigWindow : Window, IDisposable
                         newColor = Vector4.One;
                     }
                 }
+
                 ImGui.EndTable();
             }
 
@@ -188,7 +203,6 @@ public class ConfigWindow : Window, IDisposable
 
                 foreach (var part in parts)
                 {
-
                     foreach (var chan in part)
                     {
                         ImGui.TableNextColumn();
@@ -198,27 +212,28 @@ public class ConfigWindow : Window, IDisposable
                             Plugin.Config.ChannelToggles[chan.Key] = val;
                             Plugin.Config.Save();
                         }
+
                         ImGui.SameLine();
                         var color = Plugin.Config.ChatColors[chan.Key];
-                        if (ImGui.ColorEdit4($"##picker{chan.Key.ToString()}", ref color, ImGuiColorEditFlags.NoAlpha | ImGuiColorEditFlags.NoInputs))
+                        if (ImGui.ColorEdit4($"##picker{chan.Key.ToString()}", ref color,
+                                             ImGuiColorEditFlags.NoAlpha | ImGuiColorEditFlags.NoInputs))
                         {
                             Plugin.Config.ChatColors[chan.Key] = color;
                             Plugin.Config.Save();
                         }
+
                         ImGui.SameLine();
                         ImGui.PushStyleColor(ImGuiCol.Text, Plugin.Config.ChatColors[chan.Key]);
                         ImGui.TextUnformatted(chan.Key.ToString());
                         ImGui.PopStyleColor();
-
                     }
+
                     ImGui.TableNextRow();
                 }
-
             }
+
             ImGui.EndTable();
             ImGui.EndTabItem();
         }
-
     }
 }
-
