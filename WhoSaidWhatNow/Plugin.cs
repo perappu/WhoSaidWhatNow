@@ -204,7 +204,7 @@ namespace WhoSaidWhatNow
         }
 
         //close all windows when logging out so that the windows refresh
-        private void OnLogout()
+        private void OnLogout(int type, int code)
         {
             MainWindow.IsOpen = false;
             SelectedPlayer = null;

@@ -50,7 +50,7 @@ namespace WhoSaidWhatNow.Objects
             RemoveDisabled = removeDisabled;
             TimeAdded = DateTime.UtcNow;
 
-            Server = player != null ? player.HomeWorld.GameData!.Name.ToString() : "ServerNotFound";
+            Server = player != null ? player.HomeWorld.Value.Name.ToString() : "ServerNotFound";
 
             NameColor = PlayerUtils.SetNameColor(Name);
         }
@@ -62,7 +62,7 @@ namespace WhoSaidWhatNow.Objects
             RemoveDisabled = removeDisabled;
             TimeAdded = DateTime.UtcNow;
 
-            Server = playerCharacter.HomeWorld.GameData!.Name.ToString();
+            Server = playerCharacter.HomeWorld.Value.Name.ToString();
             NameColor = PlayerUtils.SetNameColor(Name);
         }
 
