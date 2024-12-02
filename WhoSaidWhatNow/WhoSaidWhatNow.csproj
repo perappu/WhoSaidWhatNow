@@ -2,7 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Authors>perappu</Authors>
-    <Version>0.5.2</Version>
+    <Version>0.5.4</Version>
     <Description>Plugin for tracking chat logs.</Description>
     <Copyright></Copyright>
     <PackageProjectUrl>https://github.com/perappu/WhoSaidWhatNow</PackageProjectUrl>
