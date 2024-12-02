@@ -5,8 +5,8 @@
         "Punchline": "Chat history plugin, view history per character, per group, or search.",
         "Description": "Chat history plugin, view history per character, per group, or search.\n Main command /whowhat",
         "InternalName": "WhoSaidWhatNow",
-        "AssemblyVersion": "0.5.1",
-        "TestingAssemblyVersion": "0.5.1",
+        "AssemblyVersion": "0.5.4",
+        "TestingAssemblyVersion": "0.5.4",
         "ApplicableVersion": "any",
         "RepoUrl": "https://github.com/perappu/WhoSaidWhatNow",
         "Tags": [
