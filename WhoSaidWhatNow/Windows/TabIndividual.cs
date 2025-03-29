@@ -138,21 +138,23 @@ public class TabIndividual
             {
                 mainWindow.AddPlayerSelectable(Plugin.CurrentPlayer!);
             }
-            catch
+            catch (Exception e)
             {
-
+                Plugin.Logger.Debug("Could not draw player ${p} to selectables.");
+                Plugin.Logger.Debug(e.ToString());
             }
             foreach (var p in players)
             {
                 
-                // catch NPEs silently
+                // catch NPEs?
                 try
                 {
                     mainWindow.AddPlayerSelectable(p);
                 }
-                catch
+                catch (Exception e)
                 {
-
+                    Plugin.Logger.Debug("Could not draw player ${p} to selectables.");
+                    Plugin.Logger.Debug(e.ToString());
                 }
                 
             }
