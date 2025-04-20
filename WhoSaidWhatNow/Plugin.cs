@@ -24,6 +24,7 @@ namespace WhoSaidWhatNow
         public static ConfigurationUtils ConfigHelper = null!;
 
         public static Player? SelectedPlayer = null;
+        public static String? SelectedGroup = null;
         public static Player? CurrentPlayer = null;
         public static List<Player> Players = new();
         public static string FilterPlayers = "";
@@ -35,8 +36,8 @@ namespace WhoSaidWhatNow
         public static SortedList<DateTime, ChatEntry> ChatEntries = new();
 
         private WindowSystem WindowSystem { get; set; }
-        public MainWindow MainWindow { get; }
-        public ConfigWindow ConfigWindow { get; }
+        public static MainWindow MainWindow { get; private set; } = null!;
+        public static ConfigWindow ConfigWindow { get; private set; } = null!;
 
         [PluginService]
         public static IDalamudPluginInterface PluginInterface { get; private set; } = null!;

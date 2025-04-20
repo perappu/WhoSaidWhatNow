@@ -24,6 +24,11 @@ namespace WhoSaidWhatNow
         public bool AutoscrollOnOpen { get; set; } = false;
 
         /// <summary>
+        /// Whether the chat log window should autoscroll on a new message.
+        /// </summary>
+        public bool AutoscrollOnNewMessage { get; set; } = false;
+
+        /// <summary>
         /// Show user's server in messages.
         /// </summary>
         public bool ShowServer { get; set; } = true;
@@ -32,6 +37,16 @@ namespace WhoSaidWhatNow
         /// Show timestamp in messages.
         /// </summary>
         public bool ShowTimestamp { get; set; } = true;
+
+        /// <summary>
+        /// Play a sound if there's a new message in the currently selected window.
+        /// </summary>
+        public bool PlaySound { get; set; } = false;
+
+        /// <summary>
+        /// The sound effect to play
+        /// </summary>
+        public Sounds SelectedSound { get; set; } = Sounds.Sound01;
 
         /// <summary>
         /// Player IDs that should always be tracked.

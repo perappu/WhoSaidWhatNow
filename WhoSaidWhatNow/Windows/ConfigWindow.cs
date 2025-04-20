@@ -9,6 +9,8 @@ using Dalamud.Utility;
 using Lumina.Excel.Sheets;
 using WhoSaidWhatNow.Objects;
 using WhoSaidWhatNow.Utils;
+using FFXIVClientStructs.FFXIV.Client.UI;
+using static Dalamud.Interface.Utility.Raii.ImRaii;
 
 namespace WhoSaidWhatNow.Windows;
 
@@ -20,6 +22,9 @@ public class ConfigWindow : Window, IDisposable
     internal const String ID_PANEL_LEFT = "###WhoSaidWhatNowConfig_LeftPanel_Child";
     private readonly Plugin plugin;
     private readonly string[] worldNames = GetWorldNames(Plugin.DataManager);
+
+    private readonly Sounds[] soundsList =
+    ((Sounds[])Enum.GetValues(typeof(Sounds))).Where(s => s != Sounds.Unknown).ToArray();
 
     private static string[] GetWorldNames(IDataManager dataManager)
     {
@@ -82,6 +87,51 @@ public class ConfigWindow : Window, IDisposable
             {
                 Plugin.Config.AutoscrollOnOpen = autoscroll;
                 Plugin.Config.Save();
+            }
+
+            //plugin autoscroll x2
+            var autoscrollNewMessage = Plugin.Config.AutoscrollOnNewMessage;
+            if (ImGui.Checkbox("Autoscroll to bottom on new message", ref autoscrollNewMessage))
+            {
+                Plugin.Config.AutoscrollOnNewMessage = autoscrollNewMessage;
+                Plugin.Config.Save();
+            }
+
+            ImGui.Separator();
+
+            //plugin autoscroll
+            var playSound = Plugin.Config.PlaySound;
+            if (ImGui.Checkbox("Play a notification sound on new message in currently open log", ref playSound))
+            {
+                Plugin.Config.PlaySound = playSound;
+                Plugin.Config.Save();
+            }
+
+            //selected sound
+            var selectedSound = Plugin.Config.SelectedSound;
+            if (ImGui.BeginCombo("##selectedSound", selectedSound.ToName()))
+            {
+                foreach (var sound in soundsList)
+                {
+                    bool isSelected = selectedSound == sound;
+                    if (ImGui.Selectable($"{sound.ToName()}##selectedSound", isSelected))
+                    {
+                        selectedSound = sound;
+                        Plugin.Config.SelectedSound = selectedSound;
+                        Plugin.Config.Save();
+                        if (isSelected)
+                        {
+                            ImGui.SetItemDefaultFocus();
+                        }
+                    }
+                }
+
+                ImGui.EndCombo();
+            }
+            ImGui.SameLine();
+            if (ImGui.Button("Play"))
+            {
+                UIGlobals.PlaySoundEffect((uint)selectedSound);
             }
 
             ImGui.Separator();

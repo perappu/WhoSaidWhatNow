@@ -19,6 +19,7 @@ public class TabGroups
 
         if (ImGui.BeginTabItem("Groups"))
         {
+            main.individualOpen = false;
             main.toggleWindow(true);
 
             ImGui.BeginTabBar("###groups");
@@ -32,6 +33,7 @@ public class TabGroups
                 var players = group.PLAYERS;
                 if (ImGui.BeginTabItem($"{name}###Tab_{index}"))
                 {
+                    Plugin.SelectedGroup = index;
                     var filtered = new Player[playerList.Count];
 
                     if (ImGui.BeginPopupContextItem())

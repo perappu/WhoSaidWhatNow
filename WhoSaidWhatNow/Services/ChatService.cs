@@ -1,9 +1,14 @@
 using Dalamud.Game.Text;
 using Dalamud.Game.Text.SeStringHandling;
+using Dalamud.Interface.Windowing;
 using Dalamud.Plugin.Services;
+using FFXIVClientStructs.FFXIV.Client.UI;
 using System;
+using System.Linq;
 using WhoSaidWhatNow.Objects;
 using WhoSaidWhatNow.Utils;
+using WhoSaidWhatNow.Windows;
+using static Dalamud.Interface.Utility.Raii.ImRaii;
 
 namespace WhoSaidWhatNow.Services
 {
@@ -43,7 +48,27 @@ namespace WhoSaidWhatNow.Services
                 if (result != null)
                 {
                     Plugin.ChatEntries.Add(DateTime.Now, new ChatEntry(senderId, result, message.ToString(), type, DateTime.Now));
+
+                    //do stuff that needs to happen when a message is added from the selected player OR selected group
+                    if (Plugin.MainWindow.IsOpen)
+                    {
+                        if ((Plugin.MainWindow.individualOpen == true && Plugin.SelectedPlayer != null && Plugin.SelectedPlayer.ID == result.ID) || (Plugin.MainWindow.individualOpen == false && Plugin.SelectedGroup != null && Plugin.Groups[Plugin.SelectedGroup].PLAYERS[result] == true))
+                        {
+                            //if we enabled beeps
+                            if (Plugin.Config.PlaySound)
+                            {
+                                UIGlobals.PlaySoundEffect((uint)Plugin.Config.SelectedSound);
+                            }
+                            if(Plugin.Config.AutoscrollOnNewMessage)
+                            {
+                                MainWindow.justOpened = true;
+                            }
+                        }
+                    }
+
                 }
+
+                
             }
         }
     }

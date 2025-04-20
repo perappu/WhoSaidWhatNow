@@ -13,6 +13,7 @@ public class MainWindow : Window, IDisposable
 {
     private readonly Plugin plugin;
     public static bool ChatOpen = false;
+    public bool individualOpen = false;
     internal const String ID_PANEL_LEFT = "###WhoSaidWhatNow_LeftPanel_Child";
     internal const String ID_PANEL_RIGHT = "###WhoSaidWhatNow_RightPanel_Child";
 
