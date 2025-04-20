@@ -233,6 +233,8 @@ public class ConfigWindow : Window, IDisposable
             }
 
             ImGui.EndTable();
+
+            ImGui.EndChild();
             ImGui.EndTabItem();
         }
     }
