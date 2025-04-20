@@ -4,6 +4,7 @@ using Dalamud.Interface.Windowing;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using System;
+using System.Linq;
 using WhoSaidWhatNow.Objects;
 using WhoSaidWhatNow.Utils;
 using WhoSaidWhatNow.Windows;
@@ -56,7 +57,11 @@ namespace WhoSaidWhatNow.Services
                             //if we enabled beeps
                             if (Plugin.Config.PlaySound)
                             {
-                                UIGlobals.PlaySoundEffect((uint)0x34);
+                                UIGlobals.PlaySoundEffect((uint)Plugin.Config.SelectedSound);
+                            }
+                            if(Plugin.Config.AutoscrollOnNewMessage)
+                            {
+                                MainWindow.justOpened = true;
                             }
                         }
                     }
