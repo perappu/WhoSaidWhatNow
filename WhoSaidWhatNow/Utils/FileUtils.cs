@@ -64,9 +64,10 @@ namespace WhoSaidWhatNow.Utils
                     Plugin.ChatGui.Print($"Successfully saved log: {path}", "WhoWhat");
                 }
             }
-            catch
+            catch (Exception e)
             {
-                Plugin.ChatGui.Print("Failed to save log.", "WhoWhat");
+                Plugin.Logger.Error(e.Message);
+                Plugin.ChatGui.Print("Failed to save log. Please check the /xllog and report the error to the developers.", "WhoWhat");
             }
         }
 
@@ -98,9 +99,10 @@ namespace WhoSaidWhatNow.Utils
 
                 Plugin.ChatGui.Print($"Successfully saved log: {path}", "WhoWhat");
             }
-            catch
+            catch (Exception e)
             {
-                Plugin.ChatGui.Print("Failed to save log.", "WhoWhat");
+                Plugin.Logger.Error(e.Message);
+                Plugin.ChatGui.Print("Failed to save log. Please check the /xllog and report the error to the developers.", "WhoWhat");
             }
         }
 
