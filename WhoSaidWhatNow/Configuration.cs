@@ -34,6 +34,11 @@ namespace WhoSaidWhatNow
         public bool ShowTimestamp { get; set; } = true;
 
         /// <summary>
+        /// Play a sound if there's a new message in the currently selected window.
+        /// </summary>
+        public bool PlaySound { get; set; } = false;
+
+        /// <summary>
         /// Player IDs that should always be tracked.
         /// </summary>
         public List<TrackedPlayer> AlwaysTrackedPlayers = new List<TrackedPlayer>();

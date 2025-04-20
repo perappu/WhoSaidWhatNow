@@ -86,6 +86,16 @@ public class ConfigWindow : Window, IDisposable
 
             ImGui.Separator();
 
+            //plugin autoscroll
+            var playSound = Plugin.Config.PlaySound;
+            if (ImGui.Checkbox("Play a notification sound on new message in currently open log", ref playSound))
+            {
+                Plugin.Config.PlaySound = playSound;
+                Plugin.Config.Save();
+            }
+
+            ImGui.Separator();
+
             //plugin set config colors
             ImGui.TextWrapped(
                 "This button will match WhoWhat's colors to Character Configuration > Log Window Settings.");

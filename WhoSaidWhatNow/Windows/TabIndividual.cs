@@ -18,6 +18,7 @@ public class TabIndividual
 
         if (ImGui.BeginTabItem("Individual"))
         {
+            mainWindow.individualOpen = true;
             var players = new Player[Plugin.Players.Count];
 
             //janky handling for if we're coming back to this tab from the groups tab
