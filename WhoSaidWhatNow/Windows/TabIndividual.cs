@@ -177,7 +177,7 @@ public class TabIndividual
             }
             ImGui.EndGroup();
 
-            if (Plugin.Config.AutoscrollOnOpen && MainWindow.justOpened || Plugin.Config.AutoscrollOnNewMessage && MainWindow.justOpened)
+            if (Plugin.Config.AutoscrollOnOpen && MainWindow.justOpened)
             {
                 //i don't understand math, make this actually work better
                 ImGui.SetScrollHereY(1);

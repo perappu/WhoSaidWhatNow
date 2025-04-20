@@ -89,14 +89,6 @@ public class ConfigWindow : Window, IDisposable
                 Plugin.Config.Save();
             }
 
-            //plugin autoscroll x2
-            var autoscrollNewMessage = Plugin.Config.AutoscrollOnNewMessage;
-            if (ImGui.Checkbox("Autoscroll to bottom on new message", ref autoscrollNewMessage))
-            {
-                Plugin.Config.AutoscrollOnNewMessage = autoscrollNewMessage;
-                Plugin.Config.Save();
-            }
-
             ImGui.Separator();
 
             //plugin autoscroll
