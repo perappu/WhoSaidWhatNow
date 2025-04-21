@@ -3,6 +3,7 @@ using System.Linq;
 using System.Numerics;
 using Dalamud.Interface;
 using Dalamud.Interface.Utility;
+using Dalamud.Interface.Utility.Raii;
 using ImGuiNET;
 using WhoSaidWhatNow.Objects;
 using WhoSaidWhatNow.Utils;
@@ -72,12 +73,13 @@ public class TabGroups
                     if (ImGui.BeginMenuBar())
                     {
                         //push font to make our menus with FA icons
-                        ImGui.PushFont(UiBuilder.IconFont);
-                        if (ImGui.MenuItem(FontAwesomeIcon.Save.ToIconString()))
+                        using (ImRaii.PushFont(UiBuilder.IconFont))
                         {
-                            FileUtils.DialogSaveGroup(name, players);
+                            if (ImGui.MenuItem(FontAwesomeIcon.Save.ToIconString()))
+                            {
+                                FileUtils.DialogSaveGroup(name, players);
+                            }
                         }
-                        ImGui.PopFont();
                         if (ImGui.IsItemHovered())
                         {
                             ImGui.SetTooltip("Save log to .txt file");

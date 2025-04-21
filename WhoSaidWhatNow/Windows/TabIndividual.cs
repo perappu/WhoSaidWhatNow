@@ -8,6 +8,7 @@ using System.Numerics;
 using Dalamud.Interface.Utility;
 using WhoSaidWhatNow.Objects;
 using WhoSaidWhatNow.Utils;
+using Dalamud.Interface.Utility.Raii;
 
 namespace WhoSaidWhatNow.Windows;
 
@@ -42,12 +43,13 @@ public class TabIndividual
                 ImGui.BeginGroup();
                 ImGui.BeginDisabled(!(Plugin.TargetManager.Target != null && Plugin.TargetManager.Target.ObjectKind == ObjectKind.Player));
                 //push font to make our menus with FA icons
-                ImGui.PushFont(UiBuilder.IconFont);
-                if (ImGui.MenuItem(FontAwesomeIcon.UserPlus.ToIconString()))
+                using (ImRaii.PushFont(UiBuilder.IconFont))
                 {
-                    PlayerUtils.AddPlayer(Plugin.TargetManager.Target);
+                    if (ImGui.MenuItem(FontAwesomeIcon.UserPlus.ToIconString()))
+                    {
+                        PlayerUtils.AddPlayer(Plugin.TargetManager.Target);
+                    }
                 }
-                ImGui.PopFont();
                 ImGui.EndDisabled();
                 ImGui.EndGroup();
                 if (ImGui.IsItemHovered())
@@ -58,12 +60,13 @@ public class TabIndividual
                 // button to remove selected player
                 ImGui.BeginGroup();
                 ImGui.BeginDisabled(Plugin.SelectedPlayer == null || Plugin.SelectedPlayer.RemoveDisabled);
-                ImGui.PushFont(UiBuilder.IconFont);
-                if (ImGui.MenuItem(FontAwesomeIcon.UserMinus.ToIconString()))
+                using (ImRaii.PushFont(UiBuilder.IconFont))
                 {
-                    mainWindow.RemovePlayerGUI();
+                    if (ImGui.MenuItem(FontAwesomeIcon.UserMinus.ToIconString()))
+                    {
+                        mainWindow.RemovePlayerGUI();
+                    }
                 }
-                ImGui.PopFont();
                 ImGui.EndDisabled();
                 ImGui.EndGroup();
                 if (ImGui.IsItemHovered())
@@ -76,12 +79,13 @@ public class TabIndividual
                 // button to remove all manually tracked players, does a refresh() behind the scenes so it's actually rebuilding the list entirely
                 ImGui.BeginGroup();
                 ImGui.BeginDisabled(!ImGui.GetIO().KeyShift);
-                ImGui.PushFont(UiBuilder.IconFont);
-                if (ImGui.MenuItem(FontAwesomeIcon.UserSlash.ToIconString()))
+                using (ImRaii.PushFont(UiBuilder.IconFont))
                 {
-                    ConfigurationUtils.refresh();
+                    if (ImGui.MenuItem(FontAwesomeIcon.UserSlash.ToIconString()))
+                    {
+                        ConfigurationUtils.refresh();
+                    }
                 }
-                ImGui.PopFont();
                 ImGui.EndDisabled();
                 ImGui.EndGroup();
                 if (ImGui.IsItemHovered())
@@ -100,29 +104,34 @@ public class TabIndividual
 
             if (ImGui.BeginMenuBar())
             {
-                //push font to make our menus with FA icons
-                ImGui.PushFont(UiBuilder.IconFont);
-                if (ImGui.MenuItem(FontAwesomeIcon.Save.ToIconString()))
+                using (ImRaii.PushFont(UiBuilder.IconFont))
                 {
-                    FileUtils.OpenFileDialog(Plugin.SelectedPlayer.Name);
+                    ImGui.BeginDisabled(Plugin.SelectedPlayer == null);
+                    if (ImGui.MenuItem(FontAwesomeIcon.Save.ToIconString()))
+                    {
+                        if (Plugin.SelectedPlayer != null)
+                        {
+                            FileUtils.OpenFileDialog(Plugin.SelectedPlayer.Name);
+                        }
+                    }
+                    ImGui.EndDisabled();
                 }
-                ImGui.PopFont();
-
                 if (ImGui.IsItemHovered())
                 {
                     ImGui.SetTooltip("Save log to .txt file");
                 }
-
-                //push font to make our menus with FA icons
-
                 ImGui.BeginGroup();
                 ImGui.BeginDisabled(Plugin.SelectedPlayer == null || Plugin.SelectedPlayer.RemoveDisabled);
-                ImGui.PushFont(UiBuilder.IconFont);
-                if (ImGui.MenuItem(FontAwesomeIcon.UserCheck.ToIconString()))
+                using (ImRaii.PushFont(UiBuilder.IconFont))
                 {
-                    PlayerUtils.AddTrackedPlayer(new TrackedPlayer(Plugin.SelectedPlayer.Name, Plugin.SelectedPlayer.Server, Plugin.SelectedPlayer.NameColor));
+                    if (ImGui.MenuItem(FontAwesomeIcon.UserCheck.ToIconString()))
+                    {
+                        if (Plugin.SelectedPlayer != null)
+                        {
+                            PlayerUtils.AddTrackedPlayer(new TrackedPlayer(Plugin.SelectedPlayer.Name, Plugin.SelectedPlayer.Server, Plugin.SelectedPlayer.NameColor));
+                        }
+                    }
                 }
-                ImGui.PopFont();
                 ImGui.EndDisabled();
                 ImGui.EndGroup();
                 if (ImGui.IsItemHovered())
