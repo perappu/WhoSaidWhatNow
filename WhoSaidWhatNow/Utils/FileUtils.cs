@@ -17,14 +17,15 @@ namespace WhoSaidWhatNow.Utils
         public static void OpenFileDialog(string playerName)
         {
             Plugin.FileDialogManager.SaveFileDialog("Save log...", "Text File{.txt}",
-            Regex.Replace(playerName, "[^a-zA-Z0-9]", string.Empty) + "-" + DateTime.Now.ToString("yyyy-MM-dd") + ".txt",
-            ".txt", (isOk, selectedFile) =>
-            {
-                if (isOk)
-                {
-                    SaveIndividualLog(selectedFile);
-                }
-            });
+                                                    Regex.Replace(playerName, "[^a-zA-Z0-9]", string.Empty) + "-" +
+                                                    DateTime.Now.ToString("yyyy-MM-dd") + ".txt",
+                                                    ".txt", (isOk, selectedFile) =>
+                                                    {
+                                                        if (isOk)
+                                                        {
+                                                            SaveIndividualLog(selectedFile);
+                                                        }
+                                                    });
         }
 
         /// <summary>
@@ -34,14 +35,15 @@ namespace WhoSaidWhatNow.Utils
         public static void DialogSaveGroup(string name, Dictionary<Player, bool> group)
         {
             Plugin.FileDialogManager.SaveFileDialog("Save log...", "Text File{.txt}",
-                Regex.Replace(name, "[^a-zA-Z0-9]", string.Empty) + "-" + DateTime.Now.ToString("yyyy-MM-dd") + ".txt",
-                ".txt", (isOk, selectedFile) =>
-                {
-                    if (isOk)
-                    {
-                        SaveGroupLog(selectedFile, group);
-                    }
-                });
+                                                    Regex.Replace(name, "[^a-zA-Z0-9]", string.Empty) + "-" +
+                                                    DateTime.Now.ToString("yyyy-MM-dd") + ".txt",
+                                                    ".txt", (isOk, selectedFile) =>
+                                                    {
+                                                        if (isOk)
+                                                        {
+                                                            SaveGroupLog(selectedFile, group);
+                                                        }
+                                                    });
         }
 
         /// <summary>
@@ -52,22 +54,25 @@ namespace WhoSaidWhatNow.Utils
         {
             try
             {
-                using (var file = new System.IO.StreamWriter(path, false))
+                using var file = new System.IO.StreamWriter(path, false);
+                foreach (var pair in
+                         from KeyValuePair<DateTime, ChatEntry> entry in Plugin.ChatEntries
+                         where Plugin.Config.ChannelToggles[entry.Value.Type] &&
+                               entry.Value.Sender.Name.Contains(Plugin.SelectedPlayer.Name)
+                         select entry)
                 {
-                    foreach (var c in from KeyValuePair<DateTime, ChatEntry> c in Plugin.ChatEntries
-                                      where Plugin.Config.ChannelToggles[c.Value.Type] == true && c.Value.Sender.Name.Contains(Plugin.SelectedPlayer.Name)
-                                      select c)
-                    {
-                        var tag = ConfigurationUtils.ChatTypeToFormat(c.Value.Type);
-                        file.WriteLine(c.Value.CreateMessage(tag));
-                    }
-                    Plugin.ChatGui.Print($"Successfully saved log: {path}", "WhoWhat");
+                    var tag = ConfigurationUtils.ChatTypeToFormat(pair.Value.Type);
+                    file.WriteLine(pair.Value.CreateMessage(tag));
                 }
+
+                Plugin.ChatGui.Print($"Successfully saved log: {path}", "WhoWhat");
             }
             catch (Exception e)
             {
                 Plugin.Logger.Error(e.Message);
-                Plugin.ChatGui.Print("Failed to save log. Please check the /xllog and report the error to the developers.", "WhoWhat");
+                Plugin.Logger.Error(e.StackTrace ?? "No stack trace available.");
+                Plugin.ChatGui.Print(
+                    "Failed to save log. Please check the /xllog and report the error to the developers.", "WhoWhat");
             }
         }
 
@@ -82,17 +87,17 @@ namespace WhoSaidWhatNow.Utils
             try
             {
                 using var file = new System.IO.StreamWriter(path, false);
-                foreach (var c in Plugin.ChatEntries)
+                foreach (var pair in Plugin.ChatEntries)
                 {
                     // if we are displaying this type of message;
-                    if (Plugin.Config.ChannelToggles[c.Value.Type] == true)
+                    if (Plugin.Config.ChannelToggles[pair.Value.Type])
                     {
                         // and if the player is among the tracked;
-                        var p = PlayerUtils.GetCurrentAndPlayers().Find(p => c.Value.Sender.Name.Contains(p.Name));
+                        var p = PlayerUtils.GetCurrentAndPlayers().Find(p => pair.Value.Sender.Name.Contains(p.Name));
                         if (players[p!])
                         {
-                            var tag = ConfigurationUtils.ChatTypeToFormat(c.Value.Type);
-                            file.WriteLine(c.Value.CreateMessage(tag));
+                            var tag = ConfigurationUtils.ChatTypeToFormat(pair.Value.Type);
+                            file.WriteLine(pair.Value.CreateMessage(tag));
                         }
                     }
                 }
@@ -102,9 +107,10 @@ namespace WhoSaidWhatNow.Utils
             catch (Exception e)
             {
                 Plugin.Logger.Error(e.Message);
-                Plugin.ChatGui.Print("Failed to save log. Please check the /xllog and report the error to the developers.", "WhoWhat");
+                Plugin.Logger.Error(e.StackTrace ?? "No stack trace available.");
+                Plugin.ChatGui.Print(
+                    "Failed to save log. Please check the /xllog and report the error to the developers.", "WhoWhat");
             }
         }
-
     }
 }
