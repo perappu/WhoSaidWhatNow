@@ -4,8 +4,8 @@
     "Punchline": "Chat history plugin, view history per character, per group, or search.",
     "Description": "Chat history plugin, view history per character, per group, or search.\n Main command /whowhat",
     "InternalName": "WhoSaidWhatNow",
-    "AssemblyVersion": "0.6.1",
-    "TestingAssemblyVersion": "0.6.1",
+    "AssemblyVersion": "0.6.3",
+    "TestingAssemblyVersion": "0.6.3",
     "ApplicableVersion": "any",
     "RepoUrl": "https://github.com/perappu/WhoSaidWhatNow",
     "Tags": [
@@ -13,6 +13,6 @@
         "chat"
     ],
     "IconUrl": "https://raw.githubusercontent.com/perappu/WhoSaidWhatNow/master/WhoSaidWhatNow/images/icon.png",
-    "Changelog": "* v0.6.1\n * add sound notifications"
+    "Changelog": "* v0.6.3\n * add sound notifications\n* v0.6.2\n * fix font weirdness from ImGui using ImRaii"
 }
 
