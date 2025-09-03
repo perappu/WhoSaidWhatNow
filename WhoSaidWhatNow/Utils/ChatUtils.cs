@@ -1,4 +1,4 @@
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -81,27 +81,27 @@ namespace WhoSaidWhatNow.Utils
                     var textStart = text;
                     var textEnd = text + bytes.Length;
 
-                    var Font = ImGui.GetFont().NativePtr;
+                    var Font = ImGui.GetFont().Handle;
 
                     do
                     {
                         var widthRemaining = ImGui.GetContentRegionAvail().X;
-                        var drawEnd = ImGuiNative.ImFont_CalcWordWrapPositionA(Font, 1.0f, textStart, textEnd, widthRemaining);
+                        var drawEnd = ImGuiNative.CalcWordWrapPositionA(Font, 1.0f, textStart, textEnd, widthRemaining);
 
                         if (textStart == drawEnd)
                         {
                             ImGui.NewLine();
-                            drawEnd = ImGuiNative.ImFont_CalcWordWrapPositionA(Font, 1.0f, textStart, textEnd, widthRemaining);
+                            drawEnd = ImGuiNative.CalcWordWrapPositionA(Font, 1.0f, textStart, textEnd, widthRemaining);
                         }
 
                         ImGui.PushStyleColor(ImGuiCol.Text, chunk.Value);
-                        ImGuiNative.igTextUnformatted(textStart, drawEnd);
+                        ImGuiNative.TextUnformatted(textStart, drawEnd);
                         ImGui.PopStyleColor();
 
                         //non-native SameLine will add spaces
                         if (textStart == drawEnd || drawEnd == textEnd)
                         {
-                            ImGuiNative.igSameLine(0, 0);
+                            ImGuiNative.SameLine(0, 0);
                             break;
                         }
 

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <!-- https://www.nuget.org/packages/Dalamud.NET.Sdk -->
-<Project Sdk="Dalamud.NET.Sdk/12.0.2">
+<Project Sdk="Dalamud.NET.Sdk/13.1.0">
     <PropertyGroup>
         <RootNamespace>WhoSaidWhatNow</RootNamespace>
         <AssemblyName>WhoSaidWhatNow</AssemblyName>
         <Authors>perappu</Authors>
-        <Version>0.6.3</Version>
+        <Version>0.6.4</Version>
         <Description>Plugin for tracking chat logs.</Description>
         <Copyright></Copyright>
         <PackageProjectUrl>https://github.com/perappu/WhoSaidWhatNow</PackageProjectUrl>
