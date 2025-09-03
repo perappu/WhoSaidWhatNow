@@ -37,7 +37,7 @@ public class TabGroups
                     Plugin.SelectedGroup = index;
                     var filtered = new Player[playerList.Count];
 
-                    if (ImGui.BeginPopupContextItem())
+                    if (ImGui.BeginPopupContextItem("###groupName"))
                     {
                         var input = String.Empty;
                         ImGui.InputTextWithHint($"##{index}", "Enter the group name...", ref name, 30);

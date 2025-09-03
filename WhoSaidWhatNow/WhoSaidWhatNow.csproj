@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <!-- https://www.nuget.org/packages/Dalamud.NET.Sdk -->
-<Project Sdk="Dalamud.NET.Sdk/13.0.0">
+<Project Sdk="Dalamud.NET.Sdk/13.1.0">
     <PropertyGroup>
         <RootNamespace>WhoSaidWhatNow</RootNamespace>
         <AssemblyName>WhoSaidWhatNow</AssemblyName>
