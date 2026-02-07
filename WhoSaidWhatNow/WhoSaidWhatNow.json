@@ -4,8 +4,8 @@
     "Punchline": "Chat history plugin, view history per character, per group, or search.",
     "Description": "Chat history plugin, view history per character, per group, or search.\n Main command /whowhat",
     "InternalName": "WhoSaidWhatNow",
-    "AssemblyVersion": "0.6.2",
-    "TestingAssemblyVersion": "0.6.2",
+    "AssemblyVersion": "0.6.4",
+    "TestingAssemblyVersion": "0.6.4",
     "ApplicableVersion": "any",
     "RepoUrl": "https://github.com/perappu/WhoSaidWhatNow",
     "Tags": [
@@ -13,6 +13,6 @@
         "chat"
     ],
     "IconUrl": "https://raw.githubusercontent.com/perappu/WhoSaidWhatNow/master/WhoSaidWhatNow/images/icon.png",
-    "Changelog": "* v0.6.2\n * potential fix for font glitch"
+    "Changelog": "* v0.6.4\n * update for patch 7.3[.1]"
 }
 

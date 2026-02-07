@@ -19,3 +19,11 @@ Takes ideas and logic from [Snooper](https://github.com/Maia-Everett/dalamud-sno
 
 ![image](https://github.com/perappu/WhoSaidWhatNow/assets/13854524/3eb4e1ca-f2db-439e-858b-7dd0fd7a3016)
 
+## Creating a New Release
+
+- Bump `AssemblyVersion` and/or `TestingAssemblyVersion` in `./WhoSaidWhatNow/WhoSaidWhatNow.json`.
+- Bump `<Version>` in `./WhoSaidWhatNow/WhoSaidWhatNow.csproj`.
+- Run .NET build in Release mode: `dotnet build --configuration Release`
+- Create new release tag using the `vX.X.X` format, and attach the release artifact from `./WhoSaidWhatNow/WhoSaidWhatNow/bin/x64/Release/latest.zip`.
+- Update `repo.json` and merged to root branch. Create PR using forked D17 repository with latest commit hash.
+- Verify updated release is available in Dalamud. Check for updates as necessary.
